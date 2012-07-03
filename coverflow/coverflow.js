@@ -16,7 +16,7 @@ var coverCount;
 
 window.onload = function(event) {
 	$id("loading").style.display="none";
-	
+
 	container = $id("container");
 	var style = container.style;
 	style.visibility="visible";
@@ -52,7 +52,6 @@ function initCovers() {
 
 		var shd=document.createElement("div");
 		shd.style.width=img.width+"px";
-		// shd.style.height=img.height+"px";
 		shd.style.top=img.height+"px";
 		c.appendChild(shd);
 
@@ -95,7 +94,6 @@ function setCurrentCover(idx) {
 }
 
 
-var coverBg="-webkit-gradient(linear, 0% 50%, 0% 100%, from(rgba(25,25,25,1)), to(rgba(25,25,25,0)) )";
 function moveToLeft(idx) {
 	var cover = covers[idx];
 	var offsetX = (idx - currentIndex) * coverMargin - currentWidth;
