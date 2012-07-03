@@ -20,12 +20,17 @@ body, div, img , canvas  {
 	-webkit-image-rendering:  optimizeSpeed;
 }
 
-canvas {
-	-webkit-transform : translateZ(0px);
 
-	position: absolute;
-	margin-left:50%;
-	z-index: 2000;
+
+#loading {
+font-size : 22px;
+font-weight: bolder;
+color : #fff;
+width : 100%;
+text-align:center;
+padding : 10px;
+background-color: rgba(30,30,30,0.2);
+
 }
 
 #container {

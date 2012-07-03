@@ -15,6 +15,8 @@ var container, covers, images ,shadows ;
 var coverCount;
 
 window.onload = function(event) {
+	$id("loading").style.display="none";
+	
 	container = $id("container");
 	var style = container.style;
 	style.visibility="visible";
