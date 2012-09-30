@@ -48,7 +48,9 @@ background-color: rgba(30,30,30,0.2);
 	left : 0px;
 	background-image: -webkit-gradient(linear, 0% 50%, 0% 100%, from(rgba(30,30,30,1)), to(rgba(30,30,30,0)) );
 }
-
+#container div:hover {
+	border : 2px solid red;
+}
 #container div img {
 	-webkit-box-reflect:below -1px 
 		-webkit-gradient(linear, left top, left bottom, 
