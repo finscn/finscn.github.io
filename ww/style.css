@@ -1,0 +1,57 @@
+body {
+	background-color: #000;
+	margin: 0px;
+	text-align: center;
+	overflow: hidden;
+	font-family: Arial, Helvetica, sans-serif;
+	color: #ddd;
+}
+h1 {
+	font-family: 'Lobster', cursive;
+	font-size: 30px;
+	color:rgba(255,255,255,0.5);
+	position: absolute;
+	width: 100%;
+}
+
+#info {
+	
+	xtext-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+	position: absolute;
+	bottom: 20px;
+	width: 100%;
+	padding: 5px;
+	z-index: 100;
+	
+	font-size: 12px;
+	line-height:20px;
+}
+
+#loading {
+	font-size: 26px;
+	position: absolute;
+	top: 50%;
+	width: 100%;
+	margin:-20px;
+	
+
+}
+
+#debugCtx{
+	position: absolute;
+	top:10px;
+	left: 100px;
+	xwidth: 800px;
+	xheight: 600px;
+}
+
+a {
+    color: #fff;
+	xtext-decoration:none;
+}
+
+#loadSample{
+	
+	cursor: pointer;
+	text-decoration: underline;
+}
