@@ -60,7 +60,7 @@ function start(){
 	Game.input(function(type, e) {
 		if (type=="Up"){
 			var point = e.point;
-			createSprites(point.x,point.y,222);
+			createSprites(point.x,point.y,32);
 		}
 	});
 
