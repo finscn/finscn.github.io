@@ -69,12 +69,15 @@ var Game = {
     },
 
 
-    init : function(canvas){
+    init : function(canvas,cb){
 		this.canvas = canvas;
         this.context = canvas.getContext("2d");
 		this.width = canvas.width;
 		this.height = canvas.height;
 		stagePos = Game.DOM.inner(canvas);
+		if (cb){
+			cb(canvas);
+		}
     },
 
     start: function() {

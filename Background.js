@@ -66,8 +66,8 @@ Background.prototype={
 
 	render : function(context){
 		
-		context.fillStyle="#441166"
 		context.globalAlpha=0.13;
+		context.fillStyle="#441166"
 		context.fillRect(0,0,Config.width,Config.height);
 
 		if (this.exploded){
