@@ -16,6 +16,8 @@ Sprite.prototype={
 	x : 0,
 	y : 0,
 	v : 0,
+	ax : 0,
+	ay : 0,
 	vx : 0,
 	vy : 0 ,
 
@@ -30,7 +32,7 @@ Sprite.prototype={
 		this.ty=node.y+randomInt(-2,2);
 		node.f++;
 
-		this.v=randomInt(1,2)/16;
+		
 		var dx=this.tx-this.x;
 		var dy=this.ty-this.y;
 
@@ -44,37 +46,48 @@ Sprite.prototype={
 	
 	update : function(dt){
 
-		if ( this.tx===null || this.ty===null){
+		if ( !this.exploded && this.tx===null || this.ty===null){
 			this.findTarget();
 		}else{
 
-			var dx=this.vx*dt;
-			var dy=this.vy*dt;
+			var nvx=this.vx+this.ax * dt;		
+			var nvy=this.vy+this.ay * dt;	
+			var dx=(this.vx + nvx)/2 * dt;
+			var dy=(this.vy + nvy)/2 * dt;
 
-			var dxR=Math.abs(this.tx-this.x);
-			var dyR=Math.abs(this.ty-this.y);
-			var dxA=Math.abs(dx);
-			var dyA=Math.abs(dy);
+			if (!this.exploded){
+				var dxR=Math.abs(this.tx-this.x);
+				var dyR=Math.abs(this.ty-this.y);
+				var dxA=Math.abs(dx);
+				var dyA=Math.abs(dy);
 
-			if (dxR<dxA){
-				dx=0;
+				if (dxR<dxA){
+					dx=0;
+				}
+				if (dyR<dyA){
+					dy=0;
+				}				
 			}
-			if (dyR<dyA){
-				dy=0;
-			}
+
 			this.x=this.x+dx;
 			this.y=this.y+dy;
 
 			this.rotation+=this.vr*dt;
 
-			if (dx===0 && dy===0){
+			if (!this.exploded && dx===0 && dy===0){
 				this.finished=true;
 				this.vx=0;
 				this.vy=0;
 			}		
 		}
 	},
-
+	explode : function(){
+		this.ax=0;
+		this.ay=0;
+		this.vx=randomInt(-2,2)/10;
+		this.vy=randomInt(-5,-3)/10;
+		this.exploded=true;
+	},
 	render : function(context){
 
 		context.save();

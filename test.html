@@ -1,0 +1,68 @@
+<html>
+<head>
+<script src="Game.js"></script>
+<script>
+window.onload = function() {
+	var point = null;
+		
+	var pic=document.getElementById("pic");
+	var width=pic.width;
+	var height=pic.height;
+
+	var canvas=document.getElementById("canvas");
+	canvas.width=width;
+	canvas.height=height;
+
+	var ctx=canvas.getContext("2d");
+	ctx.fillStyle="#ffffff";
+	ctx.fillRect(0,0,canvas.width,canvas.height);
+	ctx.drawImage(pic,0,0);
+
+	var output=document.getElementById("out-put");
+
+	var offset=2;
+	var str=[];
+	var arr=[];
+	for (var y=0;y<height-offset;y+=5){
+		var row=[];
+		arr.push(row);
+		for (var x=0;x<width-offset;x+=5){
+			var pixData=ctx.getImageData(x+offset, y+offset, 1, 1);
+			var pix=pixData.data;
+			var r=pix[0];
+			var g=pix[1];
+			var b=pix[2];
+			if (r<240||g<240||b<240){
+				row.push(9);
+			}else{
+				row.push(" ");
+			}
+		}
+		// console.log(row);
+		str.push("[ "+row.join(",")+" ]");
+	}
+	output.value=str.join(",\n");
+	// Game.start();
+	
+	// Game.tick(function(dt, frame) {
+	// 	//console.log("tick", dt);
+	// });
+	
+	// Game.render(function(ctx) {
+			
+
+	// });
+	
+};
+</script>
+<style>
+body { text-align: center }
+#canvas { border: 2px solid #000; margin: auto }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<textarea id="out-put"></textarea>
+<img id="pic" src='pic.png'></img>
+</body>
+</html>

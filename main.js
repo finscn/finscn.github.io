@@ -14,9 +14,10 @@ window.onload = function() {
 
 var background;
 var sprites=[];
+var canvas;
 
 function start(){
-	var canvas=document.getElementById("canvas");
+	canvas=document.getElementById("canvas");
 	canvas.width=Config.width;
 	canvas.height=Config.height;
 
@@ -29,9 +30,22 @@ function start(){
 		
 		background.update(dt);
 
+		var count=sprites.length;
+		var fc=0;
 		sprites.forEach(function(s){
 			s.update(dt);
-		})
+			if (s.finished){
+				fc++;
+			}
+		});
+
+		if (count>0 && fc===count && !background.exploded && background.nodes.length<1){
+			background.exploded=true;
+			sprites.forEach(function(s){
+				s.explode();
+			});
+		}
+
 	});
 	
 	Game.render(function(context) {
@@ -46,7 +60,7 @@ function start(){
 	Game.input(function(type, e) {
 		if (type=="Up"){
 			var point = e.point;
-			createSprites(point.x,point.y,16);
+			createSprites(point.x,point.y,222);
 		}
 	});
 
@@ -65,6 +79,7 @@ function createSprites(x, y,n){
 		var sprite=new Sprite({
 			x : x+randomInt(-5,5),
 			y : y+randomInt(-5,5),
+			v : randomInt(1,2)/16,
 			color : colors[randomInt(0,6)]
 		});
 		sprites.push(sprite);		

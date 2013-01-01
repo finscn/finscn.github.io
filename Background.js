@@ -14,15 +14,27 @@ Background.prototype={
 
 	data : null,
 
+	exploded : false,
+
 	init : function(){
 		this.nodes=[];
 
 		this.createNodes(t_2012,50,50);
-		this.createNodes(t_BYE,480,80);
-		this.createNodes(t_2013,50+60,50+240);
-		this.createNodes(t_HI,480+60,70+240);
+		this.createNodes(t_BYE,500,50);
+		this.createNodes(t_2013,50+70,50+250);
+		this.createNodes(t_HI,500+70,50+250);
 
 		this.fullNodes=[];
+
+		this.img=document.createElement("canvas");
+		this.img.width=canvas.width;
+		this.img.height=canvas.height;
+		var ctx=this.img.getContext("2d");
+		ctx.fillStyle="#ffff00";
+		for(var i = this.nodes.length - 1; i >= 0; i--) {
+			var node = this.nodes[i];
+			ctx.fillRect(node.x,node.y,9,9);
+		}
 	},
 
 	createNodes : function(text,ox,oy){
@@ -57,6 +69,11 @@ Background.prototype={
 		context.fillStyle="#441166"
 		context.globalAlpha=0.13;
 		context.fillRect(0,0,Config.width,Config.height);
+
+		if (this.exploded){
+			context.globalAlpha=1;
+			context.drawImage(this.img,0,0);
+		}
 
 	}
 
