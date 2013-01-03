@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<!-- <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no, minimum-scale=1, maximum-scale=1, initial-scale=1, target-densitydpi=device-dpi" > -->
+
+<title>OP Test : Logo</title>
+<style type="text/css">
+
+html,body {
+    margin : 0px;
+    padding : 0px;
+    border : 0px;
+    width : 100%;
+    height : 100%;
+}
+
+
+body, div {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+	user-select: none;
+}
+
+canvas {
+
+/*	
+    -webkit-transform: translateZ(0px);
+	-moz-transform: translateZ(0px);
+	-ms-transform: translateZ(0px);
+	-o-transform: translateZ(0px);
+	transform: translateZ(0px);
+*/
+
+}
+
+
+#ui-pool {
+	position: relative;
+    visibility: hidden;
+    overflow : hidden;
+    width : 0px;
+    height : 0px;
+}
+
+#container {
+    position : relative;
+    overflow : hidden;
+    width : 0px;
+    height : 0px;
+    background-color : #88aaff;
+    background-image : url("img/bg.png");
+}
+
+</style>
+<script src="Base.js"></script>
+<script src="Demo.js"></script>
+<script src="Logo.js"></script>
+
+</head>
+
+<body >
+
+<div id="container" >
+    <canvas id="canvas" ></canvas>
+</div>
+<p id="ua"></p>
+
+<div id="ui-pool" >
+    <img id="bg" src="img/bg.png">
+    <img id="chrome" src="img/chrome.png">
+    <img id="firefox" src="img/firefox.png">
+    <img id="ie" src="img/ie.png">
+    <img id="safari" src="img/safari.png">
+    <img id="opera" src="img/opera.png">
+    <img id="html5" src="img/html5.png"> 
+</div>
+
+</body>
+
+</html>
+
+
