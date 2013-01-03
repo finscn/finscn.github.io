@@ -18,17 +18,19 @@ window.onload = function() {
         setViewportScale(1 , true);
     }
 
-    var size=Config.defaultSizePixel;
-    var min=Math.floor(Math.min(window.screen.availWidth,window.screen.availHeight)*window.devicePixelRatio);
-    if (min<size){
-        size=min;
+    var min=Math.min(window.screen.availWidth,window.screen.availHeight);
+    if (b.iOS){
+        min=min*window.devicePixelRatio;
     }
+    var size=Config.defaultSizePixel;
+    size=min<size?min:size;
+
     Config.width=size;
     Config.height=size;
 
     init();
     test.run();
-    showFPS(test);
+    
 }
 
 
@@ -40,6 +42,7 @@ function init() {
         canvas: "canvas",
         sprites: createSprties()
     });
+
     test.init();
 }
 
@@ -80,44 +83,3 @@ function setViewportScale(scale, scalable) {
     document.head.appendChild(meta);
 };
 
-function showFPS(logger) {
-
-    if (logger == null) {
-        return;
-    }
-    logger.frameCount = 0;
-
-    var id = "fpsBar";
-
-    var div = $id(id);
-    if (div == null) {
-        var style = {
-            border: "solid 1px #ccc",
-            position: "absolute",
-            left: "1px",
-            top: "1px",
-            color: "#fff",
-            backgroundColor: "rgba(0,0,0,0.6)",
-            minWidth: "150px",
-            height: "55px",
-            padding : "7px",
-            fontSize: "50px",
-            zIndex: 99999
-        }
-        div = document.createElement("div");
-        div.id = id;
-        for (var p in style) {
-            div.style[p] = style[p];
-        }
-        document.body.appendChild(div);
-
-    }
-
-    div.innerHTML = "Waiting...";
-
-    function _core() {
-        div.innerHTML = "FPS:" + logger.frameCount;
-        logger.frameCount = 0;
-    }
-    setInterval(_core, 1000);
-}
