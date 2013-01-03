@@ -62,8 +62,6 @@ Logo.prototype = {
 
 }
 
-var total = 180;
-
 
 function createLogo(img, x, y, vx, vy, alpha) {
     var sprite = new Logo({
@@ -86,7 +84,7 @@ function createLogo(img, x, y, vx, vy, alpha) {
 function createSprties(){
     
 
-    var cr=total/2;
+    var cr=Config.logoCount/2;
     var col=cr*Config.width/(Config.width+Config.height)
     col=Math.ceil(col)
     var row=cr-col;

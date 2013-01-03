@@ -1,6 +1,7 @@
 
 var Config = {
     FPS: 60,
+    logoCount : 160 ,
     defaultSizePixel : 600
 };
 
