@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8" />
+<title>Twinkle -- The First Teaser Trailer  by  大城小胖</title>
+<style>
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		html, body{
+			position: relative;
+			background-color: black;
+		}
+
+		@font-face {
+	 		font-family:"star";
+	 		src:url("./res/star.ttf") format("truetype");
+			font-weight:normal;
+			font-style:normal;
+		}
+
+
+		#game-container {
+			position: relative;
+			background-color : black;
+			width: 660px;
+			margin-left: 50%;
+			left: -330px;
+			width: 660px;
+			height: 440px;
+			border : 1px solid black;
+			/*box-shadow: 0px 0px 50px rgba(255,255,255,0.7);*/
+			top :20px;
+
+		}
+		#info, #loading {
+			position: relative;
+			font-family: Arial;
+			font-size:18px;
+			text-align: center;
+			color : #888888;
+			position: relative;
+			top :-250px;
+			z-index:1000;
+			opacity: 0;
+			-webkit-transition: opacity 1s linear;
+		     -moz-transition: opacity 1s linear;
+		      -ms-transition: opacity 1s linear;
+		       -o-transition: opacity 1s linear;
+		          transition: opacity 1s linear;
+		}
+		#loading {
+			top :-290px;
+			opacity: 1;
+		}
+		#canvas{
+			/*border: 1px solid white;*/
+			/*background: black;*/
+			margin:auto;
+			display: block;
+			/*position: absolute;*/
+		}
+		#mask {
+			position: absolute;
+			top : 0px;
+			left : 0px;
+			width: 660px;
+			height: 440px;
+			z-index:100;
+			background-color: black;
+			opacity: 1;
+			-webkit-transition: opacity 7s linear;
+		     -moz-transition: opacity 7s linear;
+		      -ms-transition: opacity 7s linear;
+		       -o-transition: opacity 7s linear;
+		          transition: opacity 7s linear;
+		}
+
+		#words {
+			width: 660px;
+			height: 0px;
+			overflow : hidden;
+			color : white;
+			font-size:35px;
+			font-family: star; 
+			text-align: center;
+			-webkit-transition: height 16s linear;
+		     -moz-transition: height 16s linear;
+		      -ms-transition: height 16s linear;
+		       -o-transition: height 16s linear;
+		          transition: height 16s linear;
+
+		}
+		#words div {
+			margin  : 50px 0px;
+		}
+		#words div:nth-child(3){
+			font-family: Arial; 
+			margin-top:70px;
+			font-size:24px;
+		}
+	</style>
+
+<script src="all.min.js"></script>
+
+<script>
+
+</script>
+
+</head>
+<body>
+	<div id="game-container">
+		<canvas id="canvas" width="0" height="0" ></canvas>
+		<div id="mask">Loading...
+		<div id="words"><div>
+			This summer
+			</div><div>
+			Let's Twinkle The Night<br> Together
+			</div><div>
+			on iOS device
+			</div>
+		</div>
+		</div>
+	</div>
+<div id="info">Place headphones on or turn on your speakers , please :)
+	<br>
+	<br>
+	Press Any Key ...
+</div>
+<div id="loading">
+Loading resources, please wait a moment ...
+</div>
+</body>
+
+</html>
