@@ -12,7 +12,8 @@ window.innerHeightOrigin=window.innerHeight;
 window.onload = function() {
 
     var browser=getBrowserInfo();
-    if( window.devicePixelRatio==1) {
+    var r=window.devicePixelRatio;
+    if( r==1) {
             setViewportScale(1);
             Config.width = window.innerWidth;
             Config.height = window.innerHeight;
@@ -22,7 +23,8 @@ window.onload = function() {
             Config.width = window.innerWidth;
             Config.height = window.innerHeight;
         }else{
-            setViewportScale(0.5)
+            // r=2.2;
+            setViewportScale(1/r)
             Config.width = window.innerWidth;
             Config.height = window.innerHeight;
         }
@@ -41,7 +43,7 @@ window.onload = function() {
 
     setTimeout(function(){
         showBrowserInfo();
-    },1);
+    },10);
     
 }
 
@@ -97,8 +99,8 @@ function showBrowserInfo(){
             "devicePixelRatio : "+window.devicePixelRatio,
             "screenSize : "+[window.screen.width,window.screen.height],
             "availSize : "+[window.screen.availWidth,window.screen.availHeight],
-            "innerSize : "+[window.innerWidth,window.innerHeight],
             "innerSizeOrigin : "+[window.innerWidthOrigin,window.innerHeightOrigin],
+            "innerSize : "+[window.innerWidth,window.innerHeight],
         ].join("<br>");
 }
 
