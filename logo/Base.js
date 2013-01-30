@@ -37,6 +37,10 @@ window.onload = function() {
 
     init();
     test.run();
+
+    setTimeout(function(){
+        showBrowserInfo();
+    },1);
     
 }
 
@@ -63,13 +67,7 @@ function $id(id) {
 
 function getBrowserInfo(){
     var ua=window.navigator.userAgent.toLowerCase();
-    $id("ua").innerHTML=[
-        "userAgent : "+ua,
-        "devicePixelRatio : "+window.devicePixelRatio,
-        "screenSize : "+[window.screen.width,window.screen.height],
-        "availSize : "+[window.screen.availWidth,window.screen.availHeight],
-        "innerSize : "+[window.innerWidth,window.innerHeight],
-    ].join("<br>");
+
     var browser={};
 
     var match = /(safari)[ \/]([\w.]+)/.exec( ua ) ||
@@ -90,6 +88,16 @@ function getBrowserInfo(){
     browser.android=/android/.test(ua);
         
     return browser;
+}
+
+function showBrowserInfo(){
+        $id("info").innerHTML=[
+        "userAgent : "+window.navigator.userAgent,
+        "devicePixelRatio : "+window.devicePixelRatio,
+        "screenSize : "+[window.screen.width,window.screen.height],
+        "availSize : "+[window.screen.availWidth,window.screen.availHeight],
+        "innerSize : "+[window.innerWidth,window.innerHeight],
+    ].join("<br>");
 }
 
 function setViewportScale(scale, scalable) {
