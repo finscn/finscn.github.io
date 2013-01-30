@@ -6,7 +6,6 @@ var Config = {
 };
 
 window.devicePixelRatio = window.devicePixelRatio || 1;
-alert(window.devicePixelRatio)
 
 
 window.onload = function() {
@@ -64,7 +63,12 @@ function $id(id) {
 
 function getBrowserInfo(){
     var ua=window.navigator.userAgent.toLowerCase();
-    $id("ua").innerHTML=ua;
+    $id("ua").innerHTML=[
+        "userAgent : "+ua,
+        "devicePixelRatio : "+window.devicePixelRatio,
+        "screenSize : "+[window.screen.width,window.screen.height],
+        "availSize : "+[window.screen.availWidth,window.screen.availHeight],
+    ].join("<br>");
     var browser={};
 
     var match = /(safari)[ \/]([\w.]+)/.exec( ua ) ||
