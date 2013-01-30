@@ -6,7 +6,8 @@ var Config = {
 };
 
 window.devicePixelRatio = window.devicePixelRatio || 1;
-
+window.innerWidthOrigin=window.innerWidth;
+window.innerHeightOrigin=window.innerHeight;
 
 window.onload = function() {
 
@@ -92,12 +93,13 @@ function getBrowserInfo(){
 
 function showBrowserInfo(){
         $id("info").innerHTML=[
-        "userAgent : "+window.navigator.userAgent,
-        "devicePixelRatio : "+window.devicePixelRatio,
-        "screenSize : "+[window.screen.width,window.screen.height],
-        "availSize : "+[window.screen.availWidth,window.screen.availHeight],
-        "innerSize : "+[window.innerWidth,window.innerHeight],
-    ].join("<br>");
+            "userAgent : "+window.navigator.userAgent,
+            "devicePixelRatio : "+window.devicePixelRatio,
+            "screenSize : "+[window.screen.width,window.screen.height],
+            "availSize : "+[window.screen.availWidth,window.screen.availHeight],
+            "innerSize : "+[window.innerWidth,window.innerHeight],
+            "innerSizeOrigin : "+[window.innerWidthOrigin,window.innerHeightOrigin],
+        ].join("<br>");
 }
 
 function setViewportScale(scale, scalable) {
