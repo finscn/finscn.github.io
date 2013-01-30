@@ -23,7 +23,6 @@ window.onload = function() {
             Config.width = window.innerWidth;
             Config.height = window.innerHeight;
         }else{
-            // r=2.2;
             setViewportScale(1/r)
             Config.width = window.innerWidth;
             Config.height = window.innerHeight;
