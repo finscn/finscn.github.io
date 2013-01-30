@@ -9,20 +9,27 @@ window.devicePixelRatio = window.devicePixelRatio || 1;
 
 
 window.onload = function() {
-    var b=getBrowserInfo();
-    if (b.iOS){
-        setViewportScale(1 / window.devicePixelRatio, true);
-    }else if (b.android){
-        setViewportScale(1 , true);
-    }else{
-        // TODO : I don't know anything about WP or BB :(
-        setViewportScale(1 , true);
+
+    var browser=getBrowserInfo();
+
+    if( window.devicePixelRatio==1) {
+            setViewportScale(1);
+            Config.width = window.innerWidth;
+            Config.height = window.innerHeight;
+    } else {
+        if (browser.android){
+            setViewportScale(1);
+            Config.width = window.innerWidth;
+            Config.height = window.innerHeight;
+        }else{
+            setViewportScale(0.5)
+            Config.width = window.innerWidth;
+            Config.height = window.innerHeight;
+        }
     }
 
-    var min=Math.min(window.screen.availWidth,window.screen.availHeight);
-    if (b.iOS){
-        min=min*window.devicePixelRatio;
-    }
+    var min=Math.min(Config.width,Config.height);
+
     var size=Config.defaultSizePixel;
     size=min<size?min:size;
 
@@ -59,11 +66,23 @@ function getBrowserInfo(){
     var ua=window.navigator.userAgent.toLowerCase();
     $id("ua").innerHTML=ua;
     var browser={};
+
+    var match = /(safari)[ \/]([\w.]+)/.exec( ua ) ||
+            /(chrome)[ \/]([\w.]+)/.exec( ua ) ||
+            /(chromium)[ \/]([\w.]+)/.exec( ua ) ||
+            /(webkit)[ \/]([\w.]+)/.exec( ua ) ||
+            /(opera)(?:.*version)?[ \/]([\w.]+)/.exec( ua ) ||
+            /(msie) ([\w.]+)/.exec( ua ) ||
+            !/compatible/.test( ua ) && /(mozilla)(?:.*? rv:([\w.]+))?/.exec( ua ) || [];       
+    
+    browser[ match[1] ]=true;
+    
+    browser.mobile=ua.indexOf("mobile")>0 || "ontouchstart" in window; 
+
     browser.iPhone=/iphone/.test(ua);
     browser.iPad=/ipad/.test(ua);
     browser.iOS = browser.iPhone || browser.iPad ;
     browser.android=/android/.test(ua);
-    browser.retain=window.devicePixelRatio>=1.5;
         
     return browser;
 }
