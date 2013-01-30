@@ -6,12 +6,12 @@ var Config = {
 };
 
 window.devicePixelRatio = window.devicePixelRatio || 1;
+alert(window.devicePixelRatio)
 
 
 window.onload = function() {
 
     var browser=getBrowserInfo();
-
     if( window.devicePixelRatio==1) {
             setViewportScale(1);
             Config.width = window.innerWidth;
