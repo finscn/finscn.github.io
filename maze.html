@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title> \/ maze </title>
+
+<script>
+
+window.onload=function(){
+	document.body.innerHTML=maze();
+}
+function maze(){
+	var m=[],line="";
+    for(var i = 0; i < 1600; i++) {
+        if(i&&!(i % 40)) {
+            m.push(line)
+            line=""
+        }
+        line += Math.random() < 0.5 ? "/" : "\\";
+    }
+    return m.join("<br>");
+}
+</script>
+<style>
+
+body { 
+	font-family:courier;
+	font-size:20px;
+	letter-spacing:-5px;
+	line-height: 14px;
+	padding: 4px;
+	position:absolute;
+	top:0px;
+	left:0px;
+	z-index:9999;
+	border:1px solid black;
+	background:white;
+	-webkit-transform:matrix(2,0,0,1,160,20);
+       -moz-transform:matrix(2,0,0,1,160,20);
+        -ms-transform:matrix(2,0,0,1,160,20);
+         -o-transform:matrix(2,0,0,1,160,20);
+            transform:matrix(2,0,0,1,160,20);
+}
+
+</style>
+</head>
+<body>
+
+</body>
+</html>
+
