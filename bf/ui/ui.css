@@ -1,0 +1,359 @@
+
+body {
+  /*overflow: hidden;*/
+  text-align: center;
+  background-color: #fff;
+}
+
+#container {
+  color : #fff;
+-webkit-text-stroke: 2px black;
+  font-family:"foo";
+  font-weight: bolder;
+  background-color: #000 !important;
+  background-image: url(../res/image/bg.png);
+  background-repeat: no-repeat;
+  /*border:1px solid blue;*/
+}
+
+#container > div {
+    display : none;
+}
+
+#container > div[ui] {
+  z-index : 10001;
+
+}
+
+.ui {
+  position: absolute;
+  z-index : 10001;
+  /*background-color: #ffffff;*/
+  /* border: 1px solid #ff0000; */
+  /*color : black;      */
+}
+.panel {
+  background-image: url(../res/ui/panel.png);
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  height : 336px;
+  width : 500px;
+  top : 25%;
+  margin-left:50%;
+  left:-250px;
+  z-index : 10005;
+}
+#playBtn {
+  position: absolute;
+  width : 406px;
+  height : 91px;
+  margin-left : 50%;
+  left : -203px;
+  top : 60%;
+  background-image: url(../res/ui/start.png);
+  z-index:300;
+}
+
+#playBtn:active {
+  -webkit-transform : scale(0.8,0.8);
+  opacity: 0.8;
+}
+
+#left {
+  background-image: url(../res/ui/left-btn.png);
+  width : 122px;
+  height : 190px;
+  top:360px;
+  left : 20px;
+}
+#right {
+  background-image: url(../res/ui/right-btn.png);
+  width : 122px;
+  height : 190px;
+  top:360px;
+  right : 20px;
+  
+}
+
+#mask {
+  position: absolute;
+  z-index : 10002;
+  width : 100%;
+  height : 100%;
+  background-color: rgba(0,0,0,0.5);
+  display : none;
+}
+
+#pausePanel {
+    display : none;
+}
+#resume {
+    background-image: url(../res/ui/resume.png);
+    background-size: 100% 100%;
+    height : 70px;
+    width : 320px;
+    left : -160px;
+    margin-left : 50%;
+    top : 90px;
+}
+#restart {
+    background-image: url(../res/ui/restart.png);
+    background-size: 100% 100%;
+    height : 70px;
+    width : 320px;
+    left : -160px;
+    margin-left : 50%;
+    top : 195px;
+}
+
+
+#gameoverPanel {
+  display : none;
+
+}
+
+#gameover {
+    background-image: url(../res/ui/game-over.png);
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    height : 26px;
+    margin-left: 50%;
+    width : 300px;
+    left : -150px;
+    top : 90px;
+}
+
+#restart2 {
+    background-image: url(../res/ui/restart.png);
+    background-size: 100% 100%;
+    height : 70px;
+    width : 320px;
+    left : -160px;
+    margin-left : 50%;
+    top : 180px;
+}
+
+
+
+
+
+
+
+
+#splash {
+    position: absolute;
+    top : 0px;
+    left : 0px;
+    z-index: 10000;
+    width : 100%;
+    height : 100%;
+    background-color: #000;
+    background-repeat: no-repeat;
+    background-position: center 40%;
+    background-size: 100% auto  ;
+    background-image: url("../res/ui/title.png");
+    text-align: center;
+}
+
+
+#loading {
+  position: absolute;
+
+  width : 500px;
+  margin-left: -250px;
+  left : 50%;
+
+  top : 50%;
+  z-index: 20000;
+  font-family: "foo";
+  font-size:32px;
+  color : #fff;
+  line-height: 60px;
+  text-align: center;
+  /*border : 1px solid red;*/
+}
+
+#loadBarBox {
+  position: relative;
+  border-radius: 12px;
+  border: 2px solid #fff;
+  background-color: #000; 
+  width : 100%;
+  -webkit-box-sizing : border-box;
+    box-sizing : border-box;
+
+  padding : 4px;
+  opacity: 0.9;
+}
+#loadBar {
+  height : 16px;
+  border-radius: 10px;
+  background-color: yellow;
+  width : 0%;
+}
+
+
+/* ============================= */
+/* ============================= */
+/* ============================= */
+
+#mainScreen {
+    position: absolute;
+    top : 0px;
+    left : 0px;
+    z-index: 10000;
+    width : 100%;
+    height : 100%;
+    background-color: #000 !important;
+    background-repeat: no-repeat;
+    background-position: center 40%;
+    background-size: auto 100%  ;
+    background-image: url("../res/ui/main-bg.png");
+    text-align: center;
+}
+
+#mainScreen #title {
+  position: relative;
+  top:300px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  width : 600px;
+  height : 200px;
+  margin : auto;
+  background-size: 100% auto;
+  background-image: url("../res/ui/title.png");
+}
+#mainmenu {
+  position: relative;
+  top : 300px;
+}
+#mainmenu > .btn {
+  margin : 10px;
+  font-family: "foo";
+  font-size : 40px;
+}
+
+#pausePanel, #gameoverPanel {
+  z-index : 200000 !important;
+  /*background-color: rgba(0,0,0,0.3);*/
+}
+
+.pause-body {
+  background-color: #fff;
+  border-radius: 20px;
+  border: 2px solid red;
+  width : 500px;
+  margin:auto;
+  height : 500px;
+  top : -250px;
+  margin-top : 40%;
+}
+
+.pause-body > div {
+
+}
+
+#hud {
+  position: absolute;
+  width : 100%;
+  height : 100%;
+}
+
+#hpBar {
+  position: absolute;
+  /*border: 1px solid red;*/
+  top : 8px;
+  left : 8px;
+  width : 225px;
+  height : 45px;
+  background-image: url(../res/ui/heart-border.png);
+}
+
+#hpValue {
+  height : 100%;
+  width : 100%;
+  background-image: url(../res/ui/heart.png);
+}
+
+#hpBar , #hpValue {
+  background-size: 45px auto;
+  background-repeat: repeat-x;
+}
+
+
+#powerBar {
+  position: absolute;
+  /*border: 1px solid red;*/
+  top : 50px;
+  left : 5px;
+  width : 200px;
+  height : 30px;
+}
+#pauseBtn {
+  position: absolute;
+  /*border: 1px solid red;*/
+  bottom : 15px;
+  right : 15px;
+  width : 80px;
+  height : 80px;
+
+  background-image: url(../res/ui/pause.png);
+  background-size: 100% 100%;
+}
+
+#score {
+  position: absolute;
+  /*border: 1px solid red;*/
+  top : 5px;
+  right : 5px;
+  text-align: right;
+  font-family:"foo";
+  font-size: 36px;
+}
+#hiScore {
+  margin-top:10px;
+  font-size: 24px;
+}
+
+
+#killedBar {
+  font-size: 24px;
+  position: absolute;
+  width : 200px;
+  margin-left: -100px;
+  left : 50%;
+  /*border: 1px solid red;*/
+  bottom : 15px;
+}
+
+#comboBar {
+  position: absolute;
+  font-family:"foo";
+  font-size: 40px;
+  color: rgba(255,255,255,1);
+  text-shadow: 0px 0px 20px rgba(255,160,120,0.7);
+  width: 100%;
+  left : 0px;
+  top : 20%;
+  opacity: 0;
+  text-align: center;
+  -webkit-transition : -webkit-transform ease-out 150ms ;
+  -webkit-transform: scale(0.2,0.2);
+}
+
+#comboBar.display-combo {
+  opacity: 1;
+  -webkit-transform: scale(1, 1);
+}
+#comboBar.update-combo  {
+  -webkit-transform: scale(1.25, 1.25);
+}
+
+#comboValue {
+  font-size: 48px;
+}
+
+
+
+
