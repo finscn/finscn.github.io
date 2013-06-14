@@ -69,26 +69,34 @@ function init(){
 	start();
 }
 
+
 function start(){
 
 	context.drawImage(ImgPool["bg"],0,0,Config.width,Config.height);
 	
+	// 生成随机的"目标颜色"
 	var r=randomInt(0,255), g=randomInt(0,255), b=randomInt(0,255);
-	var a=1;
+	var colorAlpha=1;
 	var color="rgba("+r+", "+g+", "+b+", "+a+")";
 
-	drawColorImage(ImgPool["1"],150,20, color, 0.5);
+	// 此处的imgAlpha 和 前面的colorAlpha会影响到最后的变色效果, 根据需要自行调节 // 
+	var imgAlpha=0.5;
+
+	// 绘制变色的图片
+	drawColorImage(ImgPool["1"],150,20, color, imgAlpha);
 
 	setTimeout(start,500);
 }
 
+
+// 绘制变色的图片的功能函数
 function drawColorImage(img, x, y, color, alpha){
 	var w=img.width, h=img.height;
 	alpha=alpha||0.5;
 
 	// context.save();
-	var bakAlpha=context.globalAlpha;
-	var bakComposite=context.globalCompositeOperation;
+	var bakAlpha=context.globalAlpha||0;
+	var bakComposite=context.globalCompositeOperation||"source-over";
 
 	// 1 利用destination-out 在canvas上"挖一个和原图相通形状的洞"
 	context.globalCompositeOperation="destination-out";
