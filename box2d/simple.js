@@ -25,7 +25,6 @@
         var skewX = w > h ? Math.tan(skew) : 0;
         var skewY = h > w ? Math.tan(skew) : 0;
 
-        // console.log(skewX,skewY)
         var vertices = [];
         var perAng = Math.PI * 2 / n;
         var fix = perAng * 100 >> 2;
@@ -51,7 +50,6 @@
         return poly;
     }
 
-    // ==== Polygon Constructor ====
     var Polygon = function(cfg) {
 
             for (var key in cfg) {
@@ -64,7 +62,6 @@
         constructor: Polygon,
 
         vertices: null,
-        // array ,  clockwise in canvaseen-coordinate
         x: 0,
         y: 0,
         inverseMass: 0,
@@ -81,13 +78,11 @@
         this.vel = this.vel || [0, 0];
         this.matrix = [0, 0, 0, 0, 0, 0];
         this.AABB = [0, 0, 0, 0, 0, 0];
-        // form local space points
         this.localSpacePoints = this.vertices;
 
 
         this.localSpaceNormals = [];
         this.vCount = this.localSpacePoints.length;
-        // and local space normals
         for (var i = 0; i < this.vCount; i++) {
             var a = this.localSpacePoints[i];
             var b = this.localSpacePoints[(i + 1) % this.vCount];
@@ -96,33 +91,26 @@
             var len = Math.sqrt(x * x + y * y);
             this.localSpaceNormals[i] = [y / len, -x / len];
         }
-        // world points
         this.worldSpaceNormals = [];
         this.worldSpacePoints = [];
         for (var i = 0; i < this.vCount; i++) {
             this.worldSpaceNormals[i] = [0, 0];
             this.worldSpacePoints[i] = [0, 0];
         }
-        // calculate inverse inertia tensor  inverseInertia
         this.inverseInertia = (inverseMass > 0) ? 1 / ((1 / inverseMass) * (w * w + h * h) / 6) : 0
-        // contact points
         this.c0 = [0, 0];
         this.c1 = [0, 0];
     }
     Polygon.prototype.featurePairJudgement = function(that, fpc) {
         var closest, closestI, closestD, wsN, v, d, dx, dy, lsp, wsp, mfp0, mfp1, dist, centreDist;
         for (var edge = 0; edge < this.vCount; edge++) {
-            // get support vertices
             wsN = this.worldSpaceNormals[edge];
-            // rotate into rectangle space
             dx = -wsN[0];
             dy = -wsN[1];
             v = [
             dx * that.matrix[0] + dy * that.matrix[1], dx * that.matrix[2] + dy * that.matrix[3]];
-            // get axis bits
             closestI = -1;
             closestD = -1E6;
-            // first support
             for (var i = 0; i < that.vCount; i++) {
                 lsp = that.localSpacePoints[i];
                 d = v[0] * lsp[0] + v[1] * lsp[1];
@@ -131,37 +119,34 @@
                     closestI = i;
                 }
             }
-            // form point on plane of minkowski face
             closest = that.worldSpacePoints[closestI];
             wsp = this.worldSpacePoints[edge];
             mfp0 = [closest[0] - wsp[0], closest[1] - wsp[1]];
             wsp = this.worldSpacePoints[(edge + 1) % this.vCount];
             mfp1 = [closest[0] - wsp[0], closest[1] - wsp[1]];
-            // distance from origin to face 
             dist = mfp0[0] * wsN[0] + mfp0[1] * wsN[1];
-            // distance to centre
             dx = closest[0] - this.pos[0];
             dx = closest[1] - this.pos[1];
             centreDist = dx * dx + dy * dy;;
             if (dist > 0) {
-                // recompute distance to clamped edge
+
                 this.projectPointOntoEdge([0, 0], mfp0, mfp1, 0);
-                // recompute distance
+
                 dist = this.c0[0] * this.c0[0] + this.c0[1] * this.c0[1];
                 if (dist < mostSeparated[0]) {
                     mostSeparated = [dist, closestI, edge, fpc, centreDist];
                 } else if (dist == mostSeparated[0] && fpc == mostSeparated[3]) {
-                    // got to pick the right one - pick one closest to centre of A
+
                     if (centreDist < mostSeparated[4]) {
                         mostSeparated = [dist, closestI, edge, fpc, centreDist];
                     }
                 }
             } else {
-                // penetration
+
                 if (dist > mostPenetrating[0]) {
                     mostPenetrating = [dist, closestI, edge, fpc, centreDist];
                 } else if (dist == mostPenetrating[0] && fpc == mostPenetrating[3]) {
-                    // got to pick the right one - pick one closest to centre of A
+
                     if (centreDist < mostPenetrating[4]) {
                         mostPenetrating = [dist, closestI, edge, fpc, centreDist];
                     }
@@ -171,29 +156,21 @@
     }
     Polygon.prototype.projectPointOntoEdge = function(p, e0, e1, flag) {
 
-        // vector from edge to point
         var v = [p[0] - e0[0], p[1] - e0[1]];
 
-        // edge vector
         var e = [e1[0] - e0[0], e1[1] - e0[1]];
-        // time along edge
-        // t : e.Dot(v) / e.m_LenSqr;
         var t = (e[0] * v[0] + e[1] * v[1]) / (e[0] * e[0] + e[1] * e[1]);
-        // clamp to edge bounds
         if (t < 0) {
             t = 0;
         } else if (t > 1) {
             t = 1;
         }
-        // form point
-        // e0.Add( e.MulScalar(t) )
         if (flag) {
             this.c1 = [e0[0] + e[0] * t, e0[1] + e[1] * t];
         } else {
             this.c0 = [e0[0] + e[0] * t, e0[1] + e[1] * t];
         }
     }
-    // ==== Contact Constructor ====
     var Contact = function() {
             this.a = {};
             this.b = {};
@@ -221,10 +198,8 @@
         this.dist = (pb[0] - pa[0]) * wsN[0] + (pb[1] - pa[1]) * wsN[1];
         this.impulseNormal = 0;
         this.impulseTangent = 0;
-        // calculate radius arms
         this.ra = [-(pa[1] - A.pos[1]), pa[0] - A.pos[0]];
         this.rb = [-(pb[1] - B.pos[1]), pb[0] - B.pos[0]];
-        // compute denominator in impulse equation
         var ran = this.ra[0] * wsN[0] + this.ra[1] * wsN[1];
         var rbn = this.rb[0] * wsN[0] + this.rb[1] * wsN[1];
         this.invDenom = 1 / (A.inverseMass + B.inverseMass + (ran * ran * A.inverseInertia) + (rbn * rbn * B.inverseInertia));
@@ -238,58 +213,44 @@
                 var x, min = [1E6, 1E6],
                     max = [-1E6, -1E6],
                     m0 = rb.matrix;
-                // loop through all points
                 for (var j = 0; j < rb.vCount; j++) {
-                    // transform current frame
                     var lp = rb.localSpacePoints[j],
                         ln = rb.localSpaceNormals[j];
                     for (var u = 0; u < 2; u++) {
-                        // matrix transform
                         x = (m0[u] * lp[0]) + (m0[2 + u] * lp[1]) + m0[4 + u];
-                        // save world points
                         rb.worldSpacePoints[j][u] = x;
-                        // min max
                         if (x < min[u]) {
                             min[u] = x;
                         }
                         if (x > max[u]) {
                             max[u] = x;
                         }
-                        // rotate
                         x = (m0[u] * ln[0]) + (m0[2 + u] * ln[1]);
-                        // save world normals
                         rb.worldSpaceNormals[j][u] = x;
                     }
                 }
-                // save bounding box
                 rb.AABB = [(min[0] + max[0]) * 0.5, (min[1] + max[1]) * 0.5, (max[0] - min[0]) * 0.5, (max[1] - min[1]) * 0.5];
             }
         }
     var updateMatrix = function() {
             for (var i = 0, rb; rb = objects[i++];) {
                 if (rb.drag) {
-                    // dragging object
                     rb.vel[0] = (pointer.X - rb.pos[0]) * 10;
                     rb.vel[1] = (pointer.Y - rb.pos[1]) * 10;
                 } else {
-                    // horizontal stability
                     rb.vel[0] *= 0.98;
-                    // gravity
                     if (rb.inverseMass > 0) {
                         rb.vel[1] += kGravity;
                     }
                 }
-                // update position
                 rb.pos = [rb.pos[0] + rb.vel[0] * kTimeStep, rb.pos[1] + rb.vel[1] * kTimeStep];
                 rb.angle += rb.angularVel * kTimeStep;
-                // set transform matrix
                 var c = Math.cos(rb.angle),
                     s = Math.sin(rb.angle);
                 rb.matrix = [
                 c, s, -s, c, rb.pos[0], rb.pos[1]];
             }
         }
-        // ---- collide ----
     var collide = function() {
             var face, vertex, fp, vertexRect, faceRect, wsN, worldV0, worldV1, wsV0, wsV1, va, vb, vc, na, nc, len, f;
             contactsI = 0;
@@ -301,20 +262,15 @@
                         var AMB = A.AABB,
                             BMB = B.AABB;
                         if (Math.abs(BMB[0] - AMB[0]) - (AMB[2] + BMB[2]) < 0 && Math.abs(BMB[1] - AMB[1]) - (AMB[3] + BMB[3]) < 0) {
-                            // generate contacts for this pair
                             mostSeparated = [1E9, -1, -1, 0, 1E9];
                             mostPenetrating = [-1E9, -1, -1, 0, 1E9];
-                            // face of A, vertices of B
                             A.featurePairJudgement(B, 2);
-                            // faces of B, vertices of A
                             B.featurePairJudgement(A, 1);
                             if (mostSeparated[0] > 0 && mostSeparated[3] != 0) {
-                                // objects are separated
                                 vertex = mostSeparated[1];
                                 face = mostSeparated[2];
                                 fp = mostSeparated[3];
                             } else if (mostPenetrating[0] <= 0) {
-                                // objects are penetrating
                                 vertex = mostPenetrating[1];
                                 face = mostPenetrating[2];
                                 fp = mostPenetrating[3];
@@ -326,10 +282,8 @@
                                 vertexRect = B;
                                 faceRect = A;
                             }
-                            // world space vertex
                             f = faceRect.worldSpaceNormals[face];
                             wsN = [f[0], f[1]];
-                            // other vertex adjcent which makes most parallel normal with the collision normal
                             va = vertexRect.worldSpacePoints[(vertex - 1 + vertexRect.vCount) % vertexRect.vCount];
                             vb = vertexRect.worldSpacePoints[vertex];
                             vc = vertexRect.worldSpacePoints[(vertex + 1) % vertexRect.vCount];
@@ -350,12 +304,9 @@
                                 worldV0 = vb;
                                 worldV1 = vc;
                             }
-                            // world space edge
                             wsV0 = faceRect.worldSpacePoints[face];
                             wsV1 = faceRect.worldSpacePoints[(face + 1) % faceRect.vCount];
-                            // form contact
                             if (fp === 1) {
-                                // project vertex onto edge
                                 A.projectPointOntoEdge(wsV0, worldV0, worldV1, 0);
                                 A.projectPointOntoEdge(wsV1, worldV0, worldV1, 1);
                                 B.projectPointOntoEdge(worldV1, wsV0, wsV1, 0);
@@ -368,12 +319,10 @@
                                 B.projectPointOntoEdge(wsV0, worldV0, worldV1, 0);
                                 B.projectPointOntoEdge(wsV1, worldV0, worldV1, 1);
                             }
-                            // ---- first contact ----
                             if (!contacts[contactsI]) {
                                 contacts[contactsI] = new Contact();
                             }
                             contacts[contactsI++].set(A, B, wsN, 0);
-                            // ---- second contact ----
                             if (!contacts[contactsI]) {
                                 contacts[contactsI] = new Contact();
                             }
@@ -383,21 +332,6 @@
                 }
             }
         }
-        
-        // ---- solver ----
-/**      
-Contact con = contacts[i];
-Vector2 n = con.m_normal;
-// get all of relative normal velocity
-double relNv = (con.m_b.m_Vel-con.m_a.m_Vel).Dot(n);
-// remove all of it + resolve penetration over the course of some frames
-double remove = relNv + 0.4 * (con.m_dist + 1) / Constants.kTimeStep;
-// but only when objects are intersecting and moving towards each other
-if (remove < 0 && con.m_dist < 0)
-{
-...
-}
-**/
 
 
    var solve = function() {
@@ -411,49 +345,35 @@ if (remove < 0 && con.m_dist < 0)
                     normal = con.normal;
                 var dv = [(b.vel[0] + rb[0] * b.angularVel) - (a.vel[0] + ra[0] * a.angularVel), 
                         (b.vel[1] + rb[1] * b.angularVel) - (a.vel[1] + ra[1] * a.angularVel)];
-                // get all of relative normal velocity
-                // double relNv = (con.m_b.m_Vel-con.m_a.m_Vel).Dot(n);
                 var relNv=dv[0] * normal[0] + dv[1] * normal[1];
-                // we want to remove only the amount which leaves them touching next frame
                 var remove = relNv + con.dist / kTimeStep;
                 if (remove < 0) {
-                    // compute impulse
-                    // double imp = remove / (con.m_a.m_InvMass + con.m_b.m_InvMass);
                     var imp = remove * con.invDenom;
-                    // accumulate
                     var newImpulse = Math.min(imp + con.impulseNormal, 0);
-                    // apply impulse
                     var change = newImpulse - con.impulseNormal;
                     con.impulseNormal = newImpulse;
                     var x = normal[0] * change,
                         y = normal[1] * change;
-                    // linear
                     a.vel[0] += (x * a.inverseMass);
                     a.vel[1] += (y * a.inverseMass);
                     b.vel[0] -= (x * b.inverseMass);
                     b.vel[1] -= (y * b.inverseMass);
 
-                    // angular
                     a.angularVel += (x * ra[0] + y * ra[1]) * a.inverseInertia;
                     b.angularVel -= (x * rb[0] + y * rb[1]) * b.inverseInertia;
 
-                    // friction
                     var absImp = Math.abs(con.impulseNormal) * kFriction;
-                    // get tangential velocity 
                     var tangentVel = dv[0] * -normal[1] + dv[1] * normal[0];
                     newImpulse = Math.min(Math.max(tangentVel * con.invDenomTangent + con.impulseTangent, -absImp), absImp);
-                    // apply impulse
                     var change = newImpulse - con.impulseTangent;
                     con.impulseTangent = newImpulse;
                     var x = -normal[1] * change, 
                         y = normal[0] * change;
                         
-                    // linear
                     a.vel[0] += (x * a.inverseMass);
                     a.vel[1] += (y * a.inverseMass);
                     b.vel[0] -= (x * b.inverseMass);
                     b.vel[1] -= (y * b.inverseMass);
-                    // angular
                     a.angularVel += (x * ra[0] + y * ra[1]) * a.inverseInertia;
                     b.angularVel -= (x * rb[0] + y * rb[1]) * b.inverseInertia;
                 }
@@ -497,17 +417,13 @@ if (remove < 0 && con.m_dist < 0)
     }
 
 
-    // ==== init canvasipt ====
    var init = function() {
-        // ---- canvaseen ----
         canvas = document.getElementById("canvas");
         canvas.width = 960;
         canvas.height = 640;
         context = canvas.getContext("2d");
 
-        numIterations = 8; //10;
         kTimeStep = 1 / 60;
-        kGravity = 10 //25;
         kFriction = 0.3;
 
         createDefaultPoly();
@@ -524,7 +440,6 @@ if (remove < 0 && con.m_dist < 0)
 
     }
 
-    // ======== main loop ========
    var run = function() {
         setTimeout(run, 16);
 
@@ -544,7 +459,6 @@ if (remove < 0 && con.m_dist < 0)
         updateMatrix();
         updateVerticesAndAABB();
         draw();
-        // ---- animation loop ----
     }
    window.init = init;
    })();
