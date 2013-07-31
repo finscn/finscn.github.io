@@ -99,7 +99,7 @@ function drawColorImage(img, x, y, color, alpha){
 	var bakAlpha=context.globalAlpha||0;
 	var bakComposite=context.globalCompositeOperation||"source-over";
 
-	// 1 利用destination-out 在canvas上"挖一个和原图相通形状的洞"
+	// 1 利用destination-out 在canvas上"挖一个和原图相同形状的洞"
 	context.globalCompositeOperation="destination-out";
 	context.drawImage(img,x,y);
 	
