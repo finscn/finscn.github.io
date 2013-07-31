@@ -12,7 +12,7 @@
         return Math.floor((max - min + 1) * Math.random()) + min;
     }
 
-    function createRandomPoly(n, w, h, x, y, inverseMass, angle) {
+    function createRandomPoly(n, w, h, x, y, inverseMass, angle, angularVel) {
 
         n = n || 4;
         h = h || w;
@@ -44,7 +44,7 @@
             w: w || 0,
             h: h || 0,
             inverseMass: inverseMass || 0,
-            angularVel: randomInt(-0.1, 0.1),
+            angularVel: angularVel || angularVel === 0 ? angularVel : randomInt(-0.1, 0.1),
             angle: angle || angle === 0 ? angle : randomInt(-314, 314) / 400
         })
         return poly;
@@ -129,24 +129,19 @@
             dx = closest[1] - this.pos[1];
             centreDist = dx * dx + dy * dy;;
             if (dist > 0) {
-
                 this.projectPointOntoEdge([0, 0], mfp0, mfp1, 0);
-
                 dist = this.c0[0] * this.c0[0] + this.c0[1] * this.c0[1];
                 if (dist < mostSeparated[0]) {
                     mostSeparated = [dist, closestI, edge, fpc, centreDist];
                 } else if (dist == mostSeparated[0] && fpc == mostSeparated[3]) {
-
                     if (centreDist < mostSeparated[4]) {
                         mostSeparated = [dist, closestI, edge, fpc, centreDist];
                     }
                 }
             } else {
-
                 if (dist > mostPenetrating[0]) {
                     mostPenetrating = [dist, closestI, edge, fpc, centreDist];
                 } else if (dist == mostPenetrating[0] && fpc == mostPenetrating[3]) {
-
                     if (centreDist < mostPenetrating[4]) {
                         mostPenetrating = [dist, closestI, edge, fpc, centreDist];
                     }
@@ -332,7 +327,7 @@
                 }
             }
         }
-
+        
 
    var solve = function() {
         for (var j = 0; j < numIterations; j++) {
@@ -410,7 +405,7 @@
                     var x = pointer.X,
                         y = 0;
                 }
-                objects.push(createRandomPoly(randomInt(4,8), 100, 100, x, y, 100 * 100));
+                objects.push(createRandomPoly(randomInt(4,8), 60, 60, x, y, 60 * 60));
 
             }, i * 600);
         }
@@ -423,20 +418,22 @@
         canvas.height = 640;
         context = canvas.getContext("2d");
 
+        numIterations = 8;
         kTimeStep = 1 / 60;
+        kGravity = 7;
         kFriction = 0.3;
 
         createDefaultPoly();
-        updateMatrix();
-        updateVerticesAndAABB();
 
         run();
     }
 
    var createDefaultPoly = function() {
 
-        objects.push(createRandomPoly(5, 480, 200, canvas.width * 0.2, canvas.height * 0.75, 0, 0.5));
-        objects.push(createRandomPoly(5, 480, 200, canvas.width * 0.8, canvas.height * 0.75, 0, 0.5));
+        objects.push(createRandomPoly(5, 400, 100, canvas.width * 0.2, canvas.height * 0.5, 0, 0.5));
+        objects.push(createRandomPoly(5, 400, 100, canvas.width * 0.8, canvas.height * 0.5, 0, 0.5));
+        
+        objects.push(createRandomPoly(5, 800, 100, canvas.width * 0.5, canvas.height * 1, 0, 0,0,0));
 
     }
 
@@ -449,16 +446,18 @@
                 objects.splice(i, 1);
             }
         }
-        if (objects.length < 6 - dropc) {
+        if (objects.length < 80 - dropc) {
             drop();
         }
-
-        collide();
-        solve();
 
         updateMatrix();
         updateVerticesAndAABB();
         draw();
+
+        collide();
+        solve();
+
+
     }
    window.init = init;
    })();
