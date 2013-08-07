@@ -14,8 +14,8 @@
 	var bug = false;
 	var canvas = document.getElementById('canvas');
 	var ctx = canvas.getContext('2d');
-	var circle1 = {x:650, y:163, r:100};
-	var circle2 = {x:300, y:1100, r:900};
+	var circle1 = {x:550, y:163, r:100};
+	var circle2 = {x:200, y:1100, r:900};
 
 
 	// 用平方比较, 避免可能存在的小数误差
@@ -29,6 +29,7 @@
 
 	ctx.beginPath();
 	ctx.arc(circle1.x, circle1.y, circle1.r, 0, 2*Math.PI, false);
+	ctx.moveTo(circle2.x, circle2.y)
 	ctx.arc(circle2.x, circle2.y, circle2.r, 0, 2*Math.PI, false);
 	ctx.stroke();
 	ctx.closePath();
