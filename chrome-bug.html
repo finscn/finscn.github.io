@@ -9,6 +9,7 @@
 </style>
 	<script type="text/javascript">
 	// 用平方比较, 避免可能存在的小数误差
+
 	function distanceSq(a, b) {
 		var dx = a.x - b.x;
 		var dy = a.y - b.y;
@@ -16,27 +17,23 @@
 		return d;
 	}
 
-
 	function init(){
-	var canvas = document.getElementById('canvas');
-	var ctx = canvas.getContext('2d');
-	var circle1 = {x:550, y:163, r:100};
-	var circle2 = {x:200, y:1100, r:900};
+		var canvas = document.getElementById('canvas');
+		var ctx = canvas.getContext('2d');
+		var circle1 = {x:550, y:163, r:100};
+		var circle2 = {x:200, y:1100, r:900};
+		var coll=(distanceSq(circle1, circle2) < Math.pow(circle1.r + circle2.r,2));
 
-
-
-	var coll=(distanceSq(circle1, circle2) < Math.pow(circle1.r + circle2.r,2));
-
-	ctx.beginPath();
-	ctx.arc(circle1.x, circle1.y, circle1.r, 0, 2*Math.PI, false);
-	ctx.moveTo(circle2.x, circle2.y)
-	ctx.arc(circle2.x, circle2.y, circle2.r, 0, 2*Math.PI, false);
-	ctx.stroke();
-	ctx.closePath();
-	ctx.font="24px Arial";
-	ctx.fillText( "逻辑上是否相撞 : "+  coll +" 但是视觉上呢?"  , 20,300);
-	ctx.fillText( "你可以说我绘制的姿势不对(没有为每个arc创建单独的path)"  , 20,350);
-	ctx.fillText( "但FF和Safari都OK,最新Opera也有此问题.看来是Blink的错"  , 20,400);
+		ctx.beginPath();
+		ctx.arc(circle1.x, circle1.y, circle1.r, 0, 2*Math.PI, false);
+		ctx.moveTo(circle2.x, circle2.y)
+		ctx.arc(circle2.x, circle2.y, circle2.r, 0, 2*Math.PI, false);
+		ctx.stroke();
+		ctx.closePath();
+		ctx.font="24px Arial";
+		ctx.fillText( "逻辑上是否相撞 : "+  coll +" 但是视觉上呢?"  , 20,300);
+		ctx.fillText( "你可以说我绘制的姿势不对(没有为每个arc创建单独的path)"  , 20,350);
+		ctx.fillText( "但FF和Safari都OK,最新Opera也有此问题.看来是Blink的错"  , 20,400);
 
 	}
 
@@ -48,6 +45,5 @@
 </head>
 <body>
 	<canvas id="canvas" width="700" height="480"></canvas>
-
 </body>
 </html>
