@@ -55,7 +55,8 @@ var Game={
 		}
 		Game.player=new Player(-100,-100);
 
-		createBlocks( Config.blockNum );
+		createBlocks( Config.blockNum-4 );
+		createWalls();
 		
 		Game.player.pathFinder=new PathFinder({
 			polyList : Game.polyManager.polyList ,
@@ -65,13 +66,9 @@ var Game={
 
 		setTimeout(function(){
 			Game.currentTime=Date.now();	
-			showFPS(Game);
-
 			
 			Game.drawBg();
 			
-
-
 			Game.run();			
 		})
 
@@ -79,7 +76,6 @@ var Game={
 	run : function (){	
 
 		setTimeout( Game.run, Game.sleep);
-		Game.logger.frameCount++;
 		
 		Game.lastTime=Game.currentTime;
 		Game.currentTime=Date.now();

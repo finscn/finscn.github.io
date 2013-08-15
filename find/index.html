@@ -59,6 +59,13 @@ body, div ,canvas {
 	left : 0px;
 	top : 0px;
 }
+
+pre {
+	font-size : 24px;
+	margin-left : 20px;
+
+}
+
 	</style>
 
 
@@ -87,7 +94,14 @@ body, div ,canvas {
 <canvas id="canvas"></canvas>
 
 </div>
-
+<pre>
+思路:  
+1 生成/摆放好 凸多边形障碍物
+2 "扩展"多边形 扩展的大小取决于 寻路者的大小
+3 将地图中所有联通点(以扩展后的多边形为主)构成一张"图"
+4 将寻路者的起点和目标点作为"临时节点"加入到3)中生成的图里
+5 在图中寻路. 寻路后将之前的起点移除.
+</pre>
 </body>
 </body>
 </html>

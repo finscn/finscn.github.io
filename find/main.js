@@ -1,6 +1,6 @@
 
 
-var WIDTH=800, HEIGHT=480;
+var WIDTH=800, HEIGHT=400;
 var FPS=60;
 
 var Y_SCALE=1;
@@ -55,40 +55,3 @@ function init(){
 }
 
 
-
-
-
-
-function showFPS(game){	
-			if (game==null){
-				return;
-			}
-			if (game.logger==null){
-				game.logger={ frameCount : 0 };
-			}
-			var div=$id("fpsBar");
-			if (div==null){
-				div=document.createElement("div");
-				document.body.appendChild(div);
-				var style={
-						backgroundColor:"rgba(0,0,0,0.5)",
-						position:"absolute",
-						left:"1px",
-						top:"1px",
-						color:"#fff",
-						width:"100px",
-						height:"30px",
-						border:"solid 1px #ccc",
-						fontSize:"22px",
-						zIndex : 99999
-					}
-				for (var key in style){
-					div.style[key]=style[key];
-				}
-			}
-			function _core(){			
-				div.innerHTML = "FPS:" + game.logger.frameCount;
-				game.logger.frameCount = 0;	
-			}
-			setInterval(_core ,1000-1);
-		}
