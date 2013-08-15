@@ -7,7 +7,7 @@ var scale = 1;
 var allowSleep = true;
 var notSolve = false;
 
-var gravity = 8;
+var gravity = 10;
 var damping = 0;
 
 var linearSlop = 0; //0.005;
