@@ -42,7 +42,7 @@ Block.prototype={
 			console.log(this.poly);
 		}
 		drawPoly(context, this.poly, "#444444" ,true);
-		//drawPoly(context, this.boundPoly,"rgba(100,100,100,0.5)");
+		drawPoly(context, this.boundPoly,"rgba(100,100,100,0.5)");
 		context.fillStyle="#66ff99"
 		context.fillText(this.id, this.x-20,this.y);
 		// context.fillText(this.boundPoly.id, this.x-20,this.y);
