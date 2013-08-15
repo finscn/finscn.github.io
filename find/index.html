@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="-1" />
+<meta http-equiv="Cache-Control" content="no-cache" />
+
+<meta name="viewport" content="user-scalable=no, width=device-width, height=device-height, initial-scale=1, minimum-scale=0.5, maximum-scale=1" />
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+
+ 
+<title> 凸多边形障碍 地图寻路 </title>
+
+<style type="text/css">
+body, html{height: 100%;}
+
+body  {
+	font-size:12px;
+	border:none 0px;
+	margin:0px;
+	padding:0px;
+	overflow : hidden;
+	height : 100%;
+
+}
+
+body, div {
+	-webkit-user-select: none;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	-webkit-touch-callout: none;	
+	-webkit-text-size-adjust: none;
+}
+
+body, div ,canvas {
+    image-rendering: optimizeSpeed;
+	interpolation-mode: nearest-neighbor;
+    -webkit-image-rendering: optimizeSpeed;
+    -webkit-interpolation-mode: nearest-neighbor;
+}
+
+#canvas {
+	
+}
+
+#container {
+	position:relative;
+	border:solid 1px black;	
+	top:0px;
+	overflow: hidden;
+	margin:0;
+}
+
+#container canvas {
+	position:absolute;
+	left : 0px;
+	top : 0px;
+}
+	</style>
+
+
+<script type="text/javascript" src="GeomUtils.js"></script>
+<script type="text/javascript" src="PolyManager.js"></script>
+<script type="text/javascript" src="Search.js"></script>
+<script type="text/javascript" src="Utils.js"></script>
+<script type="text/javascript" src="Player.js"></script>
+<script type="text/javascript" src="Block.js"></script>
+<script type="text/javascript" src="PathFinder.js"></script>
+<script type="text/javascript" src="Game.js"></script>
+<script type="text/javascript" src="input.js"></script>
+<script type="text/javascript" src="main.js"></script>
+
+
+
+</script>
+
+</head>
+<body onload="init()">
+
+
+<div id="container" >
+
+<canvas id="bgcanvas"></canvas>
+<canvas id="canvas"></canvas>
+
+</div>
+
+</body>
+</body>
+</html>
