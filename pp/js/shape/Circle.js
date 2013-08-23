@@ -9,10 +9,9 @@
         }
     };
 
-    Circle.superclass = Shape;
+    Circle.superclass = exports.Shape;
 
     var proto = {
-        constructor: Circle,
 
         shapeType: ShapeType.Circle,
 
@@ -60,6 +59,18 @@
 
         },
 
+        translateCentroid : function(x,y){
+            this.x+=x;
+            this.y+=y;
+            var localCentre=this.localCentre;
+            var len = localCentre.length;
+            for (var i=0;i<len;i++){
+                var local=localCentre[i];
+                local[0]-=x;
+                local[1]-=y;
+            }
+        },
+        
         updateCentre: function() {
             var ox = this.localCentre[0],
                 oy = this.localCentre[1];
@@ -98,22 +109,19 @@
             this.aabb[2] = x + b;
             this.aabb[3] = y + b;
         },
+        
+        containPoint : function(x, y) {
+            var dx=x-this.centre[0],
+                dy=y-this.center[1];
 
-
+            return (dx*dx+dy*dy)<this.radiusSq;
+        },
     };
 
 
-    if (Circle.superclass) {
-        var superProto = Circle.superclass.prototype;
-        for (var key in superProto) {
-            Circle.prototype[key] = superProto[key];
-        }
-    }
 
-    for (var key in proto) {
-        Circle.prototype[key] = proto[key];
-    }
 
-    exports.Circle = Circle;
+    exports.Circle = Class(Circle,proto);
 
-}(this));
+}(exports));
+

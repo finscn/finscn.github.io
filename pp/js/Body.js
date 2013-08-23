@@ -9,8 +9,7 @@
         }
     }
 
-    Body.prototype = {
-        constructor: Body,
+    var proto = {
 
         bodyType: BodyType.Dynamic,
 
@@ -114,6 +113,10 @@
             this.forceY = y;
         },
 
+        getVelSq : function(){
+            return this.velX*this.velX+this.velY*this.velY;
+        },
+        
         applyForce: function(x, y, point) {
             if (this.bodyType != BodyType.Dynamic) {
                 return;
@@ -122,7 +125,9 @@
             this.forceX += x;
             this.forceY += y;
 
-            this.forceTorque += ((point[0] - this.centroid[0]) * y - (point[1] - this.centroid[1]) * x);
+            if (point){
+                this.forceTorque += ((point[0] - this.x) * y - (point[1] - this.y) * x) ;
+            }
 
         },
 
@@ -150,6 +155,7 @@
             this.forceTorque += torque;
         },
 
+
         applyImpulse: function(x, y, point) {
             if (this.bodyType != BodyType.Dynamic) {
                 return;
@@ -157,8 +163,9 @@
             this.awake();
             this.velX += this.invMass * x;
             this.velY += this.invMass * y;
-
-            this.velAng += ((point[0] - this.centroid[0]) * y - (point[1] - this.centroid[1]) * x) * this.invInertia;
+            if (point){
+                this.velAng += ((point[0] - this.x) * y - (point[1] - this.y) * x) * this.invInertia;
+            }
         },
 
         awake: function() {
@@ -182,13 +189,16 @@
         },
         integrate: function(timeStep) {
 
-            this.setAngle(this.angle + this.velAng * timeStep);
 
             this.velX += (this.forceX * this.invMass) * timeStep;
             this.velY += (this.forceY * this.invMass) * timeStep;
 
-            this.x += this.velX * timeStep;
-            this.y += this.velY * timeStep;
+            this.integrateAngle(timeStep);
+            this.integratePos(timeStep);
+            
+            // this.setAngle(this.angle + this.velAng * timeStep);
+            // this.x += this.velX * timeStep;
+            // this.y += this.velY * timeStep;
 
         },
 
@@ -211,6 +221,7 @@
         },
         
         integrateAngle: function(timeStep) {
+            this.lastAngle=this.angle;
             this.setAngle(this.angle + this.velAng * timeStep);
         },
 
@@ -218,14 +229,12 @@
         integratePos: function(timeStep) {
             this.lastX = this.x;
             this.lastY = this.y;
-            this.x += this.velX * timeStep;
-            this.y += this.velY * timeStep;
+            this.setPos(this.x+this.velX * timeStep, this.y+this.velY * timeStep);
         },
-
 
     }
 
+    exports.Body = Class(Body,proto);
 
-    exports.Body = Body;
 
-}(this));
+}(exports));

@@ -14,10 +14,8 @@
         }
     }
 
-    CollideManager.prototype = {
-        constructor: CollideManager,
+    var proto = {
 
-        solveIterations: 10,
 
         gridCellSize: 128,
         gridCol: 512,
@@ -26,30 +24,34 @@
             this.world = world;
 
             this.penetrated = {};
-            this.contactConstraints = [];
-            this.contactConstraintCount = 0;
+            this.arbiters = [];
+            this.arbiterCount = 0;
 
             this.collide = this.collide || this.collideSimple;
             // this.collide = this.collide || this.collideGrid;
 
         },
 
-        collideMap: {
-            1: "collideCircleCircle",
-            2: "collidePolyPoly",
-            3: "collidePolyCircle",
+        collideMethodMap: {
+            1: "circleCircle",
+            2: "polyPoly",
+            3: "polyCircle",
+            8: "compComp",
+            9: "compSingle",
+            10: "compSingle",
 
         },
 
         collideCount: 0,
         collideGrid: function(timeStep) {
 
+            var cc = 0;
+
             var gridCellSize = this.gridCellSize;
             var gridCol = this.gridCol;
             var grid = {};
-            var cc = 0;
 
-            this.contactConstraintCount = 0;
+
             var bodies = this.world.bodies;
 
             for (var i = 0, len = bodies.length; i < len; i++) {
@@ -73,8 +75,8 @@
                         } else {
                             for (var c = 0, glen = group.length; c < glen; c++) {
                                 var bodyB = group[c];
-                                if (!checked[bodyB._sn]) {
-                                    checked[bodyB._sn] = true;
+                                if (!checked[bodyB.id]) {
+                                    checked[bodyB.id] = true;
 
                                     this.collideTowBodies(bodyA, bodyB, timeStep);
                                     cc++
@@ -88,16 +90,12 @@
                     startIdx += gridCol;
                 }
             }
-            if (cc > this.collideCount) {
-                this.collideCount = cc;
-                // console.log(len,cc);
-            }
+            return cc;
         },
 
         collideSimple: function(timeStep) {
             var cc = 0;
 
-            this.contactConstraintCount = 0;
             var bodies = this.world.bodies;
 
             for (var i = 0, len = bodies.length; i < len - 1; i++) {
@@ -109,10 +107,7 @@
 
                 }
             }
-            if (cc > this.collideCount) {
-                this.collideCount = cc;
-                // console.log(len,cc);
-            }
+            return cc;
         },
 
         collideTowBodies: function(bodyA, bodyB, timeStep) {
@@ -122,18 +117,21 @@
             if (bodyA.invMass == 0 && bodyB.invMass == 0) {
                 return null;
             }
-            var contactKey = bodyA._sn + "_" + bodyB._sn;
+
+
+            var contactKey = bodyA.id + "_" + bodyB.id;
+            var arbiter = false;
             var boxA = bodyA.aabb,
                 boxB = bodyB.aabb;
-            var contactConstraint = false;
             if (boxA[0] < boxB[2] && boxA[2] > boxB[0] && boxA[1] < boxB[3] && boxA[3] > boxB[1]) {
 
-                contactConstraint = this[this.collideMap[bodyA.shapeType | bodyB.shapeType]](bodyA, bodyB);
+                arbiter = this[this.collideMethodMap[bodyA.shapeType | bodyB.shapeType]](bodyA, bodyB);
 
             }
-            if (contactConstraint) {
+
+            if (arbiter) {
                 if (!this.penetrated[contactKey]) {
-                    this.onCollided(bodyA, bodyB, contactConstraint, timeStep);
+                    this.onCollided(bodyA, bodyB, arbiter, timeStep);
                     this.penetrated[contactKey] = true;
                 }
             } else {
@@ -142,44 +140,58 @@
                     this.penetrated[contactKey] = false;
                 }
             }
-            return contactConstraint;
+            return arbiter;
         },
 
+        getArbiter: function(bodyA, bodyB) {
 
-        solve: function(timeStep) {
-            var contactConstraints = this.contactConstraints;
-            var contactConstraintCount = this.contactConstraintCount;
-            var iterations=this.solveIterations;
+            var arbiters = this.arbiters;
+            var arbiterCount = this.arbiterCount;
+            if (!arbiters[arbiterCount]) {
+                arbiters[arbiterCount] = new Arbiter();
+            }
+            var arbiter = arbiters[arbiterCount++];
+            this.arbiterCount = arbiterCount;
+            return arbiter;
+        },
 
-            for (var i = 0; i < iterations; i++) {
-                for (var j = 0; j < contactConstraintCount; j++) {
-                    var contactConstraint = contactConstraints[j];
-                    var solved = contactConstraint.solve(timeStep, iterations,i);
+        update: function(timeStep) {
+
+            this.arbiterCount = 0;
+            var cc = this.collide(timeStep);
+            // console.log("collide-test count : ",cc);
+
+        },
+
+        solve: function(timeStep, iterations, iter) {
+            var arbiters = this.arbiters;
+            var arbiterCount = this.arbiterCount;
+            for (var i = 0; i < arbiterCount; i++) {
+                var arbiter = arbiters[i];
+                if (!arbiter.disabled) {
+                    var solved = arbiter.solve(timeStep, iterations, iter);
                     if (solved) {
-                        this.onCollideSolve(contactConstraint, timeStep, iterations,i)
+                        this.onCollideSolve(arbiter, timeStep, iterations, iter)
                     }
+                } else {
 
                 }
             }
 
         },
 
-
-        onCollided: function(bodyA, bodyB, contactConstraint, timeStep) {
+        onCollided: function(bodyA, bodyB, arbiter, timeStep) {
 
         },
         onSeparated: function(bodyA, bodyB, timeStep) {
 
         },
-        onCollideSolve: function(contactConstraint, timeStep) {
+        onCollideSolve: function(arbiter, timeStep) {
 
         },
 
 
-        collideCircleCircle: function(bodyA, bodyB) {
-
-            var contactConstraints = this.contactConstraints;
-            var contactConstraintCount = this.contactConstraintCount;
+        circleCircle: function(bodyA, bodyB) {
 
             var centreA = bodyA.centre,
                 centreB = bodyB.centre;
@@ -191,7 +203,6 @@
             if (distanceSq > rt * rt) {
                 return false;
             }
-
 
             var distance = Math.sqrt(distanceSq);
 
@@ -209,26 +220,24 @@
             var contactOnB = [
                 centreB[0] + (centreA[0] - centreB[0]) * ratioB, centreB[1] + (centreA[1] - centreB[1]) * ratioB
             ]
-
-            if (!contactConstraints[contactConstraintCount]) {
-                contactConstraints[contactConstraintCount] = new ContactConstraint();
-            }
-            var contactConstraint = contactConstraints[contactConstraintCount++];
             var overlap = rt - distance;
 
+            var a = bodyA.body || bodyA;
+            var b = bodyB.body || bodyB;
+
+            var arbiter = this.getArbiter(a, b);
+
             // normalA[2] = centreA[0] * normalA[0] + centreA[1] * normalA[1];
-            contactConstraint.set(bodyA, bodyB, normalA);
-            // contactConstraint.set(bodyA, bodyB, normalA);
+            arbiter.set(a, b, normalA);
 
-            contactConstraint.addContact(contactOnA, contactOnB, overlap);
+            arbiter.addContact(contactOnA, contactOnB, overlap);
 
-            this.contactConstraintCount = contactConstraintCount;
-            return contactConstraint;
+            return arbiter;
 
 
         },
 
-        collidePolyCircle: function(bodyA, bodyB) {
+        polyCircle: function(bodyA, bodyB) {
 
             var poly, circle;
             if (bodyA.shapeType == ShapeType.Poly) {
@@ -244,8 +253,6 @@
                 return false;
             }
 
-            var contactConstraints = this.contactConstraints;
-            var contactConstraintCount = this.contactConstraintCount;
 
             var facePoly = result.facePoly;
             var vertPoly = result.vertPoly;
@@ -255,10 +262,6 @@
             var faceIdx = result.faceIdx;
             var overlap = result.minDist;
 
-            if (!contactConstraints[contactConstraintCount]) {
-                contactConstraints[contactConstraintCount] = new ContactConstraint();
-            }
-            var contactConstraint = contactConstraints[contactConstraintCount++];
 
             var contactOnFace0;
             var contactOnVert0;
@@ -279,11 +282,15 @@
 
             }
 
+            var a = facePoly.body || facePoly;
+            var b = vertPoly.body || vertPoly;
 
-            contactConstraint.set(facePoly, vertPoly, faceNormal);
-            contactConstraint.addContact(contactOnFace0, contactOnVert0);
-            this.contactConstraintCount = contactConstraintCount;
-            return contactConstraint;
+            var arbiter = this.getArbiter(a, b);
+            arbiter.set(a, b, faceNormal);
+
+            arbiter.addContact(contactOnFace0, contactOnVert0);
+
+            return arbiter;
         },
 
 
@@ -326,97 +333,87 @@
             }
 
 
-            if (min < Number.MIN_VALUE) {
-                // if (min < 0) {
-                // console.log("min < 0",min)
-                result.facePoly = poly;
-                result.vertPoly = circle;
-                result.minDist = min;
-                result.faceNormal = normal;
-                result.faceIdx = faceIdx;
+            if (min >= Number.MIN_VALUE) {
 
-                var closest = [-normal[0] * radius + cx, -normal[1] * radius + cy];
-                result.closest = closest;
-                result.closestIdx = null;
-                return result;
+                var vertIdx0 = faceIdx;
+                var vertIdx1 = (vertIdx0 + 1) % poly.vertexCount;
+                var v0 = poly.vertices[vertIdx0];
+                var v1 = poly.vertices[vertIdx1];
+
+                var dx = v1[0] - v0[0],
+                    dy = v1[1] - v0[1];
+
+                var disX0 = cx - v0[0],
+                    disY0 = cy - v0[1];
+                var disX1 = cx - v1[0],
+                    disY1 = cy - v1[1];
+
+                var p0 = disX0 * dx + disY0 * dy;
+                var p1 = -disX1 * dx + -disY1 * dy;
+                var radiusSq = circle.radiusSq;
+
+
+                if (p0 <= 0) {
+                    var disSq = disX0 * disX0 + disY0 * disY0;
+                    if (disSq > radiusSq) {
+                        return false;
+                    }
+                    var dis = Math.sqrt(disSq);
+                    var nx = -disX0 / dis,
+                        ny = -disY0 / dis;
+
+                    normal = [nx, ny];
+                    // min = normal[2] + radius;
+
+                    result.facePoly = circle;
+                    result.vertPoly = poly;
+                    result.minDist = min;
+                    result.faceNormal = normal;
+                    result.faceIdx = null;
+                    result.closest = v0;
+                    result.closestIdx = vertIdx0;
+
+                    return result
+
+                } else if (p1 <= 0) {
+                    var disSq = disX1 * disX1 + disY1 * disY1;
+                    if (disSq > radiusSq) {
+                        return false;
+                    }
+                    var dis = Math.sqrt(disSq);
+                    var nx = -disX1 / dis,
+                        ny = -disY1 / dis;
+
+                    normal = [nx, ny];
+                    // min = normal[2] + radius;
+
+                    result.facePoly = circle;
+                    result.vertPoly = poly;
+                    result.minDist = min;
+                    result.faceNormal = normal;
+                    result.faceIdx = null;
+                    result.closest = v1;
+                    result.closestIdx = vertIdx1;
+
+                    return result
+                }
             }
 
-            var vertIdx0 = faceIdx;
-            var vertIdx1 = (vertIdx0 + 1) % poly.vertexCount;
-            var v0 = poly.vertices[vertIdx0];
-            var v1 = poly.vertices[vertIdx1];
+            result.facePoly = poly;
+            result.vertPoly = circle;
+            result.minDist = min;
+            result.faceNormal = normal;
+            result.faceIdx = faceIdx;
 
-            var dx = v1[0] - v0[0],
-                dy = v1[1] - v0[1];
-
-            var disX0 = cx - v0[0],
-                disY0 = cy - v0[1];
-            var disX1 = cx - v1[0],
-                disY1 = cy - v1[1];
-
-            var p0 = disX0 * dx + disY0 * dy;
-            var p1 = -disX1 * dx + -disY1 * dy;
-            var radiusSq = circle.radiusSq;
-
-
-            if (p0 <= 0) {
-                var disSq = disX0 * disX0 + disY0 * disY0;
-                if (disSq > radiusSq) {
-                    return false;
-                }
-                var dis = Math.sqrt(disSq);
-                var nx = -disX0 / dis,
-                    ny = -disY0 / dis;
-
-                normal = [nx, ny];
-                // min = normal[2] + radius;
-
-                result.facePoly = circle;
-                result.vertPoly = poly;
-                result.minDist = min;
-                result.faceNormal = normal;
-                result.faceIdx = null;
-                result.closest = v0;
-                result.closestIdx = vertIdx0;
-
-            } else if (p1 <= 0) {
-                var disSq = disX1 * disX1 + disY1 * disY1;
-                if (disSq > radiusSq) {
-                    return false;
-                }
-                var dis = Math.sqrt(disSq);
-                var nx = -disX1 / dis,
-                    ny = -disY1 / dis;
-
-                normal = [nx, ny];
-                // min = normal[2] + radius;
-
-                result.facePoly = circle;
-                result.vertPoly = poly;
-                result.minDist = min;
-                result.faceNormal = normal;
-                result.faceIdx = null;
-                result.closest = v1;
-                result.closestIdx = vertIdx1;
-
-            } else {
-                result.facePoly = poly;
-                result.vertPoly = circle;
-                result.minDist = min;
-                result.faceNormal = normal;
-                result.faceIdx = faceIdx;
-
-                var closest = [-normal[0] * radius + cx, -normal[1] * radius + cy];
-                result.closest = closest;
-                result.closestIdx = null;
-            }
+            var closest = [-normal[0] * radius + cx, -normal[1] * radius + cy];
+            result.closest = closest;
+            result.closestIdx = null;
 
             return result;
         },
 
 
-        collidePolyPoly: function(bodyA, bodyB) {
-
+        polyPoly: function(bodyA, bodyB) {
 
             var vertPoly, facePoly, faceIdx, faceNormal;
             var vertV0, vertV1, faceV0, faceV1;
@@ -455,13 +452,6 @@
             faceV0 = facePoly.vertices[faceIdx];
             faceV1 = facePoly.vertices[(faceIdx + 1) % facePoly.vertexCount];
 
-            var contactConstraints = this.contactConstraints;
-            var contactConstraintCount = this.contactConstraintCount;
-
-            if (!contactConstraints[contactConstraintCount]) {
-                contactConstraints[contactConstraintCount] = new ContactConstraint();
-            }
-            var contactConstraint = contactConstraints[contactConstraintCount++];
 
             var contactOnFace0, contactOnVert0, contactOnFace1, contactOnVert1;
             var overlap;
@@ -476,16 +466,18 @@
                 contactOnFace0 = Polygon.projectPointToEdge(contactOnVert0, faceV0, faceV1);
             }
 
-            contactConstraint.set(facePoly, vertPoly, faceNormal);
+            var a = facePoly.body || facePoly;
+            var b = vertPoly.body || vertPoly;
 
+            var arbiter = this.getArbiter(a, b);
+            arbiter.set(a, b, faceNormal);
 
-            contactConstraint.addContact(contactOnFace0, contactOnVert0);
+            arbiter.addContact(contactOnFace0, contactOnVert0);
             if (contactOnFace1) {
-                contactConstraint.addContact(contactOnFace1, contactOnVert1);
+                arbiter.addContact(contactOnFace1, contactOnVert1);
             }
 
-            this.contactConstraintCount = contactConstraintCount;
-            return contactConstraint;
+            return arbiter;
         },
 
         featurePairPolyPoly: function(bodyA, bodyB) {
@@ -611,8 +603,63 @@
             return result;
         },
 
+        compSingle: function(bodyA, bodyB) {
+
+            var comp, single;
+            if (bodyB.shapeType == ShapeType.Comp) {
+                comp = bodyB;
+                single = bodyA;
+            } else {
+                comp = bodyA;
+                single = bodyB;
+            }
+            var shapes = comp.shapes;
+
+            var arbiter = false;
+            var boxB = single.aabb;
+            for (var i = 0; i < shapes.length; i++) {
+                var _shape = shapes[i];
+                var boxA = _shape.aabb;
+
+                if (boxA[0] < boxB[2] && boxA[2] > boxB[0] && boxA[1] < boxB[3] && boxA[3] > boxB[1]) {
+                    var arb = this[this.collideMethodMap[single.shapeType | _shape.shapeType]](single, _shape);
+                    if (arb) {
+                        arbiter = arb;
+                    }
+                }
+            }
+            return arbiter;
+        },
+
+        compComp: function(bodyA, bodyB) {
+
+            var shapesA = bodyA.shapes;
+            var shapesB = bodyB.shapes;
+
+            var arbiter = false;
+            for (var i = 0; i < shapesA.length; i++) {
+                var _shapeA = shapesA[i];
+                var boxA = _shapeA.aabb;
+
+                for (var j = 0; j < shapesB.length; j++) {
+                    var _shapeB = shapesB[j];
+                    var boxB = _shapeB.aabb;
+
+                    if (boxA[0] < boxB[2] && boxA[2] > boxB[0] && boxA[1] < boxB[3] && boxA[3] > boxB[1]) {
+                        var arb = this[this.collideMethodMap[_shapeA.shapeType | _shapeB.shapeType]](_shapeA, _shapeB);
+                        if (arb) {
+                            arbiter = arb;
+                        }
+                    }
+                }
+            }
+            return arbiter;
+        },
+
 
     }
 
-    exports.CollideManager = CollideManager;
-}(this));
+    exports.CollideManager = Class(CollideManager, proto);
+
+
+}(exports));

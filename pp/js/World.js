@@ -9,8 +9,7 @@
         }
     }
 
-    World.prototype = {
-        constructor: World,
+    var proto = {
 
         bodies: null,
 
@@ -22,11 +21,12 @@
         allowSleep: true,
 
         timeToSleep: 0.5,
-        minSleepVelSq: 0.75,
-        minSleepVelAng: 0.075,
+        minSleepVelSq: 0.01,//*0.01,
+        minSleepVelAng: 0.2,
 
+        solveIterations: 10,
 
-        bodySN: 1,
+        BODY_SN_SEED: 1,
 
 
         init: function() {
@@ -42,7 +42,8 @@
         },
 
         addBody: function(body) {
-            body._sn = this.bodySN++;
+            body._sn=this.BODY_SN_SEED++;
+            body.id = body.id||body._sn;
 
             if (body.bodyType !== BodyType.Static && !body.ignoreG) {
                 body.gravityX = this.gravityX;
@@ -58,16 +59,26 @@
         },
 
         checkSleep: function(body, timeStep) {
-            if (Math.abs(body.velAng) <= this.minSleepVelAng && Math.pow(body.velX, 2) + Math.pow(body.velY, 2) <= this.minSleepVelSq) {
+            if (Math.abs(body.velAng) <= this.minSleepVelAng && body.getVelSq() <= this.minSleepVelSq) {
                 body.sleepTime += timeStep;
                 if (body.sleepTime >= this.timeToSleep) {
                     body.sleeping = true;
                     return true;
                 }
             } else {
+                // console.log(Math.abs(body.velAng), body.getVelSq())
                 body.awake();
             }
             return false;
+        },
+
+        solve: function(timeStep) {
+            var iterations = this.solveIterations;
+            var collideManager=this.collideManager;
+            for (var i = 0; i < iterations; i++) {
+                collideManager.solve(timeStep,iterations,i) 
+            }
+
         },
 
 
@@ -78,6 +89,10 @@
                 len = bodies.length;
             while (i < len) {
                 var body = bodies[i];
+                if (body.body){
+                    i++;
+                    continue;
+                }
                 if (body._to_remove_) {
                     len--;
                     bodies.splice(i, 1);
@@ -90,17 +105,25 @@
                     body.integrateVel(timeStep);
                 }
 
+                // if (this.allowSleep && body.autoSleep) {
+                //     this.checkSleep(body, timeStep);
+                // }
+
                 i++;
             }
 
-            this.collideManager.collide(timeStep);
-            this.collideManager.solve(timeStep);
+            this.collideManager.update(timeStep);
+            // this.jointManager.update(timeStep);
+            this.solve(timeStep);
 
 
             i = 0;
             while (i < len) {
                 var body = bodies[i];
-
+                if (body.body){
+                    i++;
+                    continue;
+                }
                 if (!body.sleeping) {
                     body.integrateAngle(timeStep);
                     body.integratePos(timeStep);
@@ -120,7 +143,7 @@
 
     }
 
+    exports.World = Class(World,proto);
 
-    exports.World = World;
 
-}(this));
+}(exports));
