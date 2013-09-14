@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>测试 Webkit float 换行 bug by 一丝</title>
+<style type="text/css">
+  
+.container {
+   border: 2px solid red;
+   width: 300px;
+   padding : 5px;
+   margin-top: 50px;
+   
+   margin-left: auto;
+   margin-right: auto;
+}
+.box {
+  /* if not inline-block , the box is not resize */
+  display: inline-block;
+
+   border: 2px solid green;
+   white-space:nowrap;   
+   font-size:0;
+    
+   -webkit-transition: .5s;
+   -moz-transition: .5s;
+   -ms-transition: .5s;
+   -o-transition: .5s;
+   transition: .5s;
+}
+  .item{
+    font-size:16px;
+    vertical-align: top;
+    margin:10px;
+    border: 2px solid blue;
+    width : 100px;
+    height : 100px;
+  }
+  
+  .box:hover{
+    margin-left: -200px;
+  }
+  
+  .float {
+    display: inline-block;
+  }
+  
+  .float .item{
+    float: left;
+  }  
+  
+.inline-block .item{
+    display: inline-block;  
+}
+    
+.inline-flex {
+    display: -ms-inline-flexbox;
+    display: -moz-inline-box;
+    display: -webkit-inline-box;
+    display: inline-flex;
+}
+
+</style>
+
+</head>
+<body>
+  <p>Chrome 29+，Safari7 已经修复</p>
+  
+    <div class="container" >
+    <div class="box float">
+      <div class="item">float:left</div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+    </div>
+</div>
+  
+  <div class="container" >
+    <div class="box inline-block">
+        <div class="item">inline-block</div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+    </div>
+</div>
+  
+  <div class="container" >
+    <div class="box inline-flex">
+        <div class="item">inline-flex</div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+    </div>
+</div>  
+  
+</body>
+</html>
