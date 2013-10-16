@@ -51,6 +51,7 @@ var Config={
 }
 
 function init(){
+    $id("loading").style.display="none";
     canvas=$id("canvas");
     canvas.width=Config.width;
     canvas.height=Config.height;
@@ -123,6 +124,7 @@ function rotateBlur(){
 <pre>
     不需要任何『数学知识』和『像素操作』的毛玻璃（Blur）效果.
 </pre>
+<pre id="loading">(请耐心等待图片加载...)</pre>
     <canvas id="canvas"></canvas>
     <div id="res">
         <img id="test" src="test.png">
