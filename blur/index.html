@@ -1,0 +1,135 @@
+
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Blur Image</title>
+
+<style>
+
+body { 
+    padding : 0px;
+    margin : 0px;
+    text-align: center; 
+}
+pre {
+    font-size:16px;
+}
+#canvas { 
+    border: 1px solid #000; 
+    margin: auto;
+    margin-top : 10px;
+}
+
+#res {
+    opacity: 0;
+    position: absolute;
+    top : -2000px;
+}
+</style>
+
+<script>
+
+function $id(id){
+    return document.getElementById(id);
+}
+
+
+var canvas, context;
+var testImg;
+
+window.onload=function(event){
+
+    testImg=$id("test");
+
+    init();
+}
+
+var Config={
+    width : 400,
+    height : 400,
+}
+
+function init(){
+    canvas=$id("canvas");
+    canvas.width=Config.width;
+    canvas.height=Config.height;
+    context=canvas.getContext("2d");
+
+    rotateBlur()
+
+}
+
+
+
+function rotateBlur(){
+    var img= testImg;
+    var imgW=img.width,
+        imgH=img.height;
+
+    var w=imgW*2, h=imgH*2;
+    
+    var c1=document.createElement("canvas");
+    c1.width=w;
+    c1.height=h;
+    var ctx1=c1.getContext("2d");
+
+    var c2=document.createElement("canvas");
+    c2.width=w;
+    c2.height=h;
+    var ctx2=c2.getContext("2d");
+
+    var rotation=2;
+    var ctx=ctx1;
+    var idx=0;
+
+    function start(){
+        ctx.clearRect(0,0,w,h);
+        ctx.save();
+        ctx.translate(w/2,h/2);
+        ctx.rotate(rotation);
+        ctx.drawImage(img,-imgW/2,-imgH/2);
+        ctx.restore();
+        img=ctx.canvas;
+        imgW=img.width;
+        imgH=img.height;
+
+        if (ctx==ctx1){
+            ctx=ctx2;
+        }else{
+            ctx=ctx1;
+        }
+        idx++;
+
+        context.clearRect(0,0,Config.width,Config.height);
+        context.save();
+        context.translate(canvas.width/2, canvas.height/2);
+        context.rotate(-rotation*idx);
+        context.drawImage(img,-imgW/2,-imgH/2);
+        context.restore();
+
+        if (idx<200){
+            setTimeout(start,30)
+        }
+    }
+    start();
+}
+
+
+</script>
+
+</head>
+<body>
+<pre>
+    不需要任何『数学知识』和『像素操作』的毛玻璃（Blur）效果.
+</pre>
+    <canvas id="canvas"></canvas>
+    <div id="res">
+        <img id="test" src="test.png">
+    </div>
+<p>
+    此方法属于不靠谱的奇技淫巧.因为效果如何依赖于浏览器抗锯齿算法的实现.浏览器们对此算法并没有达成一致，也没有统一的官方标准.<br>
+    PS: 我也是偶然间由于程序写错了才发现这个神奇效果的 :P
+</p>
+</body>
+</html>
