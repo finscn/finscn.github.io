@@ -17,7 +17,7 @@
 
     <script>
     window.onload=function() {
-        var touchStart = "touchstart" in window ? "touchstart" : "mousedown";
+        var touchStart = "ontouchstart" in window ? "touchstart" : "mousedown";
         var info = document.getElementById("info");
         window.addEventListener(touchStart, function(event) {
             var x = event.pageX,
