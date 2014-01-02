@@ -1,0 +1,39 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <title>Test Touch</title>
+    <style>
+    #info{
+        font-size: 30px;
+        margin: 20px;
+    }
+    </style>
+
+    <script>
+    window.onload=function() {
+        var touchStart = "touschstart" in window ? "touschstart" : "mousedown";
+        var info = document.getElementById("info");
+        window.addEventListener(touchStart, function(event) {
+            var x = event.pageX,
+                y = event.pageY;
+            info.innerHTML = "x,y : " + [x, y];
+        });
+    }
+    </script>
+
+</head>
+
+<body >
+    <div id="info">
+
+    </div>
+
+</body>
+
+</html>
