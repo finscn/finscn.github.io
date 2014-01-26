@@ -1,5 +1,6 @@
 var resourceList = [
-
+    
+    {id: "temp-font" , src:"game/res/DINCondensed-Bold.ttf"},
     {
         id: "fn1",
         type: "fn",
