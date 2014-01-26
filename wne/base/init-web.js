@@ -69,6 +69,7 @@
             if (loaded < total) {
                 var js = files[loaded];
                 if (js) {
+                    console.log(js)
                     include(window.rootPath + js + ("?_t=" + Date.now()), loadNext);
                 } else {
                     loadNext({});

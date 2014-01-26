@@ -137,11 +137,9 @@ function getInputJSList(root) {
 
         if (App && !window.webview) {
             includeJS(getInputJSList(), function() {
-                initLifeCycle();
                 init();
             });
         } else {
-            initLifeCycle();
             init();
         }
     });
