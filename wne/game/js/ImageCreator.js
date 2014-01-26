@@ -17,9 +17,9 @@ var BallColors = [
 ];
 
 var PrintColors = [
-    "rgba(180,180,180,0.4)",
-    "rgba(90,90,90,0.4)",
-    "rgba(0,0,0,0.4)",
+    "rgba(190,190,190,0.5)",
+    "rgba(100,100,100,0.5)",
+    "rgba(0,0,0,0.5)",
 ];
 
 
@@ -28,8 +28,8 @@ var ImageCreator = {
     maxBlurRadius: 40,
     defaultMargin: 4,
     defaultColor: "#000000",
-    MSAAEnabled: false,   // true or false
-    MSAASamples: 2,  // 2 or 4
+    MSAAEnabled: false, // true or false
+    MSAASamples: 2, // 2 or 4
 
     init: function() {
 
@@ -55,8 +55,8 @@ var ImageCreator = {
             var blurImg1 = ImageCreator.blurImage(img, blur1);
             var blurImg2 = ImageCreator.blurImage(img, blur2);
 
-            var context=blurImg1.getContext("2d");
-            context.drawImage(blurImg2, blur1-blur2,blur1-blur2);
+            var context = blurImg1.getContext("2d");
+            context.drawImage(blurImg2, blur1 - blur2, blur1 - blur2);
             ResourcePool.add("p-" + idx, blurImg1);
         });
     },
@@ -70,83 +70,83 @@ var ImageCreator = {
         });
     },
     initTextImages: function() {
-        var text="Win isn't Everything";
-        var canvas=this.createCanvasForText(text,110,"DINCondensed-Bold","#ffffff");
-        var context=canvas.getContext("2d");
+        var text = "Win isn't Everything";
+        var canvas = this.createCanvasForText(text, 110, "DINCondensed-Bold", "#ffffff");
+        var context = canvas.getContext("2d");
 
         var blur = 15;
         var img = ImageCreator.blurImage(canvas, blur);
-        var context=img.getContext("2d");
-        context.drawImage(canvas,blur,blur);
+        var context = img.getContext("2d");
+        context.drawImage(canvas, blur, blur);
         ResourcePool.add("title", img);
         // context.strokeStyle="#ffffff";
         // context.strokeRect(0,0,img.width,img.height);
 
-/////////////////////////////
-        var text="Congratulations";
-        var canvas=this.createCanvasForText(text,60,"DINCondensed-Bold","#ffffff");
-        var context=canvas.getContext("2d");
+        /////////////////////////////
+        var text = "Congratulations";
+        var canvas = this.createCanvasForText(text, 60, "DINCondensed-Bold", "#ffffff");
+        var context = canvas.getContext("2d");
 
         var blur = 10;
         var img = ImageCreator.blurImage(canvas, blur);
-        var context=img.getContext("2d");
-        context.drawImage(canvas,blur,blur);
+        var context = img.getContext("2d");
+        context.drawImage(canvas, blur, blur);
         ResourcePool.add("end1", img);
         // context.strokeStyle="#ffffff";
         // context.strokeRect(0,0,img.width,img.height);
 
-/////////////////////////////
-        var text="You WIN";
-        var canvas=this.createCanvasForText(text,90,"DINCondensed-Bold","#ffffff");
-        var context=canvas.getContext("2d");
+        /////////////////////////////
+        var text = "You WIN";
+        var canvas = this.createCanvasForText(text, 90, "DINCondensed-Bold", "#ffffff");
+        var context = canvas.getContext("2d");
 
         var blur = 10;
         var img = ImageCreator.blurImage(canvas, blur);
-        var context=img.getContext("2d");
-        context.drawImage(canvas,blur,blur);
+        var context = img.getContext("2d");
+        context.drawImage(canvas, blur, blur);
         ResourcePool.add("end2", img);
         // context.strokeStyle="#ffffff";
         // context.strokeRect(0,0,img.width,img.height);
 
 
-            
-        var text="But do NOT forget to look at";
-        var canvas=this.createCanvasForText(text,60,"DINCondensed-Bold","#333333");
-        var context=canvas.getContext("2d");
+
+        var text = "But do NOT forget to look at";
+        var canvas = this.createCanvasForText(text, 60, "DINCondensed-Bold", "#333333");
+        var context = canvas.getContext("2d");
 
         var blur = 10;
         var img = ImageCreator.blurImage(canvas, blur);
-        var context=img.getContext("2d");
-        context.drawImage(canvas,blur,blur);
+        var context = img.getContext("2d");
+        context.drawImage(canvas, blur, blur);
         ResourcePool.add("end3", img);
         // context.strokeStyle="#ffffff";
         // context.strokeRect(0,0,img.width,img.height);
 
-//////////////////
-        var text="the Color of your Heart";
-        var canvas=this.createCanvasForText(text,60,"DINCondensed-Bold","#333333");
-        var context=canvas.getContext("2d");
+        //////////////////
+        var text = "the Color of your Heart";
+        var canvas = this.createCanvasForText(text, 60, "DINCondensed-Bold", "#333333");
+        var context = canvas.getContext("2d");
 
         var blur = 10;
         var img = ImageCreator.blurImage(canvas, blur);
-        var context=img.getContext("2d");
-        context.drawImage(canvas,blur,blur);
+        var context = img.getContext("2d");
+        context.drawImage(canvas, blur, blur);
         ResourcePool.add("end4", img);
         // context.strokeStyle="#ffffff";
         // context.strokeRect(0,0,img.width,img.height);
     },
 
-    createCanvasForText: function(text,size,font,color){
-        var canvas=createCanvas(size*2,size*2);
-        var context=canvas.getContext("2d");
-        context.font=size+"px "+font;
+    createCanvasForText: function(text, size, font, color) {
+        var canvas = createCanvas(size * 2, size * 2);
+        var context = canvas.getContext("2d");
+        context.font = size + "px " + font;
         var measure = context.measureText(text);
-        measure.height = size>>0;
-        canvas.width=measure.width*1.1>>0;
-        canvas.height=measure.height*1.5>>0;
-        context.font=size+"px "+font;
-        context.fillStyle=color;
-        context.fillText(text,measure.width*0.05>>0,measure.height+measure.height*0.1>>0);
+        measure.height = size >> 0;
+        canvas.width = measure.width * 1.1 >> 0;
+        canvas.height = measure.height * 1.5 >> 0;
+        context.font = size + "px " + font;
+        context.fillStyle = color;
+        context.fillText(text, measure.width * 0.05 >> 0, measure.height + measure.height * 0.1 >> 0);
         return canvas;
     },
 
@@ -167,20 +167,19 @@ var ImageCreator = {
     },
     initBallImagesA: function() {
 
-        var radius = Ball.radius;
         var colors = Ball.colors;
+        var radius = Ball.radius;
         var blurs = Ball.blurs;
 
-        // radius.forEach(function(r) {
-        var r = radius[0];
-        blurs.forEach(function(b) {
-            colors.forEach(function(color, idx) {
+        var idx = 0;
+        var color = colors[idx];
+        radius.forEach(function(r) {
+            blurs.forEach(function(b) {
                 var img = ImageCreator.createCircle(r, color);
                 img = ImageCreator.blurImage(img, b);
                 ResourcePool.add("c-" + r + "-" + idx + "-" + b, img);
             });
         });
-        // });
     },
     initBallImagesB: function() {
 
@@ -188,16 +187,15 @@ var ImageCreator = {
         var colors = Ball.colors;
         var blurs = Ball.blurs;
 
-        // radius.forEach(function(r) {
-        var r = radius[1];
-        blurs.forEach(function(b) {
-            colors.forEach(function(color, idx) {
+        var idx = 1;
+        var color = colors[idx];
+        radius.forEach(function(r) {
+            blurs.forEach(function(b) {
                 var img = ImageCreator.createCircle(r, color);
                 img = ImageCreator.blurImage(img, b);
                 ResourcePool.add("c-" + r + "-" + idx + "-" + b, img);
             });
         });
-        // });
     },
     initBallImagesC: function() {
 
@@ -205,16 +203,15 @@ var ImageCreator = {
         var colors = Ball.colors;
         var blurs = Ball.blurs;
 
-        // radius.forEach(function(r) {
-        var r = radius[2];
-        blurs.forEach(function(b) {
-            colors.forEach(function(color, idx) {
+        var idx = 2;
+        var color = colors[idx];
+        radius.forEach(function(r) {
+            blurs.forEach(function(b) {
                 var img = ImageCreator.createCircle(r, color);
                 img = ImageCreator.blurImage(img, b);
                 ResourcePool.add("c-" + r + "-" + idx + "-" + b, img);
             });
         });
-        // });
     },
     initBlockImagesA: function() {
         var blur = 3;

@@ -19,7 +19,7 @@ var game=new Game({
 
     loader : {
         wrapAudio : true,
-        parallel : true,
+        parallel : !true,
         deplay : 1,
         onProgressing: function(timeStep, queue) {
             var loaded = queue.finishedWeight,

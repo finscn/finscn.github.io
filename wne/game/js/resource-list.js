@@ -47,10 +47,10 @@ var resourceList = [
         type: "fn",
         fn: function() {
             var loader = this;
-            setTimeout(function() {
+            // setTimeout(function() {
                 ImageCreator.initBlockImagesB();
                 loader.finished = true;
-            }, 120)
+            // }, 120)
         }
 
     }, {
@@ -80,10 +80,10 @@ var resourceList = [
         type: "fn",
         fn: function() {
             var loader = this;
-            setTimeout(function() {
+            // setTimeout(function() {
                 ImageCreator.initBallImagesB();
                 loader.finished = true;
-            }, 120);
+            // }, 120);
         }
 
     }, {
