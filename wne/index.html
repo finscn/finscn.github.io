@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<meta name='apple-touch-fullscreen' content='yes'>
+<meta name='format-detection' content='telephone=no'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="KOK">
+
+<title> Global GameJam 2014 </title>
+
+
+<link rel="stylesheet" href="./base/base.css" >
+<style type="text/css">
+
+@font-face {
+    font-family: 'DINCondensed-Bold';
+    src: url('game/res/DINCondensed-Bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+body {
+    background-color:#cccccc; 
+}
+
+
+</style>
+
+<script type="text/javascript">
+    window.rootPath = "./";
+</script>
+
+
+<script>
+    document.write('<script src="'+window.rootPath+"load-scripts-web.js"+'"></scr' + 'ipt>');
+</script>
+
+
+
+<script type="text/javascript">
+
+function getUrlParams() {
+    var params = {};
+    var queryStr = window.location.search;
+    if (queryStr) {
+        queryStr = queryStr.substring(1);
+        var args = queryStr.split("&");
+        for (var i = 0, a, nv; a = args[i]; i++) {
+            nv = args[i] = a.split("=");
+            params[nv[0]] = nv.length > 1 ? nv[1] : true;
+        }
+    }
+    return params;
+}
+
+(function(){
+    var params = getUrlParams();
+
+    var scene = "scene-" + (params.m||0);
+
+    window.sceneId=params.m;
+
+    var file = "data/" + scene + ".js" + "?tamp=" + Date.now();
+
+    loadJS(file, function() {
+        console.log("loaded "+scene)
+    })
+}());
+
+
+</script>
+
+
+</head>
+
+<body >
+
+<div id="container" class="game-container">
+<canvas id="canvas" ></canvas>
+
+
+</div>
+<!-- <div class="build-ver">0.1</div> -->
+
+
+</body>
+</html>
+
+
