@@ -109,14 +109,16 @@
             this.itemIndex = 0;
             this.finishedWeight = 0;
             this.finishedCount = 0;
-            this.timerStart();
-            this.activeItem(0);
-
-            if (this.parallel) {
-                this.runParallel();
-            } else {
-                this.run();
-            }
+            var Me = this;
+            setTimeout(function() {
+                Me.timerStart();
+                Me.activeItem(0);
+                if (Me.parallel) {
+                    Me.runParallel();
+                } else {
+                    Me.run();
+                }
+            }, 20);
         },
 
         runParallel: function() {

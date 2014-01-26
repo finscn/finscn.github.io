@@ -6,7 +6,7 @@ var Font = {
         if (style == "normal") {
             style = null;
         }
-        if (window.Ejecta) {
+        if (window.App) {
             name = FontMapping[style ? name + " " + style : name];
             if (!name) {
                 name = FontMapping["default"];

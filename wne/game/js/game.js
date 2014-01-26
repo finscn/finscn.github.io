@@ -1,8 +1,7 @@
-
 "use strict";
 
 
-var game=new Game({
+var game = new Game({
 
     container: "container",
 
@@ -12,51 +11,45 @@ var game=new Game({
     width: Config.width,
     height: Config.height,
 
-    resources : resourceList ,
+    resources: resourceList,
     // onInit: function() {
     //     this.ready();
     // },
 
-    loader : {
-        wrapAudio : true,
-        parallel : !true,
-        deplay : 1,
+    loader: {
+        wrapAudio: true,
+        parallel: !true,
+        deplay: 1,
         onProgressing: function(timeStep, queue) {
             var loaded = queue.finishedWeight,
                 total = queue.totalWeight,
                 results = queue.resultPool;
 
-            var game=queue.parent;
-            var canvas=game.canvas;
-            var context=game.context;
+            var game = queue.parent;
+            var canvas = game.canvas;
+            var context = game.context;
 
-            var w=400, h=16;
-            var x=(game.viewWidth-w)/2,
-                y=game.viewHeight-h-200;
+            var w = 400,
+                h = 16;
+            var x = (game.viewWidth - w) / 2,
+                y = game.viewHeight - h - 200;
 
-            context.clearRect(0,0,game.viewWidth,game.viewHeight);
-            context.strokeStyle="#ffffff";
-            context.fillStyle="#ffffff";
-            context.strokeRect(x,y,w,h);
-            context.fillRect(x,y,w*loaded/total,h);
+            context.clearRect(0, 0, game.viewWidth, game.viewHeight);
+            context.strokeStyle = "#ffffff";
+            context.fillStyle = "#ffffff";
+            context.strokeRect(x, y, w, h);
+            context.fillRect(x, y, w * loaded / total, h);
 
         },
     },
 
     onReady: function() {
         var Me = this;
-            this.context.font="20px DINCondensed-Bold";
-            this.context.fillText(" ",110,110);
-            setTimeout(function(){
-                 ImageCreator.initTextImages();
+        ImageCreator.initTextImages();
 
-                game.initGameUI();
+        Me.initGameUI();
 
-                UIAction.backHome();
-                // // UIAction.quickplay();
-                // UIAction.ending();
-
-            },100);
+        UIAction.backHome();
     },
     beforeLoop: function(timeStep, now) {
         TWEEN.update();
@@ -85,27 +78,27 @@ var game=new Game({
         })
 
     },
-    getSceneInstance : function(index){
-        var cfg=Maps["scene-"+index]
-        var scene={
+    getSceneInstance: function(index) {
+        var cfg = Maps["scene-" + index]
+        var scene = {
             index: index,
             darkLevel: cfg.darkLevel,
-            width:cfg.w*cfg.tilewidth,
-            height:cfg.h*cfg.tileheight,
-            blocksData : cfg.layers[0].objects
+            width: cfg.w * cfg.tilewidth,
+            height: cfg.h * cfg.tileheight,
+            blocksData: cfg.layers[0].objects
         }
-        this.sceneIndex=index;
-        scene=new Scene(scene);
+        this.sceneIndex = index;
+        scene = new Scene(scene);
 
         return scene;
     },
-    hasNextScene: function(){
-        var index=this.sceneIndex+1;
-        return !!Maps["scene-"+index];
+    hasNextScene: function() {
+        var index = this.sceneIndex + 1;
+        return !!Maps["scene-" + index];
     },
-    nextScene: function(){
-        if (this.hasNextScene()){
-            return this.start(this.sceneIndex+1);
+    nextScene: function() {
+        if (this.hasNextScene()) {
+            return this.start(this.sceneIndex + 1);
         }
         return false;
     },
