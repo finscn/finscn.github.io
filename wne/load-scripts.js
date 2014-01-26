@@ -51,26 +51,16 @@ function getBaseJSList(root) {
         root + "lib/Base.js",
         root + "lib/DomBase.js",
         root + "lib/Class.js",
-        root + "lib/LinkedList.js",
-        root + "lib/Queue.js",
-        root + "lib/DataStore.js",
         root + "lib/ResourcePool.js",
         root + "lib/ProcessQ.js",
         root + "lib/Sound.js",
-        root + "lib/Slider.js",
         root + "lib/Timer.js",
         root + "lib/Event.js",
-        root + "lib/EventDispatcher.js",
 
-        root + "lib/Font.js",
         root + "lib/Game.js",
-        root + "lib/AbstractScene.js",
         root + "lib/Camera.js",
         root + "lib/Animation.js",
-        root + "lib/MovePath.js",
-        root + "lib/EntityTemplate.js",
 
-        root + "lib/FrameCounter.js",
         root + "lib/ui/UIManager.js",
         root + "lib/ui/Component.js",
         root + "lib/ui/Button.js",
@@ -81,8 +71,6 @@ function getBaseJSList(root) {
 
         root + "lib/SimpleBlur/Blur.js",
 
-
-        root + "lib/CollisionUtils.js",
 
 
         root + "lib/PoorPhy/js/Base.js",

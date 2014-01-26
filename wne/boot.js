@@ -38,7 +38,6 @@ function init() {
     
     initLifeCycle();
     game.init();
-    console.log("after game.init()")
     game.load();
 }
 
