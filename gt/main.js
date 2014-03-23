@@ -1,5 +1,5 @@
 Config.width = 800;
-Config.height = 600;
+Config.height = 500;
 
 var dollarOne = new RD.DollarOne({
     threshold: Math.PI / 12
@@ -323,7 +323,6 @@ function translateTo() {
     if (polyline) {
         step++;
 
-        polyline.angle = polyline.indicativeAngle();
         polyline.translateTo(polyline.originX, polyline.originY);
         Centroid = [polyline.originX, polyline.originY];
     }
@@ -340,6 +339,7 @@ function scale() {
 function rotate() {
     if (polyline) {
         step++;
+        polyline.angle = polyline.indicativeAngle();
         polyline.rotateBy(-polyline.angle);
     }
 }
