@@ -2,7 +2,9 @@ Config.width = 800;
 Config.height = 600;
 
 var dollarOne = new RD.DollarOne({
-    threshold: Math.PI / 12
+    threshold: Math.PI / 8,
+    rotationInvariance: Math.PI / 4,
+    normalPointCount: 64,
 });
 
 var game = new Game({
