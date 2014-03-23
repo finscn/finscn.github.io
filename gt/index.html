@@ -1,0 +1,70 @@
+<!doctype html>
+<html manifest="t.appcache">
+
+<head>
+    <meta charset="utf-8" />
+
+    <meta name='apple-touch-fullscreen' content='yes'>
+    <meta name='format-detection' content='telephone=no'>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="KOK">
+
+    <title>$1 Example</title>
+    <style type="text/css">
+    #toolbar {
+        padding:10px;
+        font-size:24px;
+        line-height: 30px;
+        background: #ffffff;
+        border: 1px solid blue;
+        position: absolute;
+        top:2px;
+        right:2px;
+    }
+    #toolbar button {
+        display: block;
+        font-size:20px;
+        padding: 5px 5px;
+        margin:10px 5px;
+    }
+    </style>
+
+    <script src="Utils.js"></script>
+    <script src="Polyline.js"></script>
+    <script src="DollarOne.js"></script>
+    <script src="DefaultOne.js"></script>
+
+    <script src="tiny-game.js"></script>
+    <script src="main.js"></script>
+
+    <script type="text/javascript">
+
+    </script>
+
+
+</head>
+
+<body>
+
+    <canvas id="canvas"></canvas>
+
+    <div id="toolbar">
+        <button type="button" onclick="window.location.reload();">Reload</button>
+        <hr>
+        <button type="button" onclick="testGesture();">test</button>
+        <hr>
+        <button type="button" onclick="resample();">resample</button>
+        <button type="button" onclick="centroid();">centroid</button>
+        <button type="button" onclick="translateTo();">translate</button>
+        <button type="button" onclick="rotate();">rotate</button>
+        <button type="button" onclick="scale();">scale</button>
+        <hr>
+        <button type="button" onclick="saveGesture();">save</button>
+        <button type="button" onclick="addGesture();">add <span id="gcount"></span></button>
+        <button type="button" onclick="removeGesture();">remove</button>
+    </div>
+
+</body>
+
+</html>
