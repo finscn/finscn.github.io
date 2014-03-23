@@ -1,5 +1,5 @@
 Config.width = 800;
-Config.height = 500;
+Config.height = 600;
 
 var dollarOne = new RD.DollarOne({
     threshold: Math.PI / 12
