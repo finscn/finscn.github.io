@@ -32,11 +32,11 @@
             this.centroid = this.getCentroid();
             this.angle = this.indicativeAngle();
             this.translateTo(this.originX, this.originY);
+            this.aabb = Utils.getAABB(this.points);
+            this.scaleTo(this.normalSize);
             // if (this.angle){
                 this.rotateBy(-this.angle);
             // }
-            this.aabb = Utils.getAABB(this.points);
-            this.scaleTo(this.normalSize);
             this.vector = this.vectorize();
         },
 

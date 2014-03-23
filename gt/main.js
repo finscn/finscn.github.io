@@ -105,10 +105,12 @@ var game = new Game({
 });
 
 
-/////////////////////////////
-/////////////////////////////
-/////////////////////////////
-/////////////////////////////
+///////////////////////////////
+///////////////////////////////
+///////////////////////////////
+///////////////////////////////
+///////////////////////////////
+
 
 var Records = {};
 var Points = [];
@@ -327,13 +329,6 @@ function translateTo() {
     }
 }
 
-function rotate() {
-    if (polyline) {
-        step++;
-        polyline.rotateBy(-polyline.angle);
-    }
-}
-
 function scale() {
     if (polyline) {
         step++;
@@ -341,3 +336,15 @@ function scale() {
         polyline.vector = polyline.vectorize();
     }
 }
+
+function rotate() {
+    if (polyline) {
+        step++;
+        polyline.rotateBy(-polyline.angle);
+    }
+}
+
+
+
+
+//
