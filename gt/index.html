@@ -9,7 +9,15 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="KOK">
-<meta name="viewport" content="user-scalable=no, width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+
+    <script>
+    if (window.screen && window.screen.availHeight >= 960) {
+        document.write('<meta name="viewport" content="user-scalable=no, width=device-width/2, height=device-height, initial-scale=2.0, minimum-scale=1, maximum-scale=2" />');
+    } else {
+        document.write('<meta name="viewport" content="user-scalable=no, width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1, maximum-scale=1" />');
+
+    }
+    </script>
 
     <title>$1 Example</title>
     <style type="text/css">
@@ -39,7 +47,6 @@
     <script src="main.js"></script>
 
     <script type="text/javascript">
-
     </script>
 
 
@@ -61,7 +68,9 @@
         <button type="button" onclick="rotate();">rotate</button>
         <hr>
         <button type="button" onclick="saveGesture();">save</button>
-        <button type="button" onclick="addGesture();">add <span id="gcount"></span></button>
+        <button type="button" onclick="addGesture();">add
+            <span id="gcount"></span>
+        </button>
         <button type="button" onclick="removeGesture();">remove</button>
         <span>v2</span>
     </div>
