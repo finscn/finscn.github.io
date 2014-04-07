@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="40" height="25" tilewidth="40" tileheight="40">
+ <objectgroup name="objects">
+  <object x="0" y="0" width="80" height="1010"/>
+  <object x="1520" y="0" width="90" height="1010"/>
+  <object x="80" y="920" width="1440" height="90"/>
+  <object x="280" y="800" width="120" height="40"/>
+  <object x="600" y="640" width="160" height="40"/>
+  <object name="m1" type="MoveBlock" x="480" y="800" width="80" height="40"/>
+  <object name="m1" type="Path" x="520" y="700">
+   <polyline points="0,0 0,120"/>
+  </object>
+  <object name="start" type="StartPoint" x="120" y="880" width="40" height="40"/>
+  <object name="end" type="EndPoint" x="1460" y="720" width="40" height="40"/>
+  <object name="m2" type="MoveBlock" x="400" y="800" width="80" height="40"/>
+  <object name="m2" type="Path" x="440" y="680">
+   <polyline points="0,0 0,140"/>
+  </object>
+  <object x="840" y="760" width="160" height="40"/>
+  <object x="1080" y="640" width="160" height="280"/>
+  <object x="1360" y="760" width="160" height="40"/>
+  <object name="e2" type="Enemy" x="960" y="720" width="40" height="40"/>
+  <object name="e1" type="Enemy" x="610" y="600" width="40" height="40"/>
+  <object name="e1" type="Path" x="630" y="620">
+   <polyline points="0,0 110,0"/>
+  </object>
+  <object name="e3" type="Enemy" x="520" y="880" width="40" height="40"/>
+  <object name="e3" type="Path" x="540" y="900">
+   <polyline points="0,0 320,0"/>
+  </object>
+  <object x="320" y="520" width="200" height="40"/>
+  <object name="e4" type="Enemy" x="330" y="480" width="40" height="40"/>
+  <object name="e4" type="Path" x="350" y="500">
+   <polyline points="0,0 160,0"/>
+  </object>
+  <object name="e5" type="Enemy" x="1290" y="880" width="40" height="40"/>
+  <object name="e5" type="Path" x="1310" y="900">
+   <polyline points="0,0 160,0"/>
+  </object>
+  <object name="e6" type="Enemy" x="1140" y="600" width="40" height="40"/>
+  <object name="e2" type="Path" x="970" y="740">
+   <polyline points="10,0 -120,0"/>
+  </object>
+  <object name="e7" type="Enemy" x="610" y="360" width="40" height="40"/>
+  <object name="e7" type="Path" x="640.125" y="380">
+   <polyline points="-10,0 50,0"/>
+  </object>
+  <object x="880" y="560" width="120" height="40"/>
+  <object x="1040" y="400" width="480" height="40"/>
+  <object name="e8" type="Enemy" x="1070" y="360" width="40" height="40"/>
+  <object name="e8" type="Path" x="1090" y="380">
+   <polyline points="0,0 390,0"/>
+  </object>
+  <object x="720" y="360" width="120" height="40"/>
+  <object x="600" y="400" width="320" height="40"/>
+ </objectgroup>
+</map>
