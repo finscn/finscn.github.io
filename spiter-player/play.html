@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+
+    <meta name='apple-touch-fullscreen' content='yes'>
+    <meta name='format-detection' content='telephone=no'>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="KOK">
+
+    <title>Demo</title>
+    <style type="text/css">
+    body {
+    }
+    canvas {
+        border: 1px solid black;
+    }
+    #toolbar {
+        padding:10px;
+        font-size:16px;
+        line-height: 30px;
+        background: #ffffff;
+        border: 1px solid #000000;
+        position: absolute;
+        top:2px;
+        right:2px;
+        width:190px;
+    }
+    #toolbar div {
+        overflow: hidden;
+        word-spacing: normal;
+        white-space: nowrap;
+        width: 180px;
+    }
+    #toolbar span {
+        font-size: 18px;
+        color: red;
+    }
+    #toolbar button {
+        display: block;
+        font-size:20px;
+        padding: 5px 5px;
+        margin:10px 5px;
+    }
+    #toolbar button:hover {
+        color:#ff0000;
+    }
+    #toolbar button:active {
+        color:#ff0000;
+    }
+    </style>
+    <script type="text/javascript" src="common.js"></script>
+    <script type="text/javascript" src="parser/SconDoc.js"></script>
+    <script type="text/javascript" src="parser/SconEntity.js"></script>
+    <script type="text/javascript" src="parser/SconAnimation.js"></script>
+    <script type="text/javascript" src="sprite/Sprite.js"></script>
+    <script type="text/javascript" src="sprite/Animation.js"></script>
+    <script type="text/javascript" src="sprite/Frame.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+    <script type="text/javascript">
+
+    </script>
+
+</head>
+
+<body>
+
+    <div id="container">
+        <canvas id="canvas"></canvas>
+    </div>
+    <div id="toolbar">
+        <div>Current:
+            <span id="animName"></span>
+        </div>
+        Select Animation:
+    </div>
+</body>
+
+</html>
