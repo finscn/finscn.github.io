@@ -50,6 +50,11 @@
     #toolbar button:active {
         color:#ff0000;
     }
+    #setting input {
+        font-size:14px;
+        width:50px;
+        margin-right: 50px;
+    }
     </style>
     <script type="text/javascript" src="common.js"></script>
     <script type="text/javascript" src="parser/SconDoc.js"></script>
@@ -69,6 +74,12 @@
 
     <div id="container">
         <canvas id="canvas"></canvas>
+    </div>
+    <div id="setting">
+    FPS: <input id="_fps" value="">
+    Animation frame count: <input id="_frameCount" value="">
+    Speed scale: <input id="_speedScale" value="">
+    <button type="button" onclick="go()"> GO </button>
     </div>
     <div id="toolbar">
         <div>Current:
