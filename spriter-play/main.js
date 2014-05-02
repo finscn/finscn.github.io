@@ -148,22 +148,11 @@ function initControlBar() {
     Control.frameIndexText = $id("frameIndexText");
     Control.frameCountText = $id("frameCountText");
     Control.frameCountText.innerHTML = frameCount;
-
-    Control.playBtn = $id("playBtn");
-    Control.playBtn.onclick = function() {
-        Control.paused = !Control.paused
-        Control.playBtn.innerHTML = Control.paused ? "PLAY" : "PAUSE";
-    }
-    Control.stopBtn = $id("stopBtn");
-    Control.stopBtn.onclick = function() {
-        Control.paused = true;
-        Control.playBtn.innerHTML = "PLAY";
-        Control.progressDom.value = 0;
-        if (Control.animation) {
-            Control.animation.setTime(0);
-        }
-    }
+    Control.frameIndexText.value = frameIndex;
+    Control.frameProgressDom.value = frameIndex;
     Control.progressDom = $id("progress");
+    Control.progressDom.value = 0;
+
     Control.progressDom.onchange = function() {
         // Control.playBtn.innerHTML="PLAY";
         // console.log(this.value)
@@ -174,7 +163,7 @@ function initControlBar() {
         Control.progressText.value = Math.round(Number(this.value));
         Control.frameIndexText.value = anim.currentIndex;
         Control.frameProgressDom.value = anim.currentIndex;
-    }
+    };
 
     Control.frameProgressDom.onchange = function() {
         // Control.playBtn.innerHTML="PLAY";
@@ -187,7 +176,26 @@ function initControlBar() {
         Control.frameIndexText.value = this.value;
         Control.progressDom.value = Math.round(Number(anim.played));
         Control.progressText.value = Math.round(Number(anim.played));
-    }
+    };
+
+    Control.playBtn = $id("playBtn");
+    Control.playBtn.onclick = function() {
+        Control.paused = !Control.paused
+        Control.playBtn.innerHTML = Control.paused ? "PLAY" : "PAUSE";
+    };
+    Control.stopBtn = $id("stopBtn");
+    Control.stopBtn.onclick = function() {
+        Control.paused = true;
+        Control.playBtn.innerHTML = "PLAY";
+        Control.progressDom.value = 0;
+        Control.progressText.value = 0;
+        Control.frameProgressDom.value = 0;
+        Control.frameIndexText.value = 0;
+
+        if (Control.animation) {
+            Control.animation.setTime(0);
+        }
+    };
 }
 
 window.onload = function() {
