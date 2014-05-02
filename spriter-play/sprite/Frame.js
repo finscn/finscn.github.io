@@ -16,6 +16,7 @@
         time: 0,
         endTime: 0,
         duration: 0,
+        pieceCount: 0,
         init: function() {
             this.pieces = this.pieces || [];
             this.duration = this.duration || 0;
@@ -94,15 +95,31 @@
             context.rotate(p.rotation);
             context.scale(p.scaleX, p.scaleY);
             context.drawImage(p.img, p.ix, p.iy, p.iw, p.ih, -p.origX, -p.origY, p.iw, p.ih);
-
-            context.strokeStyle = "#ff6600";
-            context.strokeRect(-p.origX, -p.origY, p.iw, p.ih);
-            context.strokeRect(0, 0, 2, 2);
-
             context.restore();
         },
         renderOne: function(context, x, y) {
             this.renderPiece(context, this, x, y);
+        },
+        renderBox: function(context, x, y) {
+            var ps, count = this.pieceCount;
+            if (!count) {
+                ps = [this];
+                count = 1;
+            } else {
+                ps = this.pieces;
+            }
+            for (var i = 0; i < count; i++) {
+                var p = ps[i];
+                context.save();
+                context.globalAlpha = p.alpha;
+                context.translate(p.x + x, p.y + y);
+                context.rotate(p.rotation);
+                context.scale(p.scaleX, p.scaleY);
+                context.strokeStyle = "#ff6600";
+                context.strokeRect(-p.origX, -p.origY, p.iw, p.ih);
+                context.strokeRect(0, 0, 2, 2);
+                context.restore();
+            }
         }
 
     };

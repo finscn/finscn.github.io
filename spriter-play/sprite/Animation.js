@@ -66,6 +66,20 @@
             this.currentEndTime = this.currentFrame.endTime;
         },
 
+        setTime: function(time) {
+            time = time % this.duration;
+            var index = 0;
+            for (var i = this.frameCount - 1; i >= 0; i--) {
+                var frame = this.frames[i];
+                if (time >= frame.time) {
+                    index = i;
+                    break;
+                }
+            }
+            this.played = time;
+            this.setFrame(index);
+        },
+
         update: function(timeStep) {
 
             var last = this.currentIndex;
@@ -78,6 +92,7 @@
                     }
                 } else {
                     this.currentIndex++;
+                    this.played += timeStep;
                 }
                 this.setFrame(this.currentIndex);
 
@@ -100,7 +115,9 @@
                 flip = -1;
             }
             frame.render(context, x, y);
-
+            if (this.debug) {
+                frame.renderBox(context, x, y);
+            }
             if (this.flip) {
                 context.scale(-1, 1);
             }

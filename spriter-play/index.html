@@ -55,6 +55,23 @@
         width:50px;
         margin-right: 50px;
     }
+    #setting input[type="range"] {
+        width:200px;
+        margin-right: 10px;
+    }
+    #control-bar input {
+        font-size:14px;
+        text-align: right;
+        padding:2px;
+        width:50px;
+    }
+    #control-bar button {
+        font-size: 14px;
+        width:70px;
+    }
+    #control-bar input[type="range"]{
+        width:400px;
+    }
     </style>
     <script type="text/javascript" src="common.js"></script>
     <script type="text/javascript" src="parser/SconDoc.js"></script>
@@ -65,21 +82,29 @@
     <script type="text/javascript" src="sprite/Frame.js"></script>
     <script type="text/javascript" src="main.js"></script>
     <script type="text/javascript">
-
     </script>
 
 </head>
 
 <body>
-
     <div id="container">
         <canvas id="canvas"></canvas>
     </div>
+    <div id="control-bar">
+        <button id="playBtn">PLAY</button>
+        <input id="progress" type="range" min=0 max=1000 step=1 value=0>
+        <input id="progressText" type="text" value="0">/<span id="durationText">0</span> ms<br>
+        <button id="stopBtn">STOP</button>
+        <input id="frameProgress" type="range" min=0 max=1000 step=1 value=0>
+        <input id="frameIndexText" type="text" value="0">/<span id="frameCountText">0</span> frame<br>
+    </div>
+<hr>
     <div id="setting">
-    FPS: <input id="_fps" value="">
-    Animation frame count: <input id="_frameCount" value="">
-    Speed scale: <input id="_speedScale" value="">
-    <button type="button" onclick="go()"> GO </button>
+        Frame Count:
+       <input id="_frameCount" value="">
+        Speed scale:
+        <input id="_speedScale" value="">
+        <button type="button" onclick="apply()">Apply</button>
     </div>
     <div id="toolbar">
         <div>Current:
