@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="KOK">
 
-    <title>Demo</title>
+    <title>Spriter Play</title>
     <style type="text/css">
     body {
     }
@@ -72,8 +72,26 @@
     #control-bar input[type="range"]{
         width:400px;
     }
+    #frameConfig {
+        position: relative;
+        margin:5px;
+    }
+    #mapping {
+        width:160px;
+        height:500px;
+    }
+    #sheet canvas {
+        position: absolute;
+        margin:5px;
+        left:180px;
+        top:20px;
+        border : 1px blue solid;
+    }
     </style>
     <script type="text/javascript" src="common.js"></script>
+    <script type="text/javascript" src="lib/packer.js"></script>
+    <script type="text/javascript" src="lib/packer.growing.js"></script>
+
     <script type="text/javascript" src="parser/SconDoc.js"></script>
     <script type="text/javascript" src="parser/SconEntity.js"></script>
     <script type="text/javascript" src="parser/SconAnimation.js"></script>
@@ -105,6 +123,10 @@
         Speed scale:
         <input id="_speedScale" value="">
         <button type="button" onclick="apply()">Apply</button>
+<hr>
+        Size scale:
+        <input id="_sizeScale" value="">
+        <button type="button" onclick="createSheet()">Create Sheet</button>
     </div>
     <div id="toolbar">
         <div>Current:
@@ -112,6 +134,11 @@
         </div>
         Select Animation:
     </div>
+    <div id="frameConfig">Frame Config:<br>
+        <textarea id="mapping"></textarea>
+        <div id="sheet"></div>
+    </div>
+
 </body>
 
 </html>

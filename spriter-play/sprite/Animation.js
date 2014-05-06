@@ -116,7 +116,8 @@
             }
             frame.render(context, x, y);
             if (this.debug) {
-                frame.renderBox(context, x, y);
+                frame.renderAABB(context, x, y);
+                frame.renderPieceBorder(context, x, y);
             }
             if (this.flip) {
                 context.scale(-1, 1);
