@@ -287,7 +287,7 @@ function initTouchEvent(dom) {
         event.preventDefault();
     }, true);
 
-    dom.addEventListener(move, function() {
+    dom.addEventListener(move, function(event) {
         var touch = useTouch ? event.changedTouches[0] : event;
 
         if (TouchInfo.touched) {
@@ -297,7 +297,7 @@ function initTouchEvent(dom) {
         event.preventDefault();
     }, true);
 
-    dom.addEventListener(end, function() {
+    dom.addEventListener(end, function(event) {
         TouchInfo.touched = false;
         game.scene.afterDraw();
         event.preventDefault();
