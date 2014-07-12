@@ -798,6 +798,18 @@ var d = {
         Ј: 1,
         Н: 0
     };
+
+var a = {
+        x: 200,
+        y: 200,
+        Xo: 0.2,
+        size: 80,
+        Ј$: 0,
+        color: "red"
+    };
+var O;
+var z;
+
 var N = new Best.aO({
         mY: 60,
         width: 640,
@@ -902,16 +914,7 @@ var N = new Best.aO({
             k.closePath()
         }
     });
-var a = {
-        x: 200,
-        y: 200,
-        Xo: 0.15,
-        size: 80,
-        Ј$: 0,
-        color: "red"
-    };
-var O;
-var z;
+
 function Τ() {
     O = new Toucher.zС({
         В: Ј("canvas"),
