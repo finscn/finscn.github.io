@@ -802,7 +802,7 @@ var d = {
 var a = {
         x: 200,
         y: 200,
-        Xo: 0.3,
+        Xo: 0.25,
         size: 80,
         Ј$: 0,
         color: "red"
