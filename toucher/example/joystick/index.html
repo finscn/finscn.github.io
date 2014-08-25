@@ -1,0 +1,126 @@
+<!doctype html>
+
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Test Joystick</title>
+    <style>
+    html {
+        height:100%;
+    }
+    body {
+        border:0px;
+        margin:0px;
+        padding:0px;
+        height:100%;
+    }
+    body, div, canvas {
+        -webkit-text-size-adjust:none;
+        -webkit-user-select: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        -webkit-touch-callout: none;
+        overflow: hidden;
+    }
+    #canvas {
+        border:0px solid black;
+        margin:0px;
+        background-color:#303640;
+    }
+    #res-preload {
+        position: absolute;
+        top:-1000px;
+    }
+    #toolbar {
+        -webkit-box-sizing : border-box;
+        box-sizing : border-box;
+        padding:10px;
+        font-size:16px;
+        line-height: 24px;
+        background: #ffffff;
+        border: 0px;
+        border-left: 1px solid #999;
+        position: absolute;
+        top:0px;
+        right:0px;
+        width:180px;
+    }
+    #toolbar > div {
+        border-top:1px solid #666666;
+        padding:10px 0px 10px 0px;
+    }
+    #toolbar input {
+        vertical-align: top;
+        /*display: block;*/
+        /*font-size:20px;*/
+        /*width:20px;*/
+        /*height:20px;*/
+        /*padding: 5px 5px;*/
+        margin:10px 15px;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+    }
+    #toolbar input[type="checkbox"] {
+        -webkit-transform: scaleX(1.5) scaleY(1.5);
+        transform: scaleX(1.5) scaleY(1.5);
+    }
+    #toolbar input:hover {
+        color:#ff0000;
+    }
+    #toolbar input:active {
+        color:#ff0000;
+    }
+    </style>
+
+    <script src="../../src/Controller.js"></script>
+    <script src="../../src/TouchWrapper.js"></script>
+    <script src="../../src/Listener.js"></script>
+    <script src="../../src/components/Joybutton.js"></script>
+    <script src="../../src/components/Joystick.js"></script>
+
+    <script src="js/Game.js"></script>
+    <script src="js/main.js"></script>
+
+
+</head>
+
+<body>
+
+    <canvas id="canvas"></canvas>
+    <div id="res-preload">
+        <img id="finger" src="res/finger.png">
+        <img id="player" src="res/player.png">
+    </div>
+    <div id="toolbar">
+        <div>
+            <input id="dynamic" type="checkbox">动态定位</div>
+        <div>
+            <input id="sensitive" type="checkbox">幅度敏感</div>
+        <div>最大半径：
+            <span id="maxMoveRadiusValue"></span>
+            <br>
+            <input id="maxMoveRadius" type="range" min=55 max=135 step=10>
+        </div>
+        <div>最小响应半径：
+            <span id="minMoveRadiusValue"></span>
+            <br>
+            <input id="minMoveRadius" type="range" min=10 max=30 step=2>
+        </div>
+        <div>跟随速度：
+            <span id="followSpeedValue"></span>
+            <br>
+            <input id="followSpeed" type="range" min=0 max=1 step=0.05>
+        </div>
+        <div>跟随距离：
+            <span id="followDistanceValue"></span>
+            <br>
+            <input id="followDistance" type="range" min=1 max=300 step=5>
+        </div>
+        <div>边界警告：
+            <span id="warningEdgeValue"></span>
+            <br>
+            <input id="warningEdge" type="range" min=0 max=100 step=20>
+        </div>
+    </div>
+</body>
+
+</html>

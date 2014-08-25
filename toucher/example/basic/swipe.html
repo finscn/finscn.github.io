@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="-1" />
+<meta http-equiv="Cache-Control" content="no-cache" />
+
+<meta name="viewport" content="user-scalable=no, width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+<title>Swipe</title>
+
+
+<style>
+
+    html {
+        height:100%;
+    }
+    body {
+        border:0px;
+        margin:0px;
+        padding:10px;
+        height:100%;
+    }
+    body, div, canvas {
+        -webkit-text-size-adjust:none;
+        -webkit-user-select: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        -webkit-touch-callout: none;
+        overflow: hidden;
+    }
+
+    div {
+        font-size:18px;
+    }
+
+    #swipeArea {
+        position: absolute;
+        left:100px;
+        top:100px;
+        width : 240px;
+        height : 80px;
+        padding : 10px;
+        margin : 0px;
+        background-color : white;
+        border : 1px solid blue;
+        color : black;
+    }
+</style>
+
+<script src="../../src/Controller.js"></script>
+<script src="../../src/TouchWrapper.js"></script>
+<script src="../../src/Listener.js"></script>
+
+<script src="../../src/gesture/Swipe.js"></script>
+
+
+<script>
+
+
+var dom;
+window.onload=function(){
+    dom=$id("swipeArea");
+    dom.x=dom.offsetLeft;
+    dom.y=dom.offsetTop;
+    controller.init();
+    //把自定义事件注册到controller里
+    controller.addListener(swipe);
+}
+
+function $id(id){
+    return document.getElementById(id);
+}
+
+var controller=new Toucher.Controller({
+    preventDefaultMove: true,
+    beforeInit : function(){
+        this.dom=document.body;
+    }
+});
+
+
+////////////////////////////////////
+////////////////////////////////////
+////////////////////////////////////
+////////////////////////////////////
+////////////////////////////////////
+
+
+
+//创建一个tap listener的实例
+var swipe=new Toucher.Swipe({
+
+    filterWrapper: function(type, wrapper, event, controller) {
+        // 只有点击了 id==tapArea 的dom对象,才会触发这个事件
+        // 条件可以是任意,不仅仅局限于dom的判断, 例如可以是点击的区域坐标 时间等等,
+        // 甚至可以和点击事件无关
+        return wrapper.target.id=="swipeArea";
+    },
+
+    onSwipe: function(disX, disY, time, wrappers, event, controller) {
+        // tap事件要执行的动作
+        var wrapper=wrappers[0];
+        var dom=wrapper.target;
+        // dom.x+=dx;
+        // dom.y+=dy;
+        // dom.style.left=dom.x+"px";
+        // dom.style.top=dom.y+"px";
+        var vx=disX/time,
+            vy=disY/time;
+        $id("info").innerHTML="Swipe vel:  "+vx.toFixed(4)+", "+vy.toFixed(4)+"";
+    }
+});
+
+
+
+
+</script>
+
+</head>
+<body >
+<div id="info">info</div>
+<div id="swipeArea"> please swipe me </div>
+</body>
+
+</html>
