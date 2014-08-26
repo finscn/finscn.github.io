@@ -153,10 +153,10 @@
             var vx = disX / time,
                 vy = disY / time;
             info.innerHTML = "Swipe vel:  " + vx.toFixed(4) + ", " + vy.toFixed(4) + "";
-            if (vy < -0.1) {
+            if (vy < -0.2) {
                 pageSlider.pageContainer.classList.add("page-tween");
                 pageSlider.nextPage();
-            } else if (vy > 0.1) {
+            } else if (vy > 0.2) {
                 pageSlider.pageContainer.classList.add("page-tween");
                 pageSlider.prevPage();
             } else {
