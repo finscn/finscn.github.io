@@ -38,6 +38,16 @@
     div {
         font-size: 18px;
     }
+
+    #info {
+        position: absolute;
+        z-index: 1000;
+        border: 1px solid blue;
+        top:100px;
+        left:100px;
+    }
+
+
     #swipeArea {
         position: absolute;
         left: 0px;
@@ -49,14 +59,12 @@
         background-color: white;
         border: 1px solid blue;
         color: black;
+    }
+    .end-tween {
         transition: transform 200ms cubic-bezier(0.39, 0.575, 0.565, 1);
         -webkit-transition: -webkit-transform 200ms cubic-bezier(0.39, 0.575, 0.565, 1);
     }
-    #info {
-        position: absolute;
-        z-index: 1000;
-        border: 1px solid blue;
-    }
+
     .page-container {
         position: absolute;
         width: 100%;
@@ -64,6 +72,8 @@
         top: 0px;
         transform: translate3d(0, 0, 0);
         -webkit-transform: translate3d(0, 0, 0);
+    }
+    .page-tween {
         transition: transform 500ms cubic-bezier(0.39, 0.575, 0.565, 1);
         -webkit-transition: -webkit-transform 500ms cubic-bezier(0.39, 0.575, 0.565, 1);
     }
@@ -96,6 +106,7 @@
         return document.getElementById(id);
     }
 
+    var info;
 
     var pageSlider = new PageSlider({
         pageClassName: "page",
@@ -137,7 +148,7 @@
             // dom.style.top=dom.y+"px";
             var vx = disX / time,
                 vy = disY / time;
-            $id("info").innerHTML = "Swipe vel:  " + vx.toFixed(4) + ", " + vy.toFixed(4) + "";
+            info.innerHTML = "Swipe vel:  " + vx.toFixed(4) + ", " + vy.toFixed(4) + "";
             if (vy < -0.1) {
                 pageSlider.nextPage();
             } else if (vy > 0.1) {
@@ -150,7 +161,7 @@
 
 
     window.onload = function() {
-
+        info = $id("info");
         pageSlider.init();
 
         controller.init();
@@ -163,8 +174,8 @@
 
 <body>
     <div id="info">info</div>
-    <div id="swipeArea">
-        <div class="page-container">
+    <div id="swipeArea" class="end-tween">
+        <div class="page-container page-tween">
             <div class="page">1</div>
             <div class="page">2</div>
             <div class="page">3</div>

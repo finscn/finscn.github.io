@@ -50,7 +50,7 @@ PageSlider.prototype = {
     },
     align: function() {
         var p=Math.round(-this.y/this.height);
-        document.title=[0,this.y];
+        $id("info").innerHTML="log:"+[p,this.y];
         this.gotoPage(p);
     },
     setDomPos: function(dom, x, y) {
@@ -60,14 +60,14 @@ PageSlider.prototype = {
     gotoPage: function(idx){
         if (idx<0){
             this.gotoPage(0);
-        }else if (idx>=this.pageCount-1){ 
+        }else if (idx>this.pageCount-1){ 
             this.gotoPage(this.pageCount-1);
         }else{
             this.currentPage = idx;
             var p = this.pageList[idx];
-            this.y=-this.currentPage * this.height;
+            this.y=-idx * this.height;
+            info.innerHTML=this.y;
             this.setDomPos(this.pageContainer, 0, this.y + "px");
-
         }
     },
     nextPage: function() {
