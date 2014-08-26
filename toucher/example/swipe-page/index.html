@@ -130,12 +130,16 @@
             // 甚至可以和点击事件无关
             return pageSlider.swipeHolder.contains(wrapper.target);
         },
+        start: function(){
+            pageSlider.pageContainer.classList.remove("page-tween");
+        },
         move: function(wrappers, event, controller) {
             var t0 = wrappers[0];
             var dy=t0.deltaY;
             pageSlider.scrollBy(0,dy);
         },
         onTouchEnd: function() {
+            pageSlider.pageContainer.classList.add("page-tween");
             pageSlider.align();
         },
         onSwipe: function(disX, disY, time, wrappers, event, controller) {
@@ -150,8 +154,10 @@
                 vy = disY / time;
             info.innerHTML = "Swipe vel:  " + vx.toFixed(4) + ", " + vy.toFixed(4) + "";
             if (vy < -0.1) {
+                pageSlider.pageContainer.classList.add("page-tween");
                 pageSlider.nextPage();
             } else if (vy > 0.1) {
+                pageSlider.pageContainer.classList.add("page-tween");
                 pageSlider.prevPage();
             } else {
                 this.onTouchEnd(disX, disY, wrappers, event, controller);
