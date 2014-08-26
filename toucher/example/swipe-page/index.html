@@ -61,8 +61,8 @@
         color: black;
     }
     .end-tween {
-        transition: transform 200ms cubic-bezier(0.39, 0.575, 0.565, 1);
-        -webkit-transition: -webkit-transform 200ms cubic-bezier(0.39, 0.575, 0.565, 1);
+        transition: transform 300ms ease;
+        -webkit-transition: -webkit-transform 300ms ease;
     }
 
     .page-container {
@@ -131,7 +131,9 @@
             return pageSlider.swipeHolder.contains(wrapper.target);
         },
         start: function(){
-            pageSlider.pageContainer.classList.remove("page-tween");
+            var cl=pageSlider.pageContainer.classList;
+            cl.remove("page-tween");
+            cl.remove("end-tween");
         },
         move: function(wrappers, event, controller) {
             var t0 = wrappers[0];
@@ -139,7 +141,6 @@
             pageSlider.scrollBy(0,dy);
         },
         onTouchEnd: function() {
-            pageSlider.pageContainer.classList.add("page-tween");
             pageSlider.align();
         },
         onSwipe: function(disX, disY, time, wrappers, event, controller) {
@@ -154,10 +155,8 @@
                 vy = disY / time;
             info.innerHTML = "Swipe vel:  " + vx.toFixed(4) + ", " + vy.toFixed(4) + "";
             if (vy < -0.2) {
-                pageSlider.pageContainer.classList.add("page-tween");
                 pageSlider.nextPage();
             } else if (vy > 0.2) {
-                pageSlider.pageContainer.classList.add("page-tween");
                 pageSlider.prevPage();
             } else {
                 this.onTouchEnd(disX, disY, wrappers, event, controller);
@@ -180,7 +179,7 @@
 
 <body>
     <div id="info">info</div>
-    <div id="swipeArea" class="end-tween">
+    <div id="swipeArea">
         <div class="page-container page-tween">
             <div class="page">1</div>
             <div class="page">2</div>
