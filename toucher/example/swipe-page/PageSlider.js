@@ -45,7 +45,11 @@ PageSlider.prototype = {
     },
     scrollBy: function(dx, dy) {
         this.x += dx;
-        this.y += dy;
+        if (this.y>this.maxY || this.y<this.minY){
+            this.y+=dy*0.2;
+        }else{
+            this.y += dy;
+        }
         this.setDomPos(this.pageContainer,0,this.y+"px")
     },
     align: function() {
