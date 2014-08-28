@@ -31,8 +31,12 @@ PageSlider.prototype = {
             this.setPageList(pages);
         }
         this.pageContainer = document.querySelector(".page-container");
-        this.maxY=0;
+        this.maxY = 0;
         this.minY = -this.height * (this.pageList.length - 1);
+
+        if ("webkitTransform" in document.body) {
+            this.setDomPos = this.webkitSetDomPos
+        }
     },
 
     setPageList: function(pageList) {
@@ -41,74 +45,76 @@ PageSlider.prototype = {
         this.pageList.forEach(function(p) {
             p.style.height = height + "px";
         });
-        this.pageCount=this.pageList.length;
+        this.pageCount = this.pageList.length;
     },
     scrollBy: function(dx, dy) {
         this.x += dx;
-        if (this.y>this.maxY || this.y<this.minY){
-            this.y+=dy*0.2;
-        }else{
+        if (this.y > this.maxY || this.y < this.minY) {
+            this.y += dy * 0.2;
+        } else {
             this.y += dy;
         }
-        this.setDomPos(this.pageContainer,0,this.y+"px")
+        this.setDomPos(this.pageContainer, 0, this.y + "px")
     },
     align: function() {
-        var p=Math.round(-this.y/this.height);
-        $id("info").innerHTML="log:"+[p,this.y];
+        var p = Math.round(-this.y / this.height);
+        $id("info").innerHTML = "log:" + [p, this.y];
         this.gotoPage(p);
     },
-    setDomPos: function(dom, x, y) {
+    webkitSetDomPos: function(dom, x, y) {
         dom.style.webkitTransform = "translate3d(" + x + "," + y + ",0)";
+    },
+    setDomPos: function(dom, x, y) {
         dom.style.transform = "translate3d(" + x + "," + y + ",0)";
     },
-    gotoPage: function(idx,end){
-        if (idx<0){
-            this.gotoPage(0,true);
-        }else if (idx>this.pageCount-1){ 
-            this.gotoPage(this.pageCount-1,true);
-        }else{
+    gotoPage: function(idx, end) {
+        if (idx < 0) {
+            this.gotoPage(0, true);
+        } else if (idx > this.pageCount - 1) {
+            this.gotoPage(this.pageCount - 1, true);
+        } else {
             this.currentPage = idx;
             var p = this.pageList[idx];
-            this.y=-idx * this.height;
-            this.pageContainer.classList.remove(end?"page-tween":"end-tween");
-            this.pageContainer.classList.add(end?"end-tween":"page-tween");
+            this.y = -idx * this.height;
+            this.pageContainer.classList.remove(end ? "page-tween" : "end-tween");
+            this.pageContainer.classList.add(end ? "end-tween" : "page-tween");
             this.setDomPos(this.pageContainer, 0, this.y + "px");
         }
     },
     nextPage: function() {
-        if (this.currentPage<this.pageCount-1) {
+        if (this.currentPage < this.pageCount - 1) {
             this.currentPage++;
             var p = this.pageList[this.currentPage];
-            this.y=-this.currentPage * this.height;
+            this.y = -this.currentPage * this.height;
             this.pageContainer.classList.add("page-tween");
             this.setDomPos(this.pageContainer, 0, this.y + "px");
         } else {
-            this.y=this.minY;
+            this.y = this.minY;
             var Me = this;
             this.pageContainer.classList.add("page-tween");
-            this.setDomPos(Me.pageContainer, 0, Me.minY-100+"px");
+            this.setDomPos(Me.pageContainer, 0, Me.minY - 100 + "px");
             setTimeout(function() {
                 Me.pageContainer.classList.remove("page-tween");
                 Me.pageContainer.classList.add("end-tween");
-                Me.setDomPos(Me.pageContainer, 0, Me.minY+"px");
+                Me.setDomPos(Me.pageContainer, 0, Me.minY + "px");
             }, 300);
         }
     },
     prevPage: function() {
         if (this.currentPage > 0) {
             this.currentPage--;
-            this.y=-this.currentPage * this.height;
+            this.y = -this.currentPage * this.height;
             this.pageContainer.classList.add("page-tween");
-            this.setDomPos(this.pageContainer, 0, this.y+"px");
+            this.setDomPos(this.pageContainer, 0, this.y + "px");
         } else {
-            this.y=this.maxY;
+            this.y = this.maxY;
             var Me = this;
             this.pageContainer.classList.add("page-tween");
-            this.setDomPos(Me.pageContainer, 0, Me.maxY+100+"px");
+            this.setDomPos(Me.pageContainer, 0, Me.maxY + 100 + "px");
             setTimeout(function() {
                 Me.pageContainer.classList.remove("page-tween");
                 Me.pageContainer.classList.add("end-tween");
-                Me.setDomPos(Me.pageContainer, 0, Me.maxY+"px");
+                Me.setDomPos(Me.pageContainer, 0, Me.maxY + "px");
             }, 300);
         }
     }
