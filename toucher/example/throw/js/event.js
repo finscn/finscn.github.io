@@ -57,9 +57,9 @@ function initTouchController() {
             //     dy = w.deltaY;
             var vx = disX / time,
                 vy = disY / time
-
-            if (game.selectBall) {
-                game.selectBall.throw(vx / 2, vy / 2);
+            if (Math.abs(vx)>0.1&&Math.abs(vy)>0.1&&game.selectBall) {
+                var rad=Math.atan2(vy,vx);
+                game.selectBall.throw(rad);
                 game.selectBall = null;
             }
         }

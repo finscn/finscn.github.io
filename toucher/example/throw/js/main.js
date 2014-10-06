@@ -12,6 +12,8 @@ var game = new Best.Game({
     height: 480,
     caption: '',
     selectBall: null,
+    minY: 60,
+
     onInit: function(caption) {
         this.canvas = document.getElementById("canvas");
         this.canvas.width = this.width;
@@ -29,7 +31,7 @@ var game = new Best.Game({
             var b = new Ball({
                 zIndex: i + 1,
                 x: randomInt(0, this.width / 10) * 10,
-                y: randomInt(0, this.height / 10) * 10
+                y: randomInt(this.minY/10, this.height / 10) * 10
             });
             balls.push(b);
         }
@@ -38,14 +40,16 @@ var game = new Best.Game({
 
     },
     update: function(timeStep, now) {
-        for (var i=balls.length-1;i>=0;i--){
-            var b=balls[i];
+        for (var i = balls.length - 1; i >= 0; i--) {
+            var b = balls[i];
             b.update(timeStep);
         }
     },
     render: function(timeStep, now) {
         var ctx = this.context;
         ctx.clearRect(0, 0, this.width, this.height);
+        ctx.fillStyle="red"
+        ctx.fillRect(0,this.minY,this.width,2);
         balls.forEach(function(b) {
             b.render(ctx, timeStep);
         });
