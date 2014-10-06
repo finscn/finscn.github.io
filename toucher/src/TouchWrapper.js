@@ -52,8 +52,13 @@
 
             this.type = CONST.END;
 
+            var deltaX = this.deltaX;
+            var deltaY = this.deltaY;
+
             this.update(rawTouch, rawEvent);
 
+            this.deltaX = deltaX;
+            this.deltaY = deltaY;
             this.endPageX = this.pageX;
             this.endPageY = this.pageY;
             this.endTarget = this.target;

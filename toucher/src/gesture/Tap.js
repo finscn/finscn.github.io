@@ -1,4 +1,5 @@
 "use strict";
+
 Toucher.Tap = Toucher.Listener.extend({
 
     maxTimeLag: 800,

@@ -233,7 +233,7 @@
         beforeCancel: null,
         onCancel: function(event, now) {
             // this.dispatch("cancel",[],event);
-            console.log("cancel", this.listenerList.length)
+            // console.log("cancel", this.listenerList.length)
             for (var i = 0, len = this.listenerList.length; i < len; i++) {
                 var listener = this.listenerList[i];
                 if (listener.cancel != null) {
