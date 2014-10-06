@@ -9,24 +9,36 @@ Toucher.Swipe = Toucher.Listener.extend({
     },
 
     start: function(wrappers, event, controller) {
-
+        var t0 = wrappers[0];
+        this.swipeStartX = t0.pageX;
+        this.swipeStartY = t0.pageY;
+        this.swipeTime = t0.startTime;
+        this.swipeDirX = 0;
+        this.swipeDirY = 0;
     },
 
     move: function(wrappers, event, controller) {
-
+        var t0 = wrappers[0];
+        if (this.swipeDirX * t0.deltaX <= 0 || this.swipeDirY * t0.deltaY <= 0) {
+            this.swipeDirX = t0.deltaX;
+            this.swipeDirY = t0.deltaY;
+            this.swipeStartX = t0.pageX;
+            this.swipeStartY = t0.pageY;
+            this.swipeTime = t0.moveTime;
+        }
     },
 
     end: function(wrappers, event, controller) {
         var t0 = wrappers[0];
-        var time = (t0.endTime - t0.startTime);
+        var time = (t0.endTime - this.swipeTime);
         if (time > this.maxTime) {
             if (this.onTouchEnd != null) {
                 this.onTouchEnd(disX, disY, wrappers, event, controller);
             }
             return;
         }
-        var disX = (t0.endPageX - t0.startPageX);
-        var disY = (t0.endPageY - t0.startPageY);
+        var disX = (t0.endPageX - this.swipeStartX);
+        var disY = (t0.endPageY - this.swipeStartY);
         // var dis=Math.sqrt(disX*disX+disY*disY);
         // if (dis<this.minDistance){
         //  return;

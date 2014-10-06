@@ -39,22 +39,36 @@
         font-size:18px;
     }
 
+
     #canvas {
         margin:0px;
+        background-color: #f0f0f0;
     }
+#info {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-color: transparent;
+    border: 0px solid black;
+    /*height: 0px;*/
+    z-index:10000;
+    /*border-top: 2px solid black;*/
+    /*height: 90px;*/
+    /*width:100%;*/
+}
 </style>
 
-<script src="../../src/Controller.js"></script>
-<script src="../../src/TouchWrapper.js"></script>
-<script src="../../src/Listener.js"></script>
+<script src="../../src/Controller.js?tt=123"></script>
+<script src="../../src/TouchWrapper.js?tt=123"></script>
+<script src="../../src/Listener.js?tt=123"></script>
 
-<script src="../../src/gesture/Pan.js"></script>
-<script src="../../src/gesture/Swipe.js"></script>
+<script src="../../src/gesture/Pan.js?tt=123"></script>
+<script src="../../src/gesture/Swipe.js?tt=123"></script>
 
-<script src="js/Game.js"></script>
-<script src="js/Ball.js"></script>
-<script src="js/event.js"></script>
-<script src="js/main.js"></script>
+<script src="js/Game.js?tt=123"></script>
+<script src="js/Ball.js?tt=123"></script>
+<script src="js/event.js?tt=123"></script>
+<script src="js/main.js?tt=123"></script>
 
 
 <script>
@@ -68,6 +82,7 @@
 </head>
 <body >
     <canvas id="canvas"></canvas>
+    <div id="info">123</div>
 </body>
 
 </html>

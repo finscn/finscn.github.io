@@ -53,12 +53,13 @@ function initTouchController() {
         onSwipe: function(disX, disY, time, wrappers, event, controller) {
             // tap事件要执行的动作
             var w = wrappers[0];
-            var dx = w.deltaX,
-                dy = w.deltaY;
-            var vx = dx / time,
-                vy = dy / time;
+            // var dx = w.deltaX,
+            //     dy = w.deltaY;
+            var vx = disX / time,
+                vy = disY / time
+
             if (game.selectBall) {
-                game.selectBall.throw(vx * 2, vy * 2);
+                game.selectBall.throw(vx / 2, vy / 2);
                 game.selectBall = null;
             }
         }
