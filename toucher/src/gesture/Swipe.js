@@ -10,11 +10,11 @@ Toucher.Swipe = Toucher.Listener.extend({
 
     start: function(wrappers, event, controller) {
         var t0 = wrappers[0];
-        this.swipeStartX = t0.pageX;
-        this.swipeStartY = t0.pageY;
-        this.swipeTime = t0.startTime;
         this.swipeDirX = 0;
         this.swipeDirY = 0;
+        this.turnPointX = t0.pageX;
+        this.turnPointY = t0.pageY;
+        this.turnTime = t0.startTime;
     },
 
     move: function(wrappers, event, controller) {
@@ -22,23 +22,27 @@ Toucher.Swipe = Toucher.Listener.extend({
         if (this.swipeDirX * t0.deltaX <= 0 || this.swipeDirY * t0.deltaY <= 0) {
             this.swipeDirX = t0.deltaX;
             this.swipeDirY = t0.deltaY;
-            this.swipeStartX = t0.pageX;
-            this.swipeStartY = t0.pageY;
-            this.swipeTime = t0.moveTime;
+            this.turnPointX = t0.pageX;
+            this.turnPointY = t0.pageY;
+            this.turnTime = t0.moveTime;
         }
     },
 
     end: function(wrappers, event, controller) {
         var t0 = wrappers[0];
-        var time = (t0.endTime - this.swipeTime);
+        var time = (t0.endTime - this.turnTime);
         if (time > this.maxTime) {
             if (this.onTouchEnd != null) {
                 this.onTouchEnd(disX, disY, wrappers, event, controller);
             }
             return;
         }
-        var disX = (t0.endPageX - this.swipeStartX);
-        var disY = (t0.endPageY - this.swipeStartY);
+        // var disX = (t0.endPageX - this.turnPointX);
+        // var disY = (t0.endPageY - this.turnPointY);
+
+        var disX = t0.deltaX;
+        var disY = t0.deltaY;
+
         // var dis=Math.sqrt(disX*disX+disY*disY);
         // if (dis<this.minDistance){
         //  return;

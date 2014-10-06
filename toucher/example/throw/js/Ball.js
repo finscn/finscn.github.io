@@ -52,12 +52,14 @@ Ball.prototype = {
             this.y = Math.min(this.y, game.height);
         }
     },
+
     throw: function(rad) {
         var velX = this.throwSpeed * Math.cos(rad);
         var velY = this.throwSpeed * Math.sin(rad);
         this.velX = velX;
         this.velY = velY;
     },
+
     update: function(timeStep) {
         if (!this.velX && !this.accX && !this.velY && !this.accY) {
             return;
