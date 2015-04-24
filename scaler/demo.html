@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Scaler Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+
+  <script type="text/javascript" src="Scaler.js"></script>
+  <script type="text/javascript" src="main.js"></script>
+  <style>
+    body{
+      padding:0px;
+      margin:0px;
+      border:0px;
+      background-color: #333333;
+    }
+    #tools {
+      position: absolute;
+      z-index: 99;
+      right:0;
+      bottom:0;
+      background-color: rgba(0,0,0,0.3);
+    }
+    #tools button {
+      margin: 8px;
+      padding:4px;
+    }
+  </style>
+
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div id="tools" onclick="changeMode(event)">
+    <button type="button">CENTER</button>
+    <button type="button">ASPECT_FILL</button>
+    <button type="button">ASPECT_FIT</button>
+    <button type="button">WIDTH_FIT</button>
+    <button type="button">HEIGHT_FIT</button>
+    <button type="button">SCALE_FIT</button>
+  </div>
+</body>
+</html>
