@@ -68,7 +68,9 @@ function render() {
 
 function changeMode(event) {
     var target = event.target;
-    scaleMode = target.textContent;
-    scaler.setScaleMode(Scaler[scaleMode]);
-    scaler.resizeCanvas(canvas);
+    if (target.tagName=="BUTTON"){
+        scaleMode = target.textContent;
+        scaler.setScaleMode(Scaler[scaleMode]);
+        scaler.resizeCanvas(canvas);
+    }
 }
