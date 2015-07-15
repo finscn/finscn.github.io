@@ -1,0 +1,3 @@
+[submodule "repo/GT-Toucher"]
+	path = repo/GT-Toucher
+	url = https://github.com/finscn/GT-Toucher
