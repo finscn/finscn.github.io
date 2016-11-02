@@ -3,14 +3,20 @@ var width, height;
 var canvas;
 
 
-var width = width || 560;
-var height = height || 400;
+var width = width || 640;
+var height = height || 480;
+
 var aspectRatio = width / height;
+
+var styleWidth = width;
+var styleHeight = height;
+
+var centerX = width / 2;
+var centerY = height / 2;
 
 var minX, maxX;
 var minY, maxY;
 var screenWidth, screenHeight;
-var centerX, centerY;
 
 var container;
 var canvas;
@@ -156,30 +162,27 @@ function doResize() {
     screenHeight = window.innerHeight;
 
     if (screenWidth / screenHeight >= aspectRatio) {
-        height = screenHeight;
-        width = height * aspectRatio;
+        styleHeight = screenHeight;
+        styleWidth = styleHeight * aspectRatio;
     } else if (screenWidth / screenHeight < aspectRatio) {
-        width = screenWidth;
-        height = width / aspectRatio;
+        styleWidth = screenWidth;
+        styleHeight = styleWidth / aspectRatio;
     }
 
-    maxX = width;
+    maxX = styleWidth;
     minX = 0;
-    maxY = height - 10;
+    maxY = styleHeight - 10;
     minY = 0;
-
-    centerX = width / 2;
-    centerY = height / 2;
 
 }
 
 function doReLocation() {
 
-    var w = screenWidth / 2 - width / 2;
-    var h = screenHeight / 2 - height / 2;
+    var w = screenWidth / 2 - styleWidth / 2;
+    var h = screenHeight / 2 - styleHeight / 2;
 
-    canvas.style.width = width + "px"
-    canvas.style.height = height + "px"
+    canvas.style.width = styleWidth + "px"
+    canvas.style.height = styleHeight + "px"
     canvas.style.left = w + "px"
     canvas.style.top = h + "px"
 }
