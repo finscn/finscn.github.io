@@ -98,8 +98,8 @@ PIXI.loader
         block1.position.set(500, 100);
         block2.position.set(300, 400);
 
-        dirLight.target.x = block1.x;
-        dirLight.target.y = block1.y;
+        dirLight.target.x = block2.x;
+        dirLight.target.y = block2.y;
         dirLight.updateDirection();
 
         bg.normalTexture = res.bg_normal.texture;
