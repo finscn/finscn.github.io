@@ -20,14 +20,16 @@ var lightCount = 1;
 var lightHeight = 90;
 var allLights = [];
 
-var amLight = new AmbientLight({
-    color: 0x555555,
-    brightness: 0.6,
-});
+// var amLight = new AmbientLight({
+//     color: 0x555555,
+//     brightness: 0.6,
+// });
 
 var dirLight = new DirectionalLight({
     color: 0xffdd66,
     brightness: 1,
+    ambientColor: 0x555555,
+    ambientBrightness: 0.6,
     position: {
         x: 0,
         y: 0,
@@ -50,7 +52,7 @@ var mouseLight = new PointLight({
     }
 });
 
-allLights.push(amLight);
+// allLights.push(amLight);
 allLights.push(dirLight);
 allLights.push(mouseLight);
 
