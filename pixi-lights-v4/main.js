@@ -80,6 +80,8 @@ document.body.appendChild(stats.domElement);
 
 
 PIXI.loader
+    .add('couch_diffuse', 'image/couch.jpg')
+    .add('couch_normal', 'image/counch_norm.jpg')
     .add('bg_diffuse', 'image/BGTextureTest.jpg')
     .add('bg_normal', 'image/BGTextureNORM.jpg')
     .add('block_diffuse', 'image/block.png')
@@ -93,26 +95,32 @@ PIXI.loader
         var block = new PIXI.Sprite(res.block_diffuse.texture);
         var block1 = new PIXI.Sprite(res.block_diffuse.texture);
         var block2 = new PIXI.Sprite(res.block_diffuse.texture);
+        var couch = new PIXI.Sprite(res.couch_diffuse.texture);
 
         block.position.set(100, 100);
         block1.position.set(500, 100);
         block2.position.set(300, 400);
+        couch.position.set(640, 300);
+        couch.scale.set(0.3, 0.3);
 
         dirLight.target.x = block2.x;
         dirLight.target.y = block2.y;
         dirLight.updateDirection();
 
         bg.normalTexture = res.bg_normal.texture;
+        couch.normalTexture = res.couch_normal.texture;
         block.normalTexture = res.block_normal.texture;
         block1.normalTexture = res.block_normal.texture;
         block2.normalTexture = res.block_normal.texture;
 
         bg.rendererName = "lightsprite";
+        couch.rendererName = "lightsprite";
         block.rendererName = "lightsprite";
         block1.rendererName = "lightsprite";
         block2.rendererName = "lightsprite";
 
         bg.lights = allLights;
+        couch.lights = allLights;
         block.lights = allLights;
         block1.lights = allLights;
         block2.lights = allLights;
@@ -120,9 +128,12 @@ PIXI.loader
         // no lights sprite
         var panda = new PIXI.Sprite(res.panda.texture);
         panda.position.set(550, 100);
-        stage.addChild(panda);
         // panda.rendererName = "lightsprite";
         // panda.lights = allLights;
+
+
+        stage.addChild(couch);
+        stage.addChild(panda);
 
         stage.addChild(block);
         stage.addChild(block1);
