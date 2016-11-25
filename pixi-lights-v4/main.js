@@ -44,7 +44,7 @@ var dirLight = new DirectionalLight({
 
 var mouseLight = new PointLight({
     color: 0xffffff,
-    brightness: 1,
+    brightness: 4,
     position: {
         x: viewWidth / 2,
         y: viewHeight / 2,
@@ -59,7 +59,9 @@ allLights.push(mouseLight);
 
 function createClickLight(x, y) {
     var clickLight = new PointLight({
-        color: 0xffffff,
+        color: 0xee3311,
+        brightness: 8,
+        falloff: [0.3, 6, 60],
         position: {
             x: x,
             y: y,
