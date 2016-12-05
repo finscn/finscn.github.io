@@ -1,7 +1,7 @@
-var LightSpriteRenderer = PIXI.extension.light.LightSpriteRenderer;
-var AmbientLight = PIXI.extension.light.AmbientLight;
-var DirectionalLight = PIXI.extension.light.DirectionalLight;
-var PointLight = PIXI.extension.light.PointLight;
+var LightSpriteRenderer = PIXI.renderers.LightSpriteRenderer;
+var AmbientLight = PIXI.lights.AmbientLight;
+var DirectionalLight = PIXI.lights.DirectionalLight;
+var PointLight = PIXI.lights.PointLight;
 
 
 var canvas = document.getElementById("canvas");
@@ -113,11 +113,11 @@ PIXI.loader
         block1.normalTexture = res.block_normal.texture;
         block2.normalTexture = res.block_normal.texture;
 
-        bg.rendererName = "lightsprite";
-        couch.rendererName = "lightsprite";
-        block.rendererName = "lightsprite";
-        block1.rendererName = "lightsprite";
-        block2.rendererName = "lightsprite";
+        bg.pluginName = "lightSprite";
+        couch.pluginName = "lightSprite";
+        block.pluginName = "lightSprite";
+        block1.pluginName = "lightSprite";
+        block2.pluginName = "lightSprite";
 
         bg.lights = allLights;
         couch.lights = allLights;
