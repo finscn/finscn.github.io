@@ -100,8 +100,8 @@ PIXI.loader
         block.position.set(100, 100);
         block1.position.set(500, 100);
         block2.position.set(300, 400);
-        couch.position.set(640, 300);
-        couch.scale.set(0.3, 0.3);
+        couch.position.set(640, 280);
+        couch.scale.set(0.5, 0.5);
 
         dirLight.target.x = block2.x;
         dirLight.target.y = block2.y;
