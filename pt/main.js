@@ -63,7 +63,7 @@ function start() {
     container.addChild(logoOrig);
     container.addChild(logo);
 
-    bloomFilter = new PIXI.extension.BloomFilter(13, 0.2, 0.9);
+    bloomFilter = new PIXI.filters.BloomFilter(13, 0.2, 0.9);
     bloomFilter.padding = 16;
 
     sprite.rotation = 0;
@@ -80,7 +80,7 @@ function start() {
     logo.position.set(centerX, centerY);
 
 
-    PIXI.extension.PerspectiveRenderer.applyTo(sprite);
+    PIXI.renderers.PerspectiveRenderer.applyTo(sprite);
 
     logo.filters = [bloomFilter];
 
