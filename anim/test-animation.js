@@ -11,6 +11,7 @@ var graphics;
 
 var sprite;
 var ropeSprite;
+var animSprite;
 
 function createSprites(frames) {
     sprite = Animation.createSprite(frames, 2000, "anim");
@@ -22,6 +23,13 @@ function createSprites(frames) {
     ropeSprite = Animation.createMeshRope(frames, 2000, "anim", points);
     ropeSprite.anim.timeScale = 0.80;
     ropeSprite.anim.play();
+
+    animSprite = new PIXI.Sprite();
+    Animation.applyTo(animSprite);
+    animSprite.initAnimation(frames, 2000);
+    animSprite.timeScale = 0.80;
+    animSprite.play();
+
 }
 
 
@@ -57,6 +65,9 @@ function onAssetsLoaded() {
     ropeSprite.anchor.set(0.5, 0.5);
     stage.addChild(ropeSprite);
 
+    animSprite.position.set(320, 400);
+    animSprite.anchor.set(0.5, 0.5);
+    stage.addChild(animSprite);
 
     graphics.pivot.set(ropeWidth * ropeSprite.anchor.x, ropeHeight * ropeSprite.anchor.y);
     graphics.position.set(ropeSprite.x, ropeSprite.y);
@@ -81,6 +92,9 @@ function gameLoop() {
 
     graphics.rotation = ropeSprite.rotation;
     renderPoints(graphics, points);
+
+    animSprite.rotation += 0.01;
+    animSprite.update(timeStep);
 
     renderer.render(stage);
 
