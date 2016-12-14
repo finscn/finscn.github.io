@@ -94,7 +94,8 @@ function gameLoop() {
     renderPoints(graphics, points);
 
     animSprite.rotation += 0.01;
-    animSprite.update(timeStep);
+    // play backward
+    animSprite.update(-timeStep);
 
     renderer.render(stage);
 
