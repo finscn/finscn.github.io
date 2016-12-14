@@ -57,15 +57,15 @@ function onAssetsLoaded() {
 
     createSprites(frames);
 
-    sprite.position.set(160, 220);
+    sprite.position.set(160, 150);
     sprite.anchor.set(0.5, 0.5);
     stage.addChild(sprite);
 
-    ropeSprite.position.set(480, 220);
+    ropeSprite.position.set(480, 150);
     ropeSprite.anchor.set(0.5, 0.5);
     stage.addChild(ropeSprite);
 
-    animSprite.position.set(320, 400);
+    animSprite.position.set(310, 320);
     animSprite.anchor.set(0.5, 0.5);
     stage.addChild(animSprite);
 
