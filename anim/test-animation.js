@@ -11,24 +11,24 @@ var graphics;
 
 var sprite;
 var ropeSprite;
-var animSprite;
+var spriteBack;
 
 function createSprites(frames) {
-    sprite = Animation.createSprite(frames, 2000, "anim");
-    sprite.anim.timeScale = 0.80;
-    sprite.anim.play();
+    sprite = Animation.createSprite(frames, 2000);
+    sprite.timeScale = 0.80;
+    sprite.play();
 
     createPoints();
 
-    ropeSprite = Animation.createMeshRope(frames, 2000, "anim", points);
-    ropeSprite.anim.timeScale = 0.80;
-    ropeSprite.anim.play();
+    ropeSprite = Animation.createMeshRope(frames, 2000, points);
+    ropeSprite.timeScale = 0.80;
+    ropeSprite.play();
 
-    animSprite = new PIXI.Sprite();
-    Animation.applyTo(animSprite);
-    animSprite.initAnimation(frames, 2000);
-    animSprite.timeScale = 0.80;
-    animSprite.play();
+    spriteBack = Animation.createSprite(frames, 2000);
+    spriteBack.initAnimation(frames, 2000);
+    // timeScale < 0 , play backward
+    spriteBack.timeScale = -0.80;
+    spriteBack.play();
 
 }
 
@@ -65,9 +65,9 @@ function onAssetsLoaded() {
     ropeSprite.anchor.set(0.5, 0.5);
     stage.addChild(ropeSprite);
 
-    animSprite.position.set(310, 320);
-    animSprite.anchor.set(0.5, 0.5);
-    stage.addChild(animSprite);
+    spriteBack.position.set(310, 320);
+    spriteBack.anchor.set(0.5, 0.5);
+    stage.addChild(spriteBack);
 
     graphics.pivot.set(ropeWidth * ropeSprite.anchor.x, ropeHeight * ropeSprite.anchor.y);
     graphics.position.set(ropeSprite.x, ropeSprite.y);
@@ -83,19 +83,18 @@ function gameLoop() {
     timeLine += timeStep;
 
     sprite.rotation += 0.01;
-    sprite.anim.update(timeStep);
+    sprite.update(timeStep);
 
     updatePoints(timeLine);
 
     ropeSprite.rotation += 0.01;
-    ropeSprite.anim.update(timeStep);
+    ropeSprite.update(timeStep);
 
     graphics.rotation = ropeSprite.rotation;
     renderPoints(graphics, points);
 
-    animSprite.rotation += 0.01;
-    // play backward
-    animSprite.update(-timeStep);
+    spriteBack.rotation += 0.01;
+    spriteBack.update(timeStep);
 
     renderer.render(stage);
 
