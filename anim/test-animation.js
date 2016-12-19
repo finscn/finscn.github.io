@@ -11,11 +11,12 @@ var graphics;
 
 var sprite;
 var ropeSprite;
-var spriteBack;
+var planeSprite;
 
 function createSprites(frames) {
     sprite = Animation.createSprite(frames, 2000);
-    sprite.timeScale = 0.80;
+    // timeScale < 0 , play backward
+    sprite.timeScale = -0.80;
     sprite.play();
 
     createPoints();
@@ -24,12 +25,9 @@ function createSprites(frames) {
     ropeSprite.timeScale = 0.80;
     ropeSprite.play();
 
-    spriteBack = Animation.createSprite(frames, 2000);
-    spriteBack.initAnimation(frames, 2000);
-    // timeScale < 0 , play backward
-    spriteBack.timeScale = -0.80;
-    spriteBack.play();
-
+    planeSprite = Animation.createMeshPlane(frames, 4000, 10, 10);
+    planeSprite.timeScale = 0.80;
+    planeSprite.play();
 }
 
 
@@ -65,13 +63,14 @@ function onAssetsLoaded() {
     ropeSprite.anchor.set(0.5, 0.5);
     stage.addChild(ropeSprite);
 
-    spriteBack.position.set(310, 320);
-    spriteBack.anchor.set(0.5, 0.5);
-    stage.addChild(spriteBack);
 
-    graphics.pivot.set(ropeWidth * ropeSprite.anchor.x, ropeHeight * ropeSprite.anchor.y);
-    graphics.position.set(ropeSprite.x, ropeSprite.y);
-    stage.addChild(graphics);
+    planeSprite.position.set(310, 320);
+    planeSprite.anchor.set(0.5, 0.5);
+    stage.addChild(planeSprite);
+
+    // graphics.pivot.set(ropeWidth * ropeSprite.anchor.x, ropeHeight * ropeSprite.anchor.y);
+    // graphics.position.set(ropeSprite.x, ropeSprite.y);
+    // stage.addChild(graphics);
 
     gameLoop();
 }
@@ -85,16 +84,18 @@ function gameLoop() {
     sprite.rotation += 0.01;
     sprite.update(timeStep);
 
-    updatePoints(timeLine);
+    updatePoints(ropeSprite, timeLine);
 
     ropeSprite.rotation += 0.01;
     ropeSprite.update(timeStep);
 
-    graphics.rotation = ropeSprite.rotation;
-    renderPoints(graphics, points);
+    updatePlane(planeSprite, timeLine);
+    planeSprite.rotation += 0.01;
+    planeSprite.update(timeStep);
 
-    spriteBack.rotation += 0.01;
-    spriteBack.update(timeStep);
+    // graphics.rotation = ropeSprite.rotation;
+    // renderPoints(graphics, points);
+
 
     renderer.render(stage);
 
@@ -103,6 +104,19 @@ function gameLoop() {
 
 function randomInt(from, to) {
     return Math.floor(Math.random() * (to - from + 1) + from);
+}
+
+function updatePlane(plane, timeLine) {
+    var points = plane.points;
+    for (var i = 0; i < points.length; i++) {
+        var row = points[i];
+        for (var j = 0; j < points.length; j++) {
+            var p = row[j];
+            p.x = p.originalX + Math.cos((i * 0.5) + timeLine / 100) * 10;
+            p.y = p.originalY + Math.sin((i * 0.3) + timeLine / 100) * 10;
+        }
+    }
+    plane.refresh();
 }
 
 /***************************
@@ -130,11 +144,13 @@ function createPoints(_points) {
     }
 }
 
-function updatePoints(timeLine) {
+function updatePoints(rope, timeLine) {
+    var points = rope.points;
     for (var i = 0; i < points.length; i++) {
         points[i].x = Math.sin((i * 0.5) + timeLine / 500) * 40;
         points[i].y = i * ropeLength + Math.cos((i * 0.3) + timeLine / 500) * 20;
     }
+    rope.refresh();
 }
 
 function renderPoints(graphics, points) {
