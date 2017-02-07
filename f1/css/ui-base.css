@@ -1,0 +1,103 @@
+.dialog {
+    position: relative;
+    color: #222222;
+    width: 280px;
+    height: 250px;
+    top: 40px;
+    /*background-color: #ffffff;*/
+    /*border: 1px solid red;*/
+    /*border: 30px solid red;*/
+    border-width: 43px 16px 14px 16px;
+    border-image: url("../res/ui/ui_bg-dialog.png") 43 16 14 16 fill stretch;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    background-origin: border-box;
+    -webkit-background-origin: border-box;
+    background-clip: border-box;
+    -webkit-background-clip: border-box;
+    font-family: "黑体", "STHeiti", "Arial", "Lucida Grande", "Lucida Sans Unicode", "Helvetica", "Arial", "Verdana", "sans-serif";
+}
+
+.dialog-close {
+    position: absolute;
+    top: -43px;
+    right: -20px;
+    width: 32px;
+    height: 32px;
+    background-image: url("../res/ui/ui_btn-close.png");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.dialog-title {
+    position: absolute;
+    top: -28px;
+    font-weight: bolder;
+    color: #223344;
+    font-size: 20px;
+    font-weight: bolder;
+}
+
+.dialog-body {
+    padding: 4px;
+    line-height: 40px;
+}
+
+.dialog-body .label {
+    font-weight: bolder;
+    display: inline-block;
+    width: 60px;
+    margin: 0px 6px 0px 0px;
+    vertical-align: middle;
+    /*border: 1px solid red;*/
+    /*text-align: right;*/
+    text-align: left;
+}
+
+.dialog-body input {
+    font-size: 17px;
+    padding: 2px;
+    width: 158px;
+    height: 32px;
+    vertical-align: middle;
+    border: 1px solid #99bbdd;
+    border-radius: 4px;
+    outline: none;
+}
+
+.edit-area {}
+
+.dialog-btn-area {
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    bottom: 5px;
+    margin: 5px 0px;
+}
+
+.dialog-btn {
+    position: relative;
+    border: none;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    padding: 0px;
+    color: rgba(0, 0, 0, 0.7);
+    margin: 2px 5px;
+    text-align: center;
+    font-weight: bolder;
+    font-size: 17px;
+    line-height: 30px;
+    width: 80px;
+    height: 40px;
+    display: inline-block;
+    outline: none;
+}
+
+.btn-confirm {
+    background-image: url("../res/ui/ui_btn-green.png");
+}
+
+.btn-cancel {
+    background-image: url("../res/ui/ui_btn-yellow.png");
+}

@@ -1,0 +1,85 @@
+body {
+    /*background-color: #333;*/
+    background-color: #333333;
+}
+
+#container {
+    /*display: none;*/
+    /*overflow:visible;*/
+    /*-webkit-transform: translateZ(0);*/
+    /*transform: translateZ(0);*/
+    background-color: #222222;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border: 0px solid red;
+    margin: 0px;
+    padding: 0px;
+    min-height: 300px;
+    /*background-image: url(../res/bg.jpg);*/
+    /*background-position: left top;*/
+    /*background-repeat: repeat-x;*/
+    /*background-size: auto 100% ;*/
+    /*background-size: 100%  auto;*/
+    /*cursor:none;*/
+}
+
+
+#canvas {
+    margin: 0px;
+    padding: 0px;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+.custom-cursor {
+    cursor:url('../res/cursor.png'), default;
+}
+
+.hidden-cursor {
+    cursor:none;
+}
+
+.load-font {
+    opacity: 0;
+    position: absolute;
+    top: -100000px;
+}
+
+@font-face {
+    font-family: "font-8bitoperatorRegular";
+    src: url("../res/font/8bitoperator.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "NBP-Sydnie2-Standard";
+    src: url("../res/font/SYDORIG_0.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "PixelOperator";
+    src: url("../res/font/PixelOperator.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+.load-font {
+    opacity: 0;
+    position: absolute;
+    top:-100000px;
+}
+
+.load-font > i:nth-child(1) {
+    font-family: "font-8bitoperatorRegular";
+}
+
+.load-font > i:nth-child(2) {
+    font-family: "NBP-Sydnie2-Standard";
+}
+.load-font > i:nth-child(3){
+    font-family: "PixelOperator";
+}
