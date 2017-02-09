@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="-1" />
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta charset="utf-8">
+    <title>测试 dialog</title>
+    <!-- <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, target-densitydpi=device-dpi" /> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="apple-mobile-web-app-title" content="H5Game">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name='format-detection' content='telephone=no'>
+    <meta name="screen-orientation" content="portrait">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="360-fullscreen" content="true">
+    <link rel="stylesheet" href="./base.css">
+    <link rel="stylesheet" href="./game.css">
+    <link rel="stylesheet" href="./ui.css">
+    <style>
+    body {
+        background-color: #ffffff;
+    }
+    </style>
+    <script>
+
+
+    window.onload = function() {
+        DomUI.init();
+    }
+
+    </script>
+</head>
+
+<body>
+    <div id="ui-container" class="ui-container ui-center-h">
+        <div id="test" class="dialog">
+          <div class="dialog-close"></div>
+          <div class="dialog-title"></div>
+          <div class="dialog-body">
+           <div><span>表单1</span><input type="text"></div>
+           <div><span>表单2</span><input type="text"></div>
+          </div>
+          <div class="confirm-btn"></div>
+          <div class="cancel-btn"></div>
+        </div>
+    </div>
+</body>
+
+</html>

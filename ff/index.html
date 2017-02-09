@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="-1" />
+<meta http-equiv="Cache-Control" content="no-cache" />
+
+  <meta charset="utf-8">
+  <title>FatFaces</title>
+  <!-- <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, target-densitydpi=device-dpi" /> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="apple-mobile-web-app-title" content="H5Game">
+  <meta name="apple-touch-fullscreen" content="yes" >
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name='format-detection' content='telephone=no'>
+  <meta name="screen-orientation" content="portrait">
+  <meta name="full-screen" content="yes">
+  <meta name="360-fullscreen" content="true">
+
+  <meta name="x5-fullscreen" content="true">
+  <meta name="x5-page-mode" content="app"/>
+  <meta name="x5-orientation" content="portrait"/>
+
+
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/game.css">
+
+<!-- <script src="./js/common/error-log.js"></script> -->
+<script type="text/javascript">
+  window.ignoreErrors=[
+    "trigger",
+    "postMessage",
+  ];
+  window.addEventListener("touchmove", function(event) {
+      event.preventDefault();
+  }, false);
+
+  window.rootPath = "./";
+  window.resPath = "./res/image/";
+</script>
+
+</head>
+<body>
+    <div id="container" class="splash">
+        <canvas id="canvas"></canvas>
+    </div>
+    <div id="ui-container" class="ui-container ui-center-h">
+    </div>
+    <!-- <input type="button" value="resetAll" onclick="resetAll()"> -->
+    <div id="preload">
+        <div class="load-font"><i>l</i>o<i>a</i>d f<i>o</i>n<i>t</i></div>
+        <!-- <img id="load-bg" src="res/loading-bg.png"> -->
+        <!-- <img id="load-value" src="res/loading-value.png"> -->
+    </div>
+
+<script>
+document.write('<script src="all_in_one.js?_ts='+(Date.now()>>10)+'"></scr' + 'ipt>');
+</script>
+
+</body>
+</html>
