@@ -29,7 +29,7 @@ var tileBorder = new PIXI.Graphics();
 var origin = new PIXI.Graphics();
 
 
-function initTiledMap(name) {
+function initTiledMap(name, emptyTexture) {
 
     game.tiledMap = new Tiled.Map({
         viewWidth: game.width,
@@ -50,7 +50,8 @@ function initTiledMap(name) {
         tileLayer.maxScale = Infinity;
         tileLayer.init();
 
-        tileLayer.tilemap = game.tiledMap.createTilemap(tileTextures, 32);
+        tileLayer.tilemap = game.tiledMap.createTilemap(tileTextures, 32, emptyTexture);
+        tileLayer.tilemap.id="ttt";
         container.addChild(tileLayer.tilemap);
     });
     game.tileLayers = game.tiledMap.tileLayers;
@@ -105,10 +106,10 @@ function initFlag() {
         var tileLayer = game.tileLayers[0];
 
         var mapPos = tileLayer.screenToMap(p.x, p.y);
-        console.log("map: ", mapPos.x, mapPos.y);
-
         var tileInfo = tileLayer.getTileFromScreen(p.x, p.y);
-        console.log("tile: ", tileInfo.col, tileInfo.row, tileInfo.x, tileInfo.y);
+
+        // console.log("map: ", mapPos.x, mapPos.y);
+        // console.log("tile: ", tileInfo.col, tileInfo.row, tileInfo.x, tileInfo.y);
 
         tileBorder.clear();
         drawTileBorder(tileLayer, tileInfo);
