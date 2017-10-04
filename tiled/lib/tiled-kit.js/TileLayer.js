@@ -2,6 +2,7 @@ var Tiled = Tiled || {};
 
 (function(exports) {
 
+    var Utils = exports.Utils;
     var Collision = exports.Collision;
     var Tileset = exports.Tileset;
 
@@ -12,6 +13,7 @@ var Tiled = Tiled || {};
         for (var key in options) {
             this[key] = options[key];
         }
+        this.initBaseData();
     };
 
     var proto = {
@@ -35,6 +37,7 @@ var Tiled = Tiled || {};
         name: null,
         type: null,
         visible: true,
+        opacity: 1,
 
         minScale: 0.5,
         maxScale: 2,
@@ -66,6 +69,40 @@ var Tiled = Tiled || {};
 
         init: function() {
 
+        },
+
+        initBaseData: function() {
+            var map = this.map;
+            var layerData = this.data;
+
+            this.rawMapData = layerData.data;
+
+            this.name = layerData.name;
+            this.type = layerData.type;
+            this.visible = layerData.visible !== false;
+            this.opacity = (layerData.opacity || layerData.opacity === 0) ? layerData.opacity : 1;
+            this.offsetX = layerData.offsetx || 0;
+            this.offsetY = layerData.offsety || 0;
+
+            this.cols = layerData.width;
+            this.rows = layerData.height;
+            this.col = layerData.x;
+            this.row = layerData.y;
+
+            // var compression = layerData.compression;
+            // var encoding = layerData.encoding;
+            var mapData = Utils.arrayTo2D(this.rawMapData, map.cols);
+            this.mapData = mapData;
+
+            this.mapCols = map.cols;
+            this.mapRows = map.rows;
+
+            this.tileWidth = map.tileWidth;
+            this.tileHeight = map.tileHeight;
+
+            this.viewType = map.viewType;
+            this.viewWidth = map.viewWidth;
+            this.viewHeight = map.viewHeight;
         },
 
         initCollision: function(options) {

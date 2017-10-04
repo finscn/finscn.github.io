@@ -2,6 +2,7 @@ var Tiled = Tiled || {};
 
 (function(exports) {
 
+    var Utils = exports.Utils;
     var Collision = exports.Collision;
     var Tileset = exports.Tileset;
     var TileLayer = exports.TileLayer;
@@ -76,6 +77,8 @@ var Tiled = Tiled || {};
                     map: Me,
                     data: tilesetData,
                 });
+                tileset.init();
+
                 Me.tilesetTable[tileset.name] = tileset;
                 Me.tilesetList[idx] = tileset;
 
@@ -128,7 +131,6 @@ var Tiled = Tiled || {};
                     }
 
                     if (layer) {
-                        Me.initTileLayerBaseData(layer);
                         Me.tileLayers.push(layer);
                     }
                 } else if (layerData.type === "objectgroup") {
@@ -146,38 +148,6 @@ var Tiled = Tiled || {};
                     Me.layers.push(layer);
                 }
             });
-        },
-
-        initTileLayerBaseData: function(layer) {
-            var layerData = layer.data;
-
-            layer.rawMapData = layerData.data;
-
-            layer.name = layerData.name;
-            layer.type = layerData.type;
-            layer.visible = layerData.visible !== false;
-            layer.offsetX = layerData.offsetx || 0;
-            layer.offsetY = layerData.offsety || 0;
-
-            layer.cols = layerData.width;
-            layer.rows = layerData.height;
-            layer.col = layerData.x;
-            layer.row = layerData.y;
-
-            // var compression = layerData.compression;
-            // var encoding = layerData.encoding;
-            var mapData = this.arrayTo2D(layer.rawMapData, this.cols);
-            layer.mapData = mapData;
-
-            layer.mapCols = this.cols;
-            layer.mapRows = this.rows;
-
-            layer.tileWidth = this.tileWidth;
-            layer.tileHeight = this.tileHeight;
-
-            layer.viewType = this.viewType;
-            layer.viewWidth = this.viewWidth;
-            layer.viewHeight = this.viewHeight;
         },
 
         getTileLayerAt: function(index) {
@@ -202,31 +172,6 @@ var Tiled = Tiled || {};
                 }
             }
             return null;
-        },
-
-        // common
-        getMinEven: function(n) {
-            return n + (n % 2);
-        },
-
-        getMaxEven: function(n) {
-            return n - (n % 2);
-        },
-
-        arrayTo2D: function(arr, cols) {
-            cols = cols || 1;
-            var arr2 = [];
-            var rows = Math.floor((arr.length + cols) / cols) - 1;
-            var r = 0,
-                c = 0,
-                i = 0;
-            for (r = 0; r < rows; r++) {
-                arr2[r] = [];
-                for (c = 0; c < cols; c++) {
-                    arr2[r][c] = arr[i++];
-                }
-            }
-            return arr2;
         },
     };
 

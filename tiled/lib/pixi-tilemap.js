@@ -31,22 +31,20 @@ var PIXI;
     (function (tilemap) {
         var CompositeRectTileLayer = (function (_super) {
             __extends(CompositeRectTileLayer, _super);
-            function CompositeRectTileLayer(zIndex, bitmaps, useSquare, texPerChild) {
+            function CompositeRectTileLayer(zIndex, bitmaps, texPerChild) {
                 var _this = _super.call(this) || this;
-                _this.shadowColor = new Float32Array([0.0, 0.0, 0.0, 0.5]);
                 _this.modificationMarker = 0;
+                _this.shadowColor = new Float32Array([0.0, 0.0, 0.0, 0.5]);
                 _this._globalMat = null;
-                _this._tempScale = null;
                 _this.initialize.apply(_this, arguments);
                 return _this;
             }
             CompositeRectTileLayer.prototype.updateTransform = function () {
                 _super.prototype.displayObjectUpdateTransform.call(this);
             };
-            CompositeRectTileLayer.prototype.initialize = function (zIndex, bitmaps, useSquare, texPerChild) {
+            CompositeRectTileLayer.prototype.initialize = function (zIndex, bitmaps, texPerChild) {
                 this.z = this.zIndex = zIndex;
-                this.useSquare = useSquare;
-                this.texPerChild = texPerChild || 16;
+                this.texPerChild = texPerChild || tilemap.Constant.boundCountPerBuffer * tilemap.Constant.maxTextures;
                 if (bitmaps) {
                     this.setBitmaps(bitmaps);
                 }
@@ -60,21 +58,30 @@ var PIXI;
                     this.children[i].textures = bitmaps.slice(i * texPerChild, (i + 1) * texPerChild);
                 }
                 for (i = len1; i < len2; i++) {
-                    this.addChild(new tilemap.RectTileLayer(this.zIndex, bitmaps.slice(i * texPerChild, (i + 1) * texPerChild)));
+                    var layer = new tilemap.RectTileLayer(this.zIndex, bitmaps.slice(i * texPerChild, (i + 1) * texPerChild));
+                    layer.compositeParent = true;
+                    layer.offsetX = tilemap.Constant.boundSize;
+                    layer.offsetY = tilemap.Constant.boundSize;
+                    this.addChild(layer);
                 }
             };
             CompositeRectTileLayer.prototype.clear = function () {
-                for (var i = 0; i < this.children.length; i++)
+                for (var i = 0; i < this.children.length; i++) {
                     this.children[i].clear();
+                }
                 this.modificationMarker = 0;
             };
-            CompositeRectTileLayer.prototype.addRect = function (num, u, v, x, y, tileWidth, tileHeight) {
-                if (this.children[num] && this.children[num].textures)
-                    this.children[num].addRect(0, u, v, x, y, tileWidth, tileHeight);
+            CompositeRectTileLayer.prototype.addRect = function (textureIndex, u, v, x, y, tileWidth, tileHeight) {
+                var childIndex = textureIndex / this.texPerChild >> 0;
+                var textureId = textureIndex % this.texPerChild;
+                if (this.children[childIndex] && this.children[childIndex].textures) {
+                    this.children[childIndex].addRect(textureId, u, v, x, y, tileWidth, tileHeight);
+                }
             };
             CompositeRectTileLayer.prototype.addFrame = function (texture_, x, y, animX, animY) {
                 var texture;
-                var layer = null, ind = 0;
+                var layer = null;
+                var ind = 0;
                 var children = this.children;
                 if (typeof texture_ === "number") {
                     var childIndex = texture_ / this.texPerChild >> 0;
@@ -91,11 +98,13 @@ var PIXI;
                     }
                     texture = layer.textures[ind];
                 }
-                else if (typeof texture_ === "string") {
-                    texture = PIXI.Texture.fromImage(texture_);
-                }
                 else {
-                    texture = texture_;
+                    if (typeof texture_ === "string") {
+                        texture = PIXI.Texture.fromImage(texture_);
+                    }
+                    else {
+                        texture = texture_;
+                    }
                     for (var i = 0; i < children.length; i++) {
                         var child = children[i];
                         var tex = child.textures;
@@ -121,7 +130,11 @@ var PIXI;
                             }
                         }
                         if (!layer) {
-                            children.push(layer = new tilemap.RectTileLayer(this.zIndex, texture));
+                            layer = new tilemap.RectTileLayer(this.zIndex, texture);
+                            layer.compositeParent = true;
+                            layer.offsetX = tilemap.Constant.boundSize;
+                            layer.offsetY = tilemap.Constant.boundSize;
+                            children.push(layer);
                             ind = 0;
                         }
                     }
@@ -129,47 +142,40 @@ var PIXI;
                 layer.addRect(ind, texture.frame.x, texture.frame.y, x, y, texture.frame.width, texture.frame.height, animX, animY);
                 return true;
             };
-            ;
             CompositeRectTileLayer.prototype.renderCanvas = function (renderer) {
-                if (!renderer.plugins.tilemap.dontUseTransform) {
+                var plugin = renderer.plugins.tilemap;
+                if (!plugin.dontUseTransform) {
                     var wt = this.worldTransform;
                     renderer.context.setTransform(wt.a, wt.b, wt.c, wt.d, wt.tx * renderer.resolution, wt.ty * renderer.resolution);
                 }
                 var layers = this.children;
-                for (var i = 0; i < layers.length; i++)
-                    layers[i].renderCanvas(renderer);
+                for (var i = 0; i < layers.length; i++) {
+                    layers[i].renderCanvasCore(renderer);
+                }
             };
-            ;
             CompositeRectTileLayer.prototype.renderWebGL = function (renderer) {
                 var gl = renderer.gl;
-                var shader = renderer.plugins.tilemap.getShader(this.useSquare);
-                renderer.setObjectRenderer(renderer.plugins.tilemap);
+                var plugin = renderer.plugins.tilemap;
+                var shader = plugin.getShader();
+                renderer.setObjectRenderer(plugin);
                 renderer.bindShader(shader);
                 this._globalMat = this._globalMat || new PIXI.Matrix();
                 renderer._activeRenderTarget.projectionMatrix.copy(this._globalMat).append(this.worldTransform);
                 shader.uniforms.projectionMatrix = this._globalMat.toArray(true);
                 shader.uniforms.shadowColor = this.shadowColor;
-                if (this.useSquare) {
-                    var tempScale = this._tempScale = (this._tempScale || [0, 0]);
-                    tempScale[0] = this._globalMat.a >= 0 ? 1 : -1;
-                    tempScale[1] = this._globalMat.d < 0 ? 1 : -1;
-                    var ps = shader.uniforms.pointScale = tempScale;
-                    shader.uniforms.projectionScale = Math.abs(this.worldTransform.a) * renderer.resolution;
-                }
-                var af = shader.uniforms.animationFrame = renderer.plugins.tilemap.tileAnim;
+                var af = shader.uniforms.animationFrame = plugin.tileAnim;
                 var layers = this.children;
-                for (var i = 0; i < layers.length; i++)
-                    layers[i].renderWebGL(renderer, this.useSquare);
+                for (var i = 0; i < layers.length; i++) {
+                    layers[i].renderWebGLCore(renderer, plugin);
+                }
             };
             CompositeRectTileLayer.prototype.isModified = function (anim) {
                 var layers = this.children;
-                if (this.modificationMarker != layers.length) {
+                if (this.modificationMarker !== layers.length) {
                     return true;
                 }
                 for (var i = 0; i < layers.length; i++) {
-                    var layer = layers[i];
-                    if (layer.modificationMarker != layer.pointsBuf.length ||
-                        anim && layer.hasAnim) {
+                    if (layers[i].isModified(anim)) {
                         return true;
                     }
                 }
@@ -179,13 +185,24 @@ var PIXI;
                 var layers = this.children;
                 this.modificationMarker = layers.length;
                 for (var i = 0; i < layers.length; i++) {
-                    var layer = layers[i];
-                    layer.modificationMarker = layer.pointsBuf.length;
+                    layers[i].clearModify();
                 }
             };
             return CompositeRectTileLayer;
         }(PIXI.Container));
         tilemap.CompositeRectTileLayer = CompositeRectTileLayer;
+    })(tilemap = PIXI.tilemap || (PIXI.tilemap = {}));
+})(PIXI || (PIXI = {}));
+var PIXI;
+(function (PIXI) {
+    var tilemap;
+    (function (tilemap) {
+        tilemap.Constant = {
+            maxTextures: 4,
+            bufferSize: 2048,
+            boundSize: 1024,
+            boundCountPerBuffer: 4,
+        };
     })(tilemap = PIXI.tilemap || (PIXI.tilemap = {}));
 })(PIXI || (PIXI = {}));
 var PIXI;
@@ -235,11 +252,14 @@ var PIXI;
                 var _this = _super.call(this) || this;
                 _this.z = 0;
                 _this.zIndex = 0;
-                _this.pointsBuf = [];
-                _this._tempSize = new Float32Array([0, 0]);
-                _this._tempTexSize = 1;
                 _this.modificationMarker = 0;
+                _this.shadowColor = new Float32Array([0.0, 0.0, 0.0, 0.5]);
+                _this._globalMat = null;
+                _this.pointsBuf = [];
                 _this.hasAnim = false;
+                _this.offsetX = 0;
+                _this.offsetY = 0;
+                _this.compositeParent = false;
                 _this.vbId = 0;
                 _this.vbBuffer = null;
                 _this.vbArray = null;
@@ -247,6 +267,9 @@ var PIXI;
                 _this.initialize(zIndex, texture);
                 return _this;
             }
+            RectTileLayer.prototype.updateTransform = function () {
+                _super.prototype.displayObjectUpdateTransform.call(this);
+            };
             RectTileLayer.prototype.initialize = function (zIndex, textures) {
                 if (!textures) {
                     textures = [];
@@ -256,37 +279,43 @@ var PIXI;
                 }
                 this.textures = textures;
                 this.z = this.zIndex = zIndex;
-                this.visible = false;
             };
             RectTileLayer.prototype.clear = function () {
                 this.pointsBuf.length = 0;
                 this.modificationMarker = 0;
                 this.hasAnim = false;
             };
-            RectTileLayer.prototype.renderCanvas = function (renderer) {
-                if (this.textures.length === 0)
-                    return;
-                var points = this.pointsBuf;
-                renderer.context.fillStyle = '#000000';
-                for (var i = 0, n = points.length; i < n; i += 9) {
-                    var x1 = points[i], y1 = points[i + 1];
-                    var x2 = points[i + 2], y2 = points[i + 3];
-                    var w = points[i + 4];
-                    var h = points[i + 5];
-                    x1 += points[i + 6] * renderer.plugins.tilemap.tileAnim[0];
-                    y1 += points[i + 7] * renderer.plugins.tilemap.tileAnim[1];
-                    var textureId = points[i + 8];
-                    if (textureId >= 0) {
-                        renderer.context.drawImage(this.textures[textureId].baseTexture.source, x1, y1, w, h, x2, y2, w, h);
+            RectTileLayer.prototype.addFrame = function (texture_, x, y, animX, animY) {
+                var texture;
+                var textureIndex = 0;
+                if (typeof texture_ === "number") {
+                    textureIndex = texture_;
+                    texture = this.textures[textureIndex];
+                }
+                else {
+                    if (typeof texture_ === "string") {
+                        texture = PIXI.Texture.fromImage(texture_);
                     }
                     else {
-                        renderer.context.globalAlpha = 0.5;
-                        renderer.context.fillRect(x2, y2, w, h);
-                        renderer.context.globalAlpha = 1;
+                        texture = texture_;
+                    }
+                    var found = false;
+                    var textureList = this.textures;
+                    for (var i = 0; i < textureList.length; i++) {
+                        if (textureList[i].baseTexture === texture.baseTexture) {
+                            textureIndex = i;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        return false;
                     }
                 }
+                this.addRect(textureIndex, texture.frame.x, texture.frame.y, x, y, texture.frame.width, texture.frame.height, animX, animY);
+                return true;
             };
-            RectTileLayer.prototype.addRect = function (textureId, u, v, x, y, tileWidth, tileHeight, animX, animY) {
+            RectTileLayer.prototype.addRect = function (textureIndex, u, v, x, y, tileWidth, tileHeight, animX, animY) {
                 if (animX === void 0) { animX = 0; }
                 if (animY === void 0) { animY = 0; }
                 var pb = this.pointsBuf;
@@ -300,7 +329,7 @@ var PIXI;
                     pb.push(tileHeight);
                     pb.push(animX | 0);
                     pb.push(animY | 0);
-                    pb.push(textureId);
+                    pb.push(textureIndex);
                 }
                 else {
                     var i;
@@ -314,7 +343,7 @@ var PIXI;
                             pb.push(tileHeight);
                             pb.push(animX | 0);
                             pb.push(animY | 0);
-                            pb.push(textureId);
+                            pb.push(textureIndex);
                         }
                     }
                     else if (tileHeight % tileWidth === 0) {
@@ -327,7 +356,7 @@ var PIXI;
                             pb.push(tileWidth);
                             pb.push(animX | 0);
                             pb.push(animY | 0);
-                            pb.push(textureId);
+                            pb.push(textureIndex);
                         }
                     }
                     else {
@@ -339,40 +368,70 @@ var PIXI;
                         pb.push(tileHeight);
                         pb.push(animX | 0);
                         pb.push(animY | 0);
-                        pb.push(textureId);
+                        pb.push(textureIndex);
                     }
                 }
             };
-            ;
-            RectTileLayer.prototype.renderWebGL = function (renderer, useSquare) {
-                if (useSquare === void 0) { useSquare = false; }
+            RectTileLayer.prototype.renderCanvas = function (renderer) {
+                var plugin = renderer.plugins.tilemap;
+                if (!plugin.dontUseTransform) {
+                    var wt = this.worldTransform;
+                    renderer.context.setTransform(wt.a, wt.b, wt.c, wt.d, wt.tx * renderer.resolution, wt.ty * renderer.resolution);
+                }
+                this.renderCanvasCore(renderer);
+            };
+            RectTileLayer.prototype.renderCanvasCore = function (renderer) {
+                if (this.textures.length === 0)
+                    return;
+                var points = this.pointsBuf;
+                renderer.context.fillStyle = '#000000';
+                for (var i = 0, n = points.length; i < n; i += 9) {
+                    var x1 = points[i], y1 = points[i + 1];
+                    var x2 = points[i + 2], y2 = points[i + 3];
+                    var w = points[i + 4];
+                    var h = points[i + 5];
+                    x1 += points[i + 6] * renderer.plugins.tilemap.tileAnim[0];
+                    y1 += points[i + 7] * renderer.plugins.tilemap.tileAnim[1];
+                    var textureIndex = points[i + 8];
+                    if (textureIndex >= 0) {
+                        renderer.context.drawImage(this.textures[textureIndex].baseTexture.source, x1, y1, w, h, x2, y2, w, h);
+                    }
+                    else {
+                        renderer.context.globalAlpha = 0.5;
+                        renderer.context.fillRect(x2, y2, w, h);
+                        renderer.context.globalAlpha = 1;
+                    }
+                }
+            };
+            RectTileLayer.prototype.renderWebGL = function (renderer) {
+                var gl = renderer.gl;
+                var plugin = renderer.plugins.simpleTilemap;
+                var shader = plugin.getShader();
+                renderer.setObjectRenderer(plugin);
+                renderer.bindShader(shader);
+                this._globalMat = this._globalMat || new PIXI.Matrix();
+                renderer._activeRenderTarget.projectionMatrix.copy(this._globalMat).append(this.worldTransform);
+                shader.uniforms.projectionMatrix = this._globalMat.toArray(true);
+                shader.uniforms.shadowColor = this.shadowColor;
+                var af = shader.uniforms.animationFrame = plugin.tileAnim;
+                this.renderWebGLCore(renderer, plugin);
+            };
+            RectTileLayer.prototype.renderWebGLCore = function (renderer, plugin) {
                 var points = this.pointsBuf;
                 if (points.length === 0)
                     return;
                 var rectsCount = points.length / 9;
-                var tile = renderer.plugins.tilemap;
+                var tile = plugin || renderer.plugins.simpleTilemap;
                 var gl = renderer.gl;
-                if (!useSquare) {
-                    tile.checkIndexBuffer(rectsCount);
-                }
-                var shader = tile.getShader(useSquare);
+                tile.checkIndexBuffer(rectsCount);
+                var shader = tile.getShader();
                 var textures = this.textures;
                 if (textures.length === 0)
                     return;
-                var len = textures.length;
-                if (this._tempTexSize < shader.maxTextures) {
-                    this._tempTexSize = shader.maxTextures;
-                    this._tempSize = new Float32Array(2 * shader.maxTextures);
-                }
-                for (var i = 0; i < len; i++) {
-                    if (!textures[i] || !textures[i].valid)
-                        return;
-                    var texture = textures[i].baseTexture;
-                }
                 tile.bindTextures(renderer, shader, textures);
                 var vb = tile.getVb(this.vbId);
                 if (!vb) {
-                    vb = tile.createVb(useSquare);
+                    vb = tile.createVb();
                     this.vbId = vb.id;
                     this.vbBuffer = null;
                     this.modificationMarker = 0;
@@ -384,7 +443,7 @@ var PIXI;
                 var vertices = rectsCount * shader.vertPerQuad;
                 if (vertices === 0)
                     return;
-                if (this.modificationMarker != vertices) {
+                if (this.modificationMarker !== vertices) {
                     this.modificationMarker = vertices;
                     var vs = shader.stride * vertices;
                     if (!this.vbBuffer || this.vbBuffer.byteLength < vs) {
@@ -399,85 +458,79 @@ var PIXI;
                     }
                     var arr = this.vbArray, ints = this.vbInts;
                     var sz = 0;
-                    var textureId, shiftU, shiftV;
-                    if (useSquare) {
-                        for (i = 0; i < points.length; i += 9) {
+                    var textureId = 0;
+                    var shiftU = this.offsetX;
+                    var shiftV = this.offsetY;
+                    var tint = -1;
+                    for (var i = 0; i < points.length; i += 9) {
+                        var eps = 0.5;
+                        if (this.compositeParent) {
                             textureId = (points[i + 8] >> 2);
-                            shiftU = 1024 * (points[i + 8] & 1);
-                            shiftV = 1024 * ((points[i + 8] >> 1) & 1);
-                            arr[sz++] = points[i + 2];
-                            arr[sz++] = points[i + 3];
-                            arr[sz++] = points[i + 0] + shiftU;
-                            arr[sz++] = points[i + 1] + shiftV;
-                            arr[sz++] = points[i + 4];
-                            arr[sz++] = points[i + 6];
-                            arr[sz++] = points[i + 7];
-                            arr[sz++] = textureId;
+                            shiftU = this.offsetX * (points[i + 8] & 1);
+                            shiftV = this.offsetY * ((points[i + 8] >> 1) & 1);
                         }
-                    }
-                    else {
-                        var tint = -1;
-                        for (i = 0; i < points.length; i += 9) {
-                            var eps = 0.5;
-                            textureId = (points[i + 8] >> 2);
-                            shiftU = 1024 * (points[i + 8] & 1);
-                            shiftV = 1024 * ((points[i + 8] >> 1) & 1);
-                            var x = points[i + 2], y = points[i + 3];
-                            var w = points[i + 4], h = points[i + 5];
-                            var u = points[i] + shiftU, v = points[i + 1] + shiftV;
-                            var animX = points[i + 6], animY = points[i + 7];
-                            arr[sz++] = x;
-                            arr[sz++] = y;
-                            arr[sz++] = u;
-                            arr[sz++] = v;
-                            arr[sz++] = u + eps;
-                            arr[sz++] = v + eps;
-                            arr[sz++] = u + w - eps;
-                            arr[sz++] = v + h - eps;
-                            arr[sz++] = animX;
-                            arr[sz++] = animY;
-                            arr[sz++] = textureId;
-                            arr[sz++] = x + w;
-                            arr[sz++] = y;
-                            arr[sz++] = u + w;
-                            arr[sz++] = v;
-                            arr[sz++] = u + eps;
-                            arr[sz++] = v + eps;
-                            arr[sz++] = u + w - eps;
-                            arr[sz++] = v + h - eps;
-                            arr[sz++] = animX;
-                            arr[sz++] = animY;
-                            arr[sz++] = textureId;
-                            arr[sz++] = x + w;
-                            arr[sz++] = y + h;
-                            arr[sz++] = u + w;
-                            arr[sz++] = v + h;
-                            arr[sz++] = u + eps;
-                            arr[sz++] = v + eps;
-                            arr[sz++] = u + w - eps;
-                            arr[sz++] = v + h - eps;
-                            arr[sz++] = animX;
-                            arr[sz++] = animY;
-                            arr[sz++] = textureId;
-                            arr[sz++] = x;
-                            arr[sz++] = y + h;
-                            arr[sz++] = u;
-                            arr[sz++] = v + h;
-                            arr[sz++] = u + eps;
-                            arr[sz++] = v + eps;
-                            arr[sz++] = u + w - eps;
-                            arr[sz++] = v + h - eps;
-                            arr[sz++] = animX;
-                            arr[sz++] = animY;
-                            arr[sz++] = textureId;
-                        }
+                        var x = points[i + 2], y = points[i + 3];
+                        var w = points[i + 4], h = points[i + 5];
+                        var u = points[i] + shiftU, v = points[i + 1] + shiftV;
+                        var animX = points[i + 6], animY = points[i + 7];
+                        arr[sz++] = x;
+                        arr[sz++] = y;
+                        arr[sz++] = u;
+                        arr[sz++] = v;
+                        arr[sz++] = u + eps;
+                        arr[sz++] = v + eps;
+                        arr[sz++] = u + w - eps;
+                        arr[sz++] = v + h - eps;
+                        arr[sz++] = animX;
+                        arr[sz++] = animY;
+                        arr[sz++] = textureId;
+                        arr[sz++] = x + w;
+                        arr[sz++] = y;
+                        arr[sz++] = u + w;
+                        arr[sz++] = v;
+                        arr[sz++] = u + eps;
+                        arr[sz++] = v + eps;
+                        arr[sz++] = u + w - eps;
+                        arr[sz++] = v + h - eps;
+                        arr[sz++] = animX;
+                        arr[sz++] = animY;
+                        arr[sz++] = textureId;
+                        arr[sz++] = x + w;
+                        arr[sz++] = y + h;
+                        arr[sz++] = u + w;
+                        arr[sz++] = v + h;
+                        arr[sz++] = u + eps;
+                        arr[sz++] = v + eps;
+                        arr[sz++] = u + w - eps;
+                        arr[sz++] = v + h - eps;
+                        arr[sz++] = animX;
+                        arr[sz++] = animY;
+                        arr[sz++] = textureId;
+                        arr[sz++] = x;
+                        arr[sz++] = y + h;
+                        arr[sz++] = u;
+                        arr[sz++] = v + h;
+                        arr[sz++] = u + eps;
+                        arr[sz++] = v + eps;
+                        arr[sz++] = u + w - eps;
+                        arr[sz++] = v + h - eps;
+                        arr[sz++] = animX;
+                        arr[sz++] = animY;
+                        arr[sz++] = textureId;
                     }
                     vertexBuf.upload(arr, 0, true);
                 }
-                if (useSquare)
-                    gl.drawArrays(gl.POINTS, 0, vertices);
-                else
-                    gl.drawElements(gl.TRIANGLES, rectsCount * 6, gl.UNSIGNED_SHORT, 0);
+                gl.drawElements(gl.TRIANGLES, rectsCount * 6, gl.UNSIGNED_SHORT, 0);
+            };
+            RectTileLayer.prototype.isModified = function (anim) {
+                if (this.modificationMarker !== this.pointsBuf.length ||
+                    anim && this.hasAnim) {
+                    return true;
+                }
+                return false;
+            };
+            RectTileLayer.prototype.clearModify = function () {
+                this.modificationMarker = this.pointsBuf.length;
             };
             return RectTileLayer;
         }(PIXI.Container));
@@ -488,7 +541,7 @@ var PIXI;
 (function (PIXI) {
     var tilemap;
     (function (tilemap) {
-        var rectShaderFrag = "varying vec2 vTextureCoord;\nvarying vec4 vFrame;\nvarying float vTextureId;\nuniform vec4 shadowColor;\nuniform sampler2D uSamplers[%count%];\nuniform vec2 uSamplerSize[%count%];\n\nvoid main(void){\n   vec2 textureCoord = clamp(vTextureCoord, vFrame.xy, vFrame.zw);\n   float textureId = floor(vTextureId + 0.5);\n\n   vec4 color;\n   %forloop%\n   gl_FragColor = color;\n}";
+        var rectShaderFrag = "\nvarying vec2 vTextureCoord;\nvarying vec4 vFrame;\nvarying float vTextureId;\nuniform vec4 shadowColor;\nuniform sampler2D uSamplers[%count%];\nuniform vec2 uSamplerSize[%count%];\n\nvoid main(void){\n   vec2 textureCoord = clamp(vTextureCoord, vFrame.xy, vFrame.zw);\n   float textureId = floor(vTextureId + 0.5);\n\n   vec4 color;\n   %forloop%\n   gl_FragColor = color;\n}\n";
         var rectShaderVert = "\nattribute vec2 aVertexPosition;\nattribute vec2 aTextureCoord;\nattribute vec4 aFrame;\nattribute vec2 aAnim;\nattribute float aTextureId;\n\nuniform mat3 projectionMatrix;\nuniform vec2 animationFrame;\n\nvarying vec2 vTextureCoord;\nvarying float vTextureId;\nvarying vec4 vFrame;\n\nvoid main(void){\n   gl_Position = vec4((projectionMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);\n   vec2 anim = aAnim * animationFrame;\n   vTextureCoord = aTextureCoord + anim;\n   vFrame = aFrame + vec4(anim, anim);\n   vTextureId = aTextureId;\n}\n";
         var TilemapShader = (function (_super) {
             __extends(TilemapShader, _super);
@@ -542,8 +595,8 @@ var PIXI;
                 shader.uniforms.uSamplers = sampleValues;
                 var samplerSize = [];
                 for (i = 0; i < maxTextures; i++) {
-                    samplerSize.push(1.0 / 2048);
-                    samplerSize.push(1.0 / 2048);
+                    samplerSize.push(1.0 / tilemap.Constant.bufferSize);
+                    samplerSize.push(1.0 / tilemap.Constant.bufferSize);
                 }
                 shader.uniforms.uSamplerSize = samplerSize;
             }
@@ -581,39 +634,6 @@ var PIXI;
 (function (PIXI) {
     var tilemap;
     (function (tilemap) {
-        var squareShaderVert = "\nattribute vec2 aVertexPosition;\nattribute vec2 aTextureCoord;\nattribute vec2 aAnim;\nattribute float aTextureId;\nattribute float aSize;\n\nuniform mat3 projectionMatrix;\nuniform vec2 samplerSize;\nuniform vec2 animationFrame;\nuniform float projectionScale;\n\nvarying vec2 vTextureCoord;\nvarying float vSize;\nvarying float vTextureId;\n\nvoid main(void){\n   gl_Position = vec4((projectionMatrix * vec3(aVertexPosition + aSize * 0.5, 1.0)).xy, 0.0, 1.0);\n   gl_PointSize = aSize * projectionScale;\n   vTextureCoord = aTextureCoord + aAnim * animationFrame;\n   vTextureId = aTextureId;\n   vSize = aSize;\n}\n";
-        var squareShaderFrag = "\nvarying vec2 vTextureCoord;\nvarying float vSize;\nvarying float vTextureId;\n\nuniform vec4 shadowColor;\nuniform sampler2D uSamplers[%count%];\nuniform vec2 uSamplerSize[%count%];\nuniform vec2 pointScale;\n\nvoid main(void){\n   float margin = 0.5 / vSize;\n   vec2 pointCoord = (gl_PointCoord - 0.5) * pointScale + 0.5;\n   vec2 clamped = vec2(clamp(pointCoord.x, margin, 1.0 - margin), clamp(pointCoord.y, margin, 1.0 - margin));\n   vec2 textureCoord = pointCoord * vSize + vTextureCoord;\n   float textureId = vTextureId;\n   vec4 color;\n   %forloop%\n   gl_FragColor = color;\n}\n\n";
-        var SquareTileShader = (function (_super) {
-            __extends(SquareTileShader, _super);
-            function SquareTileShader(gl, maxTextures) {
-                var _this = _super.call(this, gl, maxTextures, squareShaderVert, tilemap.shaderGenerator.generateFragmentSrc(maxTextures, squareShaderFrag)) || this;
-                _this.vertSize = 8;
-                _this.vertPerQuad = 1;
-                _this.stride = _this.vertSize * 4;
-                _this.maxTextures = maxTextures;
-                tilemap.shaderGenerator.fillSamplers(_this, _this.maxTextures);
-                return _this;
-            }
-            SquareTileShader.prototype.createVao = function (renderer, vb) {
-                var gl = renderer.gl;
-                return renderer.createVao()
-                    .addIndex(this.indexBuffer)
-                    .addAttribute(vb, this.attributes.aVertexPosition, gl.FLOAT, false, this.stride, 0)
-                    .addAttribute(vb, this.attributes.aTextureCoord, gl.FLOAT, false, this.stride, 2 * 4)
-                    .addAttribute(vb, this.attributes.aSize, gl.FLOAT, false, this.stride, 4 * 4)
-                    .addAttribute(vb, this.attributes.aAnim, gl.FLOAT, false, this.stride, 5 * 4)
-                    .addAttribute(vb, this.attributes.aTextureId, gl.FLOAT, false, this.stride, 7 * 4);
-            };
-            ;
-            return SquareTileShader;
-        }(tilemap.TilemapShader));
-        tilemap.SquareTileShader = SquareTileShader;
-    })(tilemap = PIXI.tilemap || (PIXI.tilemap = {}));
-})(PIXI || (PIXI = {}));
-var PIXI;
-(function (PIXI) {
-    var tilemap;
-    (function (tilemap) {
         var glCore = PIXI.glCore;
         function _hackSubImage(tex, sprite, clearBuffer, clearWidth, clearHeight) {
             var gl = tex.gl;
@@ -632,18 +652,15 @@ var PIXI;
                 _this.indices = new Uint16Array(0);
                 _this.lastTimeCheck = 0;
                 _this.tileAnim = [0, 0];
-                _this.maxTextures = 8;
                 _this.texLoc = [];
                 return _this;
             }
             TileRenderer.prototype.onContextChange = function () {
                 var gl = this.renderer.gl;
-                var maxTextures = this.maxTextures;
+                var maxTextures = tilemap.Constant.maxTextures;
                 this.rectShader = new tilemap.RectTileShader(gl, maxTextures);
-                this.squareShader = new tilemap.SquareTileShader(gl, maxTextures);
                 this.checkIndexBuffer(2000);
                 this.rectShader.indexBuffer = this.indexBuffer;
-                this.squareShader.indexBuffer = this.indexBuffer;
                 this.vbs = {};
                 this.glTextures = [];
                 this.boundSprites = [];
@@ -651,59 +668,57 @@ var PIXI;
             };
             TileRenderer.prototype.initBounds = function () {
                 var gl = this.renderer.gl;
-                var tempCanvas = document.createElement('canvas');
-                tempCanvas.width = 2048;
-                tempCanvas.height = 2048;
-                for (var i = 0; i < this.maxTextures; i++) {
-                    var rt = PIXI.RenderTexture.create(2048, 2048);
+                var maxTextures = tilemap.Constant.maxTextures;
+                for (var i = 0; i < maxTextures; i++) {
+                    var rt = PIXI.RenderTexture.create(tilemap.Constant.bufferSize, tilemap.Constant.bufferSize);
                     rt.baseTexture.premultipliedAlpha = true;
                     rt.baseTexture.scaleMode = TileRenderer.SCALE_MODE;
                     rt.baseTexture.wrapMode = PIXI.WRAP_MODES.CLAMP;
                     this.renderer.textureManager.updateTexture(rt);
                     this.glTextures.push(rt);
-                    var bs = [];
-                    for (var j = 0; j < 4; j++) {
+                    var bounds = this.boundSprites;
+                    for (var j = 0; j < tilemap.Constant.boundCountPerBuffer; j++) {
                         var spr = new PIXI.Sprite();
-                        spr.position.x = 1024 * (j & 1);
-                        spr.position.y = 1024 * (j >> 1);
-                        bs.push(spr);
+                        spr.position.x = tilemap.Constant.boundSize * (j & 1);
+                        spr.position.y = tilemap.Constant.boundSize * (j >> 1);
+                        bounds.push(spr);
                     }
-                    this.boundSprites.push(bs);
                 }
             };
             TileRenderer.prototype.bindTextures = function (renderer, shader, textures) {
-                var bounds = this.boundSprites;
-                var glts = this.glTextures;
                 var len = textures.length;
-                var maxTextures = this.maxTextures;
-                if (len > 4 * maxTextures) {
+                var maxTextures = tilemap.Constant.maxTextures;
+                if (len > tilemap.Constant.boundCountPerBuffer * maxTextures) {
                     return;
                 }
                 var doClear = TileRenderer.DO_CLEAR;
                 if (doClear && !this._clearBuffer) {
-                    this._clearBuffer = new Uint8Array(1024 * 1024 * 4);
+                    this._clearBuffer = new Uint8Array(tilemap.Constant.boundSize * tilemap.Constant.boundSize * 4);
                 }
+                var glts = this.glTextures;
+                var bounds = this.boundSprites;
                 var i;
                 for (i = 0; i < len; i++) {
                     var texture = textures[i];
-                    if (!texture || !textures[i].valid)
+                    if (!texture || !texture.valid)
                         continue;
-                    var bs = bounds[i >> 2][i & 3];
+                    var bs = bounds[i];
                     if (!bs.texture ||
                         bs.texture.baseTexture !== texture.baseTexture) {
                         bs.texture = texture;
                         var glt = glts[i >> 2];
                         renderer.bindTexture(glt, 0, true);
                         if (doClear) {
-                            _hackSubImage(glt.baseTexture._glTextures[renderer.CONTEXT_UID], bs, this._clearBuffer, 1024, 1024);
+                            _hackSubImage(glt.baseTexture._glTextures[renderer.CONTEXT_UID], bs, this._clearBuffer, tilemap.Constant.boundSize, tilemap.Constant.boundSize);
                         }
                         else {
                             _hackSubImage(glt.baseTexture._glTextures[renderer.CONTEXT_UID], bs);
                         }
                     }
                 }
+                var gltsUsed = i >> 2;
                 this.texLoc.length = 0;
-                for (i = 0; i < maxTextures; i++) {
+                for (i = 0; i <= gltsUsed; i++) {
                     this.texLoc.push(renderer.bindTexture(glts[i], i, true));
                 }
                 shader.uniforms.uSamplers = this.texLoc;
@@ -722,7 +737,6 @@ var PIXI;
                     }
                 }
             };
-            ;
             TileRenderer.prototype.start = function () {
                 this.renderer.state.setBlendMode(PIXI.BLEND_MODES.NORMAL);
             };
@@ -735,9 +749,9 @@ var PIXI;
                 }
                 return null;
             };
-            TileRenderer.prototype.createVb = function (useSquare) {
+            TileRenderer.prototype.createVb = function () {
                 var id = ++TileRenderer.vbAutoincrement;
-                var shader = this.getShader(useSquare);
+                var shader = this.getShader();
                 var gl = this.renderer.gl;
                 var vb = PIXI.glCore.GLBuffer.createVertexBuffer(gl, null, gl.STREAM_DRAW);
                 var stuff = {
@@ -745,7 +759,6 @@ var PIXI;
                     vb: vb,
                     vao: shader.createVao(this.renderer, vb),
                     lastTimeAccess: Date.now(),
-                    useSquare: useSquare,
                     shader: shader
                 };
                 this.vbs[id] = stuff;
@@ -786,17 +799,14 @@ var PIXI;
                     this.indexBuffer = glCore.GLBuffer.createIndexBuffer(gl, this.indices, gl.STATIC_DRAW);
                 }
             };
-            TileRenderer.prototype.getShader = function (useSquare) {
-                return useSquare ? this.squareShader : this.rectShader;
+            TileRenderer.prototype.getShader = function () {
+                return this.rectShader;
             };
             TileRenderer.prototype.destroy = function () {
                 _super.prototype.destroy.call(this);
                 this.rectShader.destroy();
-                this.squareShader.destroy();
                 this.rectShader = null;
-                this.squareShader = null;
             };
-            ;
             TileRenderer.vbAutoincrement = 0;
             TileRenderer.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
             TileRenderer.DO_CLEAR = false;
@@ -804,6 +814,49 @@ var PIXI;
         }(PIXI.ObjectRenderer));
         tilemap.TileRenderer = TileRenderer;
         PIXI.WebGLRenderer.registerPlugin('tilemap', TileRenderer);
+    })(tilemap = PIXI.tilemap || (PIXI.tilemap = {}));
+})(PIXI || (PIXI = {}));
+var PIXI;
+(function (PIXI) {
+    var tilemap;
+    (function (tilemap) {
+        var SimpleTileRenderer = (function (_super) {
+            __extends(SimpleTileRenderer, _super);
+            function SimpleTileRenderer(renderer) {
+                return _super.call(this, renderer) || this;
+            }
+            SimpleTileRenderer.prototype.onContextChange = function () {
+                var gl = this.renderer.gl;
+                this.rectShader = new tilemap.RectTileShader(gl, 1);
+                this.checkIndexBuffer(2000);
+                this.rectShader.indexBuffer = this.indexBuffer;
+                this.vbs = {};
+            };
+            SimpleTileRenderer.prototype.bindTextures = function (renderer, shader, textures) {
+                var len = textures.length;
+                var i;
+                for (i = 0; i < len; i++) {
+                    var texture = textures[i];
+                    if (!texture || !texture.valid)
+                        continue;
+                    this.texLoc.length = 0;
+                    var baseTexture = texture.baseTexture;
+                    this.texLoc.push(renderer.bindTexture(baseTexture, 0, true));
+                    shader.uniforms.uSamplers = this.texLoc;
+                    shader.uniforms.uSamplerSize = [
+                        1.0 / baseTexture.width,
+                        1.0 / baseTexture.height
+                    ];
+                    break;
+                }
+            };
+            SimpleTileRenderer.prototype.destroy = function () {
+                _super.prototype.destroy.call(this);
+            };
+            return SimpleTileRenderer;
+        }(tilemap.TileRenderer));
+        tilemap.SimpleTileRenderer = SimpleTileRenderer;
+        PIXI.WebGLRenderer.registerPlugin('simpleTilemap', SimpleTileRenderer);
     })(tilemap = PIXI.tilemap || (PIXI.tilemap = {}));
 })(PIXI || (PIXI = {}));
 var PIXI;
@@ -828,7 +881,7 @@ var PIXI;
             ZLayer.prototype.cacheIfDirty = function () {
                 var tilemap = this.tilemap;
                 var layers = this.children;
-                var modified = this._previousLayers != layers.length;
+                var modified = this._previousLayers !== layers.length;
                 this._previousLayers = layers.length;
                 var buf = this.canvasBuffer;
                 var tempRender = this._tempRender;
@@ -838,8 +891,8 @@ var PIXI;
                     tempRender.context = tempRender.rootContext;
                     tempRender.plugins.tilemap.dontUseTransform = true;
                 }
-                if (buf.width != tilemap._layerWidth ||
-                    buf.height != tilemap._layerHeight) {
+                if (buf.width !== tilemap._layerWidth ||
+                    buf.height !== tilemap._layerHeight) {
                     buf.width = tilemap._layerWidth;
                     buf.height = tilemap._layerHeight;
                     modified = true;
@@ -847,7 +900,7 @@ var PIXI;
                 var i;
                 if (!modified) {
                     for (i = 0; i < layers.length; i++) {
-                        if (layers[i].isModified(this._lastAnimationFrame != tilemap.animationFrame)) {
+                        if (layers[i].isModified(this._lastAnimationFrame !== tilemap.animationFrame)) {
                             modified = true;
                             break;
                         }
@@ -870,7 +923,6 @@ var PIXI;
                     break;
                 }
             };
-            ;
             ZLayer.prototype.renderCanvas = function (renderer) {
                 this.cacheIfDirty();
                 var wt = this.layerTransform;
@@ -878,7 +930,6 @@ var PIXI;
                 var tilemap = this.tilemap;
                 renderer.context.drawImage(this.canvasBuffer, 0, 0);
             };
-            ;
             return ZLayer;
         }(PIXI.Container));
         tilemap_1.ZLayer = ZLayer;

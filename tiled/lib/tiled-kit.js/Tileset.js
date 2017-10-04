@@ -2,13 +2,13 @@ var Tiled = Tiled || {};
 
 (function(exports) {
 
+    var Utils = exports.Utils;
     var Collision = exports.Collision;
 
     var Tileset = exports.Tileset = function(options) {
         for (var key in options) {
             this[key] = options[key];
         }
-        this.init();
     };
 
     var proto = {

@@ -4,6 +4,7 @@ var Tiled = Tiled || {};
 
 (function(exports) {
 
+    var Utils = exports.Utils;
     var Collision = exports.Collision;
     var Tileset = exports.Tileset;
     var TileLayer = exports.TileLayer;
@@ -45,7 +46,8 @@ var Tiled = Tiled || {};
     };
 
     Map.prototype.createTilemap = function(tileTextures, texPerChild) {
-        var tilemap = new PIXI.tilemap.CompositeRectTileLayer(0, tileTextures, false, texPerChild);
+        // var tilemap = new PIXI.tilemap.CompositeRectTileLayer(0, tileTextures, texPerChild);
+        var tilemap = new PIXI.tilemap.RectTileLayer(0, tileTextures);
 
         return tilemap;
     };
@@ -81,6 +83,7 @@ var Tiled = Tiled || {};
             y = viewOriginY * scale;
         }
 
+        tilemap.opacity = this.opacity;
         tilemap.pivot.set(pivotX, pivotY);
         tilemap.position.set(x, y);
         tilemap.scale.set(scale, scale);
@@ -153,6 +156,7 @@ var Tiled = Tiled || {};
             y = viewOriginY * scale;
         }
 
+        tilemap.opacity = this.opacity;
         tilemap.pivot.set(pivotX, pivotY);
         tilemap.position.set(x, y);
         tilemap.scale.set(scale, scale);
@@ -245,6 +249,7 @@ var Tiled = Tiled || {};
             y = viewOriginY * scale;
         }
 
+        tilemap.opacity = this.opacity;
         tilemap.pivot.set(pivotX, pivotY);
         tilemap.position.set(x, y);
         tilemap.scale.set(scale, scale);

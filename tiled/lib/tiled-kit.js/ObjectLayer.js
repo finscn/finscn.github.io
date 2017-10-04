@@ -2,6 +2,7 @@ var Tiled = Tiled || {};
 
 (function(exports) {
 
+    var Utils = exports.Utils;
     var Collision = exports.Collision;
     var Tileset = exports.Tileset;
     var TileLayer = exports.TileLayer;
@@ -10,7 +11,7 @@ var Tiled = Tiled || {};
         for (var key in options) {
             this[key] = options[key];
         }
-        this.init();
+        this.initBaseData();
     };
 
     var proto = {
@@ -37,6 +38,10 @@ var Tiled = Tiled || {};
 
 
         init: function() {
+
+        },
+
+        initBaseData: function() {
             var data = this.data;
             this.name = data.name;
             this.type = data.type;
