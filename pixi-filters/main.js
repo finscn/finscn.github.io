@@ -52,7 +52,7 @@ app.loader
                 app.start();
             }
         });
-        gui.add(window, 'freezed').name('<i class="fa fa-pause"></i> Freeze stage');
+        gui.add(window, 'freezed').name('* Freeze stage');
         init(resources);
         app.start();
     });
