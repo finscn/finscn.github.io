@@ -16,9 +16,11 @@ FilterMakers.push(function(){
     // folder.add(filter, 'randomValue', 0, 1);
     folder.add(filter, 'sepia', 0, 1);
     folder.add(filter, 'noise', 0, 1);
+    folder.add(filter, 'noiseSize', 1, 10);
     folder.add(filter, 'scratch', 0, 1);
     folder.add(filter, 'scratchWidth', 1, 30);
     folder.add(filter, 'vignetting', 0, 1);
+    folder.add(filter, 'vignettingBlur', 0, 1);
 
     return filter;
 });

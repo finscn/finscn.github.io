@@ -1,6 +1,6 @@
 // zoom-blur
 
-FilterMakers.push(function(){
+FilterMakers.push(function() {
     var filter;
 
     filter = new PIXI.filters.ZoomBlurFilter(0.1, [stageWidth / 2, stageHeight / 2], 80);
@@ -12,6 +12,7 @@ FilterMakers.push(function(){
     folder.add(filter.center, '0', 0, stageWidth).name('center.x');
     folder.add(filter.center, '1', 0, stageHeight).name('center.y');
     folder.add(filter, 'innerRadius', 0, stageWidth / 2);
+    folder.add(filter, 'radius', -1, Math.max(stageHeight, stageWidth));
 
     return filter;
 });
