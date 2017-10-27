@@ -2,49 +2,24 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="-1" />
+        <meta http-equiv="Cache-Control" content="no-cache" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <title>PixiJS Filters Demo</title>
         <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+        <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /> -->
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.5/dat.gui.min.js"></script> -->
+        <!-- <script src="https://pixijs.download/dev/pixi.min.js"></script> -->
         <script src="./lib/dat.gui.min.js"></script>
         <script src="./lib/pixi.min.js"></script>
-        <script src="./lib/EventEmitter.min.js"></script>
-        <script src="./lib/pixi-filters.min.js"></script>
-
-        <link rel="stylesheet" href="style.css" />
+        <link rel="stylesheet" href="index.css" />
     </head>
     <body>
         <div id="container">
             <canvas id="stage" width="300" height="300"></canvas>
             <a id="logo" href="http://www.pixijs.com"><img src="images/pixijs-v4-logo.png"></a>
         </div>
-        <script>
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-            ga('create', 'UA-103772589-3', 'auto');
-            ga('send', 'pageview');
-        </script>
-        <script src="main.js"></script>
-        <!-- filters in pxix.js -->
-        <!-- <script src="filters/displacement.js"></script> -->
-        <!-- <script src="filters/alpha.js"></script> -->
-        <!-- <script src="filters/blur.js"></script> -->
-        <!-- <script src="filters/noise.js"></script> -->
-        <!-- <script src="filters/colormatrix.js"></script> -->
-        <!-- <script src="filters/fxaa.js"></script> -->
-
-        <!-- filters in pxix-filters -->
-        <script src="filters/kawase-blur.js"></script>
-        <script src="filters/motion-blur.js"></script>
-        <script src="filters/radial-blur.js"></script>
-        <script src="filters/zoom-blur.js"></script>
-
-        <script src="filters/advanced-bloom.js"></script>
-        <script src="filters/multi-color-replace.js"></script>
-        <script src="filters/old-film.js"></script>
-        <script src="filters/shockwave.js"></script>
-
+        <script src="index.js"></script>
     </body>
 </html>
