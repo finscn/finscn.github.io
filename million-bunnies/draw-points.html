@@ -8,7 +8,7 @@
         <meta name="description" content="Pixi.js usage examples." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        <title>1 million bunnies - drawArrays</title>
+        <title>1 million bunnies - draw glPoints</title>
 
         <link rel="stylesheet" href="asset/normalize.css">
         <link rel="stylesheet" href="asset/main.css">
@@ -83,20 +83,16 @@
             precision highp float;
 
             attribute vec2 aVertexPosition;
-            attribute vec2 aIndex;
-            uniform sampler2D positionTex;
-            // uniform sampler2D rotationTex;
+            uniform sampler2D positions;
+            uniform float zoom;
 
             uniform vec2 bounds;
-            attribute vec2 aTextureCoord;
-            varying vec2 vTextureCoord;
 
             void main(void)
             {
-               vec4 pos = texture2D(positionTex, aIndex);
-               vec2 p = vec2( (pos.xy / bounds * vec2(2.0, -2.0)) + vec2(-1.0, 1.0));
-               gl_Position = vec4(aVertexPosition + p , 0.0, 1.0);
-               vTextureCoord = aTextureCoord;
+               vec4 pos = texture2D(positions, aVertexPosition);
+               gl_Position = vec4( (pos.xy/bounds * vec2(2.0, -2.0)) + vec2(-1.0, 1.0), 0.0, 1.0);
+               gl_PointSize = zoom * 8.0;
             }
         </script>
 
@@ -104,11 +100,10 @@
             precision highp float;
 
             uniform sampler2D uSampler;
-            varying vec2 vTextureCoord;
 
             void main(void)
             {
-                gl_FragColor = texture2D(uSampler, vTextureCoord);
+                gl_FragColor = texture2D(uSampler, gl_PointCoord);
             }
         </script>
 
@@ -118,7 +113,7 @@
 
     <body style='margin:0;padding:0'>
 
-<script src="main-draw-arrays.js"></script>
+<script src="main-draw-points.js"></script>
 
 <div>
 <!--One million bunnies using the pixi v4 gl core. Bunny physics all done on the gpu. View src for more info.-->

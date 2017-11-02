@@ -9,9 +9,9 @@ var glCore = PIXI.glCore;
 var gl;
 
 var physicsShader;
-var renderShader;
+var pointsShader;
 var vao;
-var phyVao;
+var vaoQuad;
 var fbo1;
 var fbo2;
 var bunnyTexture;
@@ -22,7 +22,7 @@ loader.add('bunny_8x8.png');
 loader.load(init);
 
 function initShaders() {
-    // set up the physics renderShader.
+    // set up the physics pointsShader.
     // this shader will compute the position and speed of a bunny
     // r - position x
     // g - position y
@@ -33,136 +33,69 @@ function initShaders() {
     physicsShader = new glCore.GLShader(gl, vertPhysics, fragPhysics);
 
     physicsShader.bind();
-    physicsShader.uniforms.positionTex = 0;
+    physicsShader.uniforms.positions = 0;
     physicsShader.uniforms.bounds = [width, height];
 
     // a simple shader that will render each bunny using points
     var vertPoints = document.getElementById('points-vert').innerHTML;
     var fragPoints = document.getElementById('points-frag').innerHTML;
-    renderShader = new glCore.GLShader(gl, vertPoints, fragPoints);
+    pointsShader = new glCore.GLShader(gl, vertPoints, fragPoints);
 
-    renderShader.bind();
-    renderShader.uniforms.uSampler = 1;
-    renderShader.uniforms.positionTex = 0;
-    renderShader.uniforms.bounds = [width, height];
+    pointsShader.bind();
+    pointsShader.uniforms.uSampler = 1;
+    pointsShader.uniforms.positions = 0;
+    pointsShader.uniforms.bounds = [width, height];
+    pointsShader.uniforms.zoom = zoom;
+
+
 }
 
 function initPhysicsVao() {
     // here we set up a vao to render a simple quad..
-    var verts = new Float32Array([
-        -1, -1,
-        -1, 1,
-        1, -1,
-        1, 1,
-    ]);
+    var verts = new Float32Array([-1, -1, -1, 1, 1, 1, 1, -1]);
 
-    var uvs = new Float32Array([
-        0, 0,
-        0, 1,
-        1, 0,
-        1, 1,
-    ]);
+    var uvs = new Float32Array([0, 0, 0, 1, 1, 1, 1, 0])
+
+    var indices = new Uint16Array([0, 1, 2, 0, 3, 2]);
 
     var verts = new glCore.GLBuffer.createVertexBuffer(gl, verts);
     var uvs = new glCore.GLBuffer.createVertexBuffer(gl, uvs);
+    var indices = new glCore.GLBuffer.createIndexBuffer(gl, indices);
 
     // create a VertexArrayObject - this will hold all the details for rendering the quad
-    phyVao = new glCore.VertexArrayObject(gl);
-    phyVao.addAttribute(verts, physicsShader.attributes.aVertexPosition);
-    phyVao.addAttribute(uvs, physicsShader.attributes.aTextureCoord);
+    vaoQuad = new glCore.VertexArrayObject(gl);
+    vaoQuad.addAttribute(verts, physicsShader.attributes.aVertexPosition);
+    vaoQuad.addAttribute(uvs, physicsShader.attributes.aTextureCoord);
+    vaoQuad.addIndex(indices);
 }
 
 function initPointsVao() {
     // the total numbe rof bunnys to upload..
-    var totalBunnies = bunniesToRender // 1048576;
+    var totalBunnies = bunniesToRender //1048576;
 
-    var verts = new Float32Array(totalBunnies * 12);
-    var coord = new Float32Array(totalBunnies * 12);
-    var spriteIndices = new Float32Array(totalBunnies * 12);
+    var verts = new Float32Array(totalBunnies * 2);
+    var uvs = new Uint16Array(totalBunnies);
 
-    var idx = 0;
-    var c = 0;
-    var r = 0;
+    for (var i = 0; i < totalBunnies * 2; i += 2) {
 
-    // NO indexBuffer , set 6 verts manually.
-    for (var i = 0; i < totalBunnies; i++) {
+        var x = i % fboSize;
+        var y = (i / fboSize) | 0;
 
-        verts[idx + 0] = 0;
-        verts[idx + 1] = 0;
+        verts[i] = x / fboSize;
+        verts[i + 1] = y / fboSize;
 
-        verts[idx + 2] = 0;
-        verts[idx + 3] = -8 * zoom * 2 / height;
-
-        verts[idx + 4] = 8 * zoom * 2 / width;
-        verts[idx + 5] = -8 * zoom * 2 / height;
-
-        verts[idx + 6] = 0;
-        verts[idx + 7] = 0;
-
-        verts[idx + 8] = 8 * zoom * 2 / width;
-        verts[idx + 9] = -8 * zoom * 2 / height;
-
-        verts[idx + 10] = 8 * zoom * 2 / width;
-        verts[idx + 11] = 0;
-
-
-        coord[idx + 0] = 0;
-        coord[idx + 1] = 0;
-
-        coord[idx + 2] = 0;
-        coord[idx + 3] = 1;
-
-        coord[idx + 4] = 1;
-        coord[idx + 5] = 1;
-
-        coord[idx + 6] = 0;
-        coord[idx + 7] = 0;
-
-        coord[idx + 8] = 1;
-        coord[idx + 9] = 1;
-
-        coord[idx + 10] = 1;
-        coord[idx + 11] = 0;
-
-
-        spriteIndices[idx + 0] = c / fboSize;
-        spriteIndices[idx + 1] = r / fboSize;
-
-        spriteIndices[idx + 2] = c / fboSize;
-        spriteIndices[idx + 3] = r / fboSize;
-
-        spriteIndices[idx + 4] = c / fboSize;
-        spriteIndices[idx + 5] = r / fboSize;
-
-        spriteIndices[idx + 6] = c / fboSize;
-        spriteIndices[idx + 7] = r / fboSize;
-
-        spriteIndices[idx + 8] = c / fboSize;
-        spriteIndices[idx + 9] = r / fboSize;
-
-        spriteIndices[idx + 10] = c / fboSize;
-        spriteIndices[idx + 11] = r / fboSize;
-
-        c++;
-        if (c >= fboSize) {
-            c = 0;
-            r++;
-        }
-        idx += 12;
+        uvs[i / 2] = i / 2;
     };
-
 
     // create some buffers to hold our vertex data
     // the vertex data here does not hold a posiiton of the bunny, but the uv of the pixle in the physics texture
     var quadVerts = new glCore.GLBuffer.createVertexBuffer(gl, verts);
-    var quadCoord = new glCore.GLBuffer.createVertexBuffer(gl, coord);
-    var quadSpriteIndices = new glCore.GLBuffer.createVertexBuffer(gl, spriteIndices);
+    var quadIndices = new glCore.GLBuffer.createIndexBuffer(gl, uvs);
 
     // create a VertexArrayObject - this will hold all the details for rendering the points
     vao = new glCore.VertexArrayObject(gl);
-    vao.addAttribute(quadVerts, renderShader.attributes.aVertexPosition);
-    vao.addAttribute(quadCoord, renderShader.attributes.aTextureCoord);
-    vao.addAttribute(quadSpriteIndices, renderShader.attributes.aIndex);
+    vao.addAttribute(quadVerts, pointsShader.attributes.aVertexPosition);
+    vao.addIndex(quadIndices);
 }
 
 function initFbos() {
@@ -192,6 +125,7 @@ function initBunnyTexture(width, height, data) {
     bunnyTexture.enableWrapClamp();
     bunnyTexture.enableNearestScaling();
 
+
     //lets bind it to texture 1..
     bunnyTexture.bind(1);
 }
@@ -205,8 +139,9 @@ function init() {
         antialias: false,
         premultipliedAlpha: false,
         stencil: false,
-        preserveDrawingBuffer: false,
+        preserveDrawingBuffer: false
     };
+
 
     document.body.appendChild(view);
 
@@ -221,6 +156,7 @@ function init() {
     stats.domElement.style.position = "absolute";
     stats.domElement.style.top = "0px";
 
+
     gl = glCore.createContext(view, contextOptions);
 
     gl.disable(gl.DEPTH_TEST);
@@ -233,7 +169,6 @@ function init() {
     initPhysicsVao();
     initPointsVao();
     initFbos();
-
     initBunnyTexture();
 
     // lets activate texture 0 (this is the only one we update in the loop)
@@ -273,12 +208,14 @@ function animate() {
     gl.viewport(0, 0, fboSize, fboSize);
 
     // bind the quad vao
-    phyVao.bind();
+    vaoQuad.bind();
 
     // draw the quad..
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+
     // finally unbind the second fbo as we no longer need to render to it
     fbo2.unbind();
+
 
 
     /*
@@ -298,7 +235,7 @@ function animate() {
     gl.viewport(0, 0, width, height);
 
     // bind the point shader program..
-    renderShader.bind();
+    pointsShader.bind();
 
     // bind the texture we just rendered in step one.
     fbo2.texture.bind();
@@ -307,7 +244,9 @@ function animate() {
     vao.bind();
 
     // boom! draw some bunnies using gl Points
-    gl.drawArrays(gl.TRIANGLES, 0, bunniesToRender * 6);
+    gl.drawElements(gl.POINTS, bunniesToRender, gl.UNSIGNED_SHORT, 0);
+
+
 
 
     // flip flop the fbos so we write the new data to the other fbo next time

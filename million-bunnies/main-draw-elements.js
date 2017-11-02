@@ -1,9 +1,9 @@
 var width = window.innerWidth;
 var height = window.innerHeight;
-var zoom = 1.0;
 var fboSize = 1024 * 2;
-var bunniesToRender = 1000000 //1048576 ;
-// var bunniesToRender = 2000;
+var zoom = 0.5;
+var bunniesToRender = 1000000 // 1048576 ;
+// var bunniesToRender = 200000;
 
 var glCore = PIXI.glCore;
 var gl;
@@ -80,12 +80,10 @@ function initPointsVao() {
     var coord = new Float32Array(totalBunnies * 8);
     var spriteIndices = new Float32Array(totalBunnies * 8);
 
-    var size = fboSize;
     var idx = 0;
     var c = 0;
     var r = 0;
 
-    // NO indexBuffer , set 6 verts manually.
     for (var i = 0; i < totalBunnies; i++) {
 
         verts[idx + 0] = 0;
@@ -114,20 +112,20 @@ function initPointsVao() {
         coord[idx + 7] = 0;
 
 
-        spriteIndices[idx + 0] = c / size;
-        spriteIndices[idx + 1] = r / size;
+        spriteIndices[idx + 0] = c / fboSize;
+        spriteIndices[idx + 1] = r / fboSize;
 
-        spriteIndices[idx + 2] = c / size;
-        spriteIndices[idx + 3] = r / size;
+        spriteIndices[idx + 2] = c / fboSize;
+        spriteIndices[idx + 3] = r / fboSize;
 
-        spriteIndices[idx + 4] = c / size;
-        spriteIndices[idx + 5] = r / size;
+        spriteIndices[idx + 4] = c / fboSize;
+        spriteIndices[idx + 5] = r / fboSize;
 
-        spriteIndices[idx + 6] = c / size;
-        spriteIndices[idx + 7] = r / size;
+        spriteIndices[idx + 6] = c / fboSize;
+        spriteIndices[idx + 7] = r / fboSize;
 
         c++;
-        if (c >= size) {
+        if (c >= fboSize) {
             c = 0;
             r++;
         }
@@ -259,7 +257,6 @@ function animate() {
     // bind the physics shader and then set the tick ( this is used to randoize the bounces )
     physicsShader.bind();
     physicsShader.uniforms.tick = Math.random() * 10000;
-    physicsShader.uniforms.random = Math.random();
 
     // bind the firt fbo texture we will render this to the second fbo
     fbo1.texture.bind();
