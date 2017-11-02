@@ -49,19 +49,18 @@ function initShaders() {
 
 function initPhysicsVao() {
     // here we set up a vao to render a simple quad..
-    var verts = new Float32Array([-1, -1, -1, 1,
-        1, 1, -1, -1,
+    var verts = new Float32Array([
+        -1, -1,
+        -1, 1,
+        1, -1,
         1, 1,
-        1, -1
     ]);
 
     var uvs = new Float32Array([
         0, 0,
         0, 1,
+        1, 0,
         1, 1,
-        0, 0,
-        1, 1,
-        1, 0
     ]);
 
     var verts = new glCore.GLBuffer.createVertexBuffer(gl, verts);
@@ -75,7 +74,7 @@ function initPhysicsVao() {
 
 function initPointsVao() {
     // the total numbe rof bunnys to upload..
-    var totalBunnies = bunniesToRender //1048576;
+    var totalBunnies = bunniesToRender // 1048576;
 
     var verts = new Float32Array(totalBunnies * 12);
     var coord = new Float32Array(totalBunnies * 12);
@@ -108,7 +107,6 @@ function initPointsVao() {
         verts[idx + 11] = 0;
 
 
-
         coord[idx + 0] = 0;
         coord[idx + 1] = 0;
 
@@ -127,6 +125,7 @@ function initPointsVao() {
         coord[idx + 10] = 1;
         coord[idx + 11] = 0;
 
+
         spriteIndices[idx + 0] = c / size;
         spriteIndices[idx + 1] = r / size;
 
@@ -136,13 +135,11 @@ function initPointsVao() {
         spriteIndices[idx + 4] = c / size;
         spriteIndices[idx + 5] = r / size;
 
-
         spriteIndices[idx + 6] = c / size;
         spriteIndices[idx + 7] = r / size;
 
         spriteIndices[idx + 8] = c / size;
         spriteIndices[idx + 9] = r / size;
-
 
         spriteIndices[idx + 10] = c / size;
         spriteIndices[idx + 11] = r / size;
@@ -281,7 +278,7 @@ function animate() {
     phyVao.bind();
 
     // draw the quad..
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     // finally unbind the second fbo as we no longer need to render to it
     fbo2.unbind();
 
@@ -312,7 +309,7 @@ function animate() {
     vao.bind();
 
     // boom! draw some bunnies using gl Points
-    gl.drawArrays(gl.TRIANGLES, 0, bunniesToRender);
+    gl.drawArrays(gl.TRIANGLES, 0, bunniesToRender * 6);
 
 
     // flip flop the fbos so we write the new data to the other fbo next time

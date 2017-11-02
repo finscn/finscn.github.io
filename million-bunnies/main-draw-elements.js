@@ -113,6 +113,7 @@ function initPointsVao() {
         coord[idx + 6] = 1;
         coord[idx + 7] = 0;
 
+
         spriteIndices[idx + 0] = c / size;
         spriteIndices[idx + 1] = r / size;
 
@@ -306,7 +307,7 @@ function animate() {
     vao.bind();
 
     // boom! draw some bunnies using gl Points
-    gl.drawElements(gl.TRIANGLES, bunniesToRender * 4, gl.UNSIGNED_SHORT, 0);
+    gl.drawElements(gl.TRIANGLES, bunniesToRender * 6, gl.UNSIGNED_SHORT, 0);
 
 
     // flip flop the fbos so we write the new data to the other fbo next time
