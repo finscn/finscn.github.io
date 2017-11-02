@@ -1,9 +1,3 @@
-var width = window.innerWidth;
-var height = window.innerHeight;
-var fboSize = 1024 * 2;
-var zoom = 0.5;
-var bunniesToRender = 1000000 // 1048576 ;
-// var bunniesToRender = 200000;
 
 var glCore = PIXI.glCore;
 var gl;
@@ -63,7 +57,7 @@ function initPhysicsVao() {
 
     var verts = new glCore.GLBuffer.createVertexBuffer(gl, verts);
     var uvs = new glCore.GLBuffer.createVertexBuffer(gl, uvs);
-    var indices = new glCore.GLBuffer.createIndexBuffer(gl, indices);
+    var indices = new glCore.GLBuffer.createIndexBuffer(gl, indices, gl.STATIC_DRAW);
 
     // create a VertexArrayObject - this will hold all the details for rendering the quad
     phyVao = new glCore.VertexArrayObject(gl);
@@ -152,7 +146,7 @@ function initPointsVao() {
     var quadVerts = new glCore.GLBuffer.createVertexBuffer(gl, verts);
     var quadCoord = new glCore.GLBuffer.createVertexBuffer(gl, coord);
     var quadSpriteIndices = new glCore.GLBuffer.createVertexBuffer(gl, spriteIndices);
-    var indices = new glCore.GLBuffer.createIndexBuffer(gl, indices);
+    var indices = new glCore.GLBuffer.createIndexBuffer(gl, indices, gl.STATIC_DRAW);
 
     // create a VertexArrayObject - this will hold all the details for rendering the points
     vao = new glCore.VertexArrayObject(gl);

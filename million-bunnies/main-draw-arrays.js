@@ -1,9 +1,3 @@
-var width = window.innerWidth;
-var height = window.innerHeight;
-var fboSize = 1024 * 2;
-var zoom = 0.5;
-var bunniesToRender = 1000000 // 1048576 ;
-// var bunniesToRender = 200000;
 
 var glCore = PIXI.glCore;
 var gl;
