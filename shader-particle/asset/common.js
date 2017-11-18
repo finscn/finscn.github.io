@@ -29,3 +29,8 @@ function loadImages(fileList, callback) {
     $next();
     return imagePool;
 }
+
+
+function randomInt(min, max) {
+    return ((max - min + 1) * Math.random() + min) >> 0;
+}

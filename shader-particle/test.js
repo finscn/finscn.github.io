@@ -60,10 +60,25 @@ function init() {
 }
 
 function initParticle() {
-    var texture = new PIXI.Texture(bunniesTexture, new PIXI.Rectangle(0, 46, 30, 38));
+    // var texture = new PIXI.Texture(bunniesTexture, new PIXI.Rectangle(0, 46, 30, 38));
+    var texture = new PIXI.Texture(bunniesTexture);
+    texture.orig = new PIXI.Rectangle(0, 0, 30, 38);
 
     particle = new PIXI.ShaderParticle(particleCount, texture, texture.width * zoom, texture.height * zoom);
     particle.anchor.set(0.5, 0.5);
+
+    var frameList = [
+        [0, 0, 30 / 30, 46 / 203],
+        [0, 46 / 203, 30 / 30, 38 / 203],
+        [0, (46 + 38) / 203, 30 / 30, 38 / 203],
+    ];
+    var idx = 0;
+    var frames = [];
+    for (var i = 0; i < particleCount; i++) {
+        frames.push(frameList[idx]);
+        idx = (idx + 1) % frameList.length;
+    }
+    particle.setFrames(frames);
 
     var statusList = createStatus(particleCount);
     var display = createDisplay(particleCount);
@@ -84,15 +99,16 @@ function update(delta) {
     bunny.rotation += 0.02 * delta;
     bunnyBig.rotation -= 0.02 * delta;
 
-    particle.alpha = 0.6 + Math.sin(now / 500) * 0.4;
-    particle.colorMultiplier = 1.1;
+    // particle.alpha = 0.6 + Math.sin(now / 500) * 0.4;
+    // particle.colorMultiplier = 1.1;
+    particle.alpha = 0.5;
 
     var red = 0.22 + Math.sin(now / 500) * 0.2;
     var green = 0.22 + Math.sin(now / 700) * 0.2;
     var blue = 0.22 + Math.sin(now / 900) * 0.2;
 
-    particle.colorOffset = new Float32Array([red, green, blue]);
-    particle.position.x = 0 + Math.sin(now / 400) * 30;
+    // particle.colorOffset = new Float32Array([red, green, blue]);
+    // particle.position.x = 0 + Math.sin(now / 400) * 30;
     // particle.position.y = 0 + Math.cow(now / 400) * 30;
 
     particle.updateStatus(app.renderer, delta * 33, now);
