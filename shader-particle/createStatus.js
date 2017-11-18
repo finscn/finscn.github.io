@@ -10,7 +10,7 @@ precision mediump float;
 varying vec2 vTextureCoord;
 uniform sampler2D uTextureIn;
 uniform vec2 viewSize;
-uniform float fboSize;
+uniform float fboWidth;
 uniform float particleCount;
 
 const float gravity = 0.75;
@@ -29,7 +29,7 @@ void main(void)
 {
     // float x = gl_FragCoord.x - 0.5;
     // float y = gl_FragCoord.y - 0.5;
-    // if (y * fboSize + x >= particleCount){
+    // if (y * fboWidth + x >= particleCount){
     //     discard;
     // }
 
@@ -66,24 +66,8 @@ void main(void)
 
     var status = new PIXI.ShaderParticleStatus(
         vertPhysics,
-        fragPhysics,
-        512
+        fragPhysics
     );
-
-    var fboSize = status.fboSize;
-
-    var defaultData = new Float32Array(4 * fboSize * fboSize);
-    var width = app.renderer.width;
-    var height = app.renderer.height;
-
-    for (var i = 0; i < defaultData.length; i += 4) {
-        defaultData[i] = Math.random() * width; // initial x of bunny
-        defaultData[i + 1] = Math.random() * -height * 2; // initial y of bunny
-        defaultData[i + 2] = Math.random() * 10; // initial x speed of bunny
-        defaultData[i + 3] = (Math.random() * 5) - 2.5; // initial y speed of bunny
-    };
-
-    status.fboBuffer = defaultData;
 
     statusList.push(status);
 
@@ -97,7 +81,7 @@ precision mediump float;
 varying vec2 vTextureCoord;
 uniform sampler2D uTextureIn;
 
-uniform float fboSize;
+uniform float fboWidth;
 uniform float particleCount;
 
 float rand(vec2 co)
@@ -114,7 +98,7 @@ void main(void)
 {
     // float x = gl_FragCoord.x - 0.5;
     // float y = gl_FragCoord.y - 0.5;
-    // if (y * fboSize + x >= particleCount){
+    // if (y * fboWidth + x >= particleCount){
     //     discard;
     // }
 
@@ -133,8 +117,7 @@ void main(void)
 
     var status = new PIXI.ShaderParticleStatus(
         vertPhysics,
-        fragPhysics,
-        512
+        fragPhysics
     );
 
     statusList.push(status);

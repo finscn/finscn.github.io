@@ -8,6 +8,9 @@ var bunnyBig;
 var particleCount = 10 * 10000;
 var zoom = 0.5;
 
+var fboWidth = 512;
+var fboHeight = 256;
+
 var app = new PIXI.Application(width, height, { backgroundColor: 0x1099bb });
 document.body.appendChild(app.view);
 
@@ -62,9 +65,22 @@ function init() {
 function initParticle() {
     // var texture = new PIXI.Texture(bunniesTexture, new PIXI.Rectangle(0, 46, 30, 38));
     var texture = new PIXI.Texture(bunniesTexture);
-    texture.orig = new PIXI.Rectangle(0, 0, 30, 38);
+    texture.orig = new PIXI.Rectangle(0, 0, 30 * zoom, 38 * zoom);
 
-    particle = new PIXI.ShaderParticle(particleCount, texture, texture.width * zoom, texture.height * zoom);
+    var defaultData = new Float32Array(4 * fboWidth * fboHeight);
+    var width = app.renderer.width;
+    var height = app.renderer.height;
+
+    for (var i = 0; i < defaultData.length; i += 4) {
+        defaultData[i] = Math.random() * width; // initial x of bunny
+        defaultData[i + 1] = Math.random() * -height * 2; // initial y of bunny
+        defaultData[i + 2] = Math.random() * 10; // initial x speed of bunny
+        defaultData[i + 3] = (Math.random() * 5) - 2.5; // initial y speed of bunny
+    };
+
+    status.fboBuffer = defaultData;
+
+    particle = new PIXI.ShaderParticle(particleCount, texture, defaultData, fboWidth, fboHeight);
     particle.anchor.set(0.5, 0.5);
 
     var frameList = [
@@ -99,17 +115,16 @@ function update(delta) {
     bunny.rotation += 0.02 * delta;
     bunnyBig.rotation -= 0.02 * delta;
 
-    // particle.alpha = 0.6 + Math.sin(now / 500) * 0.4;
-    // particle.colorMultiplier = 1.1;
-    particle.alpha = 0.5;
+    particle.position.x = 0 + Math.sin(now / 400) * 30;
+    // particle.position.y = 0 + Math.cos(now / 400) * 30;
+    // particle.alpha = 0.5;
+    particle.alpha = 0.6 + Math.sin(now / 500) * 0.4;
+    particle.colorMultiplier = 1.1;
 
     var red = 0.22 + Math.sin(now / 500) * 0.2;
     var green = 0.22 + Math.sin(now / 700) * 0.2;
     var blue = 0.22 + Math.sin(now / 900) * 0.2;
-
-    // particle.colorOffset = new Float32Array([red, green, blue]);
-    // particle.position.x = 0 + Math.sin(now / 400) * 30;
-    // particle.position.y = 0 + Math.cow(now / 400) * 30;
+    particle.colorOffset = new Float32Array([red, green, blue]);
 
     particle.updateStatus(app.renderer, delta * 33, now);
 

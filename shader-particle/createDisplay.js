@@ -61,8 +61,7 @@ void main(void){
 
     var display = new PIXI.ShaderParticleDisplay(
         vertDisplay,
-        fragDisplay,
-        512
+        fragDisplay
     );
     display.useStatus = [0, 1];
 
