@@ -66,7 +66,8 @@ void main(void)
 
     var status = new PIXI.ShaderParticleStatus(
         vertPhysics,
-        fragPhysics
+        fragPhysics,
+        512
     );
 
     var fboSize = status.fboSize;
