@@ -1,4 +1,4 @@
-var width = 720;
+var width = 640;
 var height = 480;
 
 var stats, counter;
@@ -9,10 +9,12 @@ var particle;
 var bunny;
 var bunnyBig;
 var particleCount = 10 * 10000;
-var zoom = 0.5;
+var zoom = 0.5 * 2;
 
 var fboWidth = 512;
 var fboHeight = 512;
+
+var browser = getBrowserInfo();
 
 var app = new PIXI.Application(width, height, { backgroundColor: 0x1099bb });
 document.body.appendChild(app.view);
@@ -75,10 +77,11 @@ function initParticle() {
     var texture = new PIXI.Texture(bunniesTexture);
     texture.orig = new PIXI.Rectangle(0, 0, 30 * zoom, 38 * zoom);
 
-    var defaultData = new Float32Array(4 * fboWidth * fboHeight);
-    var width = app.renderer.width;
-    var height = app.renderer.height;
+    particle = new PIXI.ShaderParticle(particleCount, texture, fboWidth, fboHeight);
+    particle.anchor.set(0.5, 0.5);
+    particle.setRegion(0, 0, width, height);
 
+    var defaultData = new Float32Array(4 * fboWidth * fboHeight);
     for (var i = 0; i < defaultData.length; i += 4) {
         defaultData[i] = Math.random() * width; // initial x of bunny
         defaultData[i + 1] = Math.random() * -height * 2; // initial y of bunny
@@ -86,11 +89,15 @@ function initParticle() {
         defaultData[i + 3] = (Math.random() * 5) - 2.5; // initial y speed of bunny
     };
 
-    status.fboBuffer = defaultData;
+    // var defaultData = new Uint16Array(4 * fboWidth * fboHeight);
+    // for (var i = 0; i < defaultData.length; i += 4) {
+    //     defaultData[i] = particle.toHalfFloat(Math.random() * width); // initial x of bunny
+    //     defaultData[i + 1] = particle.toHalfFloat(Math.random() * -height * 2); // initial y of bunny
+    //     defaultData[i + 2] = particle.toHalfFloat(Math.random() * 10); // initial x speed of bunny
+    //     defaultData[i + 3] = particle.toHalfFloat((Math.random() * 5) - 2.5); // initial y speed of bunny
+    // };
 
-    particle = new PIXI.ShaderParticle(particleCount, texture, defaultData, fboWidth, fboHeight);
-    particle.anchor.set(0.5, 0.5);
-    particle.setRegion(0, 0, width, height);
+    particle.setData(defaultData);
 
     var frameList = [
         [0, 0, 30 / 30, 46 / 203],
@@ -108,8 +115,12 @@ function initParticle() {
     var statusList = createStatus(particleCount);
     var display = createDisplay(particleCount);
 
+    particle.useHalfFloat = browser.iOS;
+
     particle.setStatusList(statusList);
     particle.setDisplay(display);
+
+    particle.useStatus = [0, 1];
 
     particle.init(app.renderer.gl);
 
@@ -127,6 +138,7 @@ function update(delta) {
     // particle.position.x = 0 + Math.sin(now / 400) * 30;
     // particle.position.y = 0 + Math.cos(now / 400) * 30;
     // particle.alpha = 0.5;
+    particle.time = (now % (3142 * 2)) / 6000;
     particle.alpha = 0.6 + Math.sin(now / 500) * 0.4;
     particle.colorMultiplier = 1.1;
 
@@ -135,7 +147,7 @@ function update(delta) {
     var blue = 0.22 + Math.sin(now / 900) * 0.2;
     particle.colorOffset = new Float32Array([red, green, blue]);
 
-    particle.updateStatus(app.renderer, delta * 33, now);
+    particle.updateStatus(app.renderer);
 
     stats && stats.end();
 }

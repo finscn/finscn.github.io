@@ -11,6 +11,7 @@ varying vec2 vTextureCoord;
 uniform sampler2D uTextureIn;
 uniform vec2 viewSize;
 uniform float fboWidth;
+uniform float time;
 uniform float particleCount;
 
 const float gravity = 0.75;
