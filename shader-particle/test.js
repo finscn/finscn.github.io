@@ -1,3 +1,6 @@
+var width = 720;
+var height = 480;
+
 var stats, counter;
 
 // create a new Sprite from an image path
@@ -9,7 +12,7 @@ var particleCount = 10 * 10000;
 var zoom = 0.5;
 
 var fboWidth = 512;
-var fboHeight = 256;
+var fboHeight = 512;
 
 var app = new PIXI.Application(width, height, { backgroundColor: 0x1099bb });
 document.body.appendChild(app.view);
@@ -42,6 +45,11 @@ var ImagePool = loadImages(
 
 
 function init() {
+    // var filter = new PIXI.filters.AlphaFilter(1.0);
+    // var filter = new PIXI.filters.BlurFilter();
+    // filter.padding = 0;
+    // app.stage.filters = [filter];
+
     bunniesTexture = PIXI.BaseTexture.from(ImagePool['bunnies']);
 
     var texture = new PIXI.Texture(bunniesTexture, new PIXI.Rectangle(0, 0, 30, 46));
@@ -82,6 +90,7 @@ function initParticle() {
 
     particle = new PIXI.ShaderParticle(particleCount, texture, defaultData, fboWidth, fboHeight);
     particle.anchor.set(0.5, 0.5);
+    particle.setRegion(0, 0, width, height);
 
     var frameList = [
         [0, 0, 30 / 30, 46 / 203],
@@ -115,7 +124,7 @@ function update(delta) {
     bunny.rotation += 0.02 * delta;
     bunnyBig.rotation -= 0.02 * delta;
 
-    particle.position.x = 0 + Math.sin(now / 400) * 30;
+    // particle.position.x = 0 + Math.sin(now / 400) * 30;
     // particle.position.y = 0 + Math.cos(now / 400) * 30;
     // particle.alpha = 0.5;
     particle.alpha = 0.6 + Math.sin(now / 500) * 0.4;

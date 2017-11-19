@@ -1,3 +1,6 @@
+var width = 720;
+var height = 480;
+
 var stats, counter;
 
 // create a new Sprite from an image path
@@ -41,6 +44,9 @@ var ImagePool = loadImages(
 
 
 function init() {
+    // var filter = new PIXI.filters.AlphaFilter(1.0);
+    // app.stage.filters = [filter];
+
     bunniesTexture = PIXI.BaseTexture.from(ImagePool['bunnies']);
 
     var texture = new PIXI.Texture(bunniesTexture, new PIXI.Rectangle(0, 0, 30, 46));
