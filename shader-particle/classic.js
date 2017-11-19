@@ -1,17 +1,16 @@
 var width = 640;
 var height = 480;
 
-var stats, counter;
-
-// create a new Sprite from an image path
-var bunniesTexture;
-var container;
-var bunny;
-var bunnyBig;
 var particleCount = 10 * 10000;
 var zoom = 0.5 * 2;
 
 var bunnies = new Array(particleCount);
+
+var stats, counter;
+var bunniesTexture;
+var container;
+var bunny;
+var bunnyBig;
 
 var app = new PIXI.Application(width, height, { backgroundColor: 0x1099bb });
 document.body.appendChild(app.view);

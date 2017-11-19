@@ -1,13 +1,6 @@
 var width = 640;
 var height = 480;
 
-var stats, counter;
-
-// create a new Sprite from an image path
-var bunniesTexture;
-var particle;
-var bunny;
-var bunnyBig;
 var particleCount = 10 * 10000;
 var zoom = 0.5 * 2;
 
@@ -15,6 +8,16 @@ var fboWidth = 512;
 var fboHeight = 512;
 
 var browser = getBrowserInfo();
+
+var useHalfFloat = browser.iOS;
+var useFilter = false;
+var useOffscreen = true;
+
+var stats, counter;
+var bunniesTexture;
+var particle;
+var bunny;
+var bunnyBig;
 
 var app = new PIXI.Application(width, height, { backgroundColor: 0x1099bb });
 document.body.appendChild(app.view);
@@ -47,10 +50,13 @@ var ImagePool = loadImages(
 
 
 function init() {
-    // var filter = new PIXI.filters.BlurFilter();
-    // var filter = new PIXI.filters.AlphaFilter(1.0);
-    // filter.padding = 0;
-    // app.stage.filters = [filter];
+    if (useFilter)
+    {
+        // var filter = new PIXI.filters.BlurFilter();
+        var filter = new PIXI.filters.AlphaFilter(1.0);
+        filter.padding = 0;
+        app.stage.filters = [filter];
+    }
 
     bunniesTexture = PIXI.BaseTexture.from(ImagePool['bunnies']);
 
@@ -80,6 +86,7 @@ function initParticle() {
     particle = new PIXI.ShaderParticle(particleCount, texture, fboWidth, fboHeight);
     particle.anchor.set(0.5, 0.5);
     particle.setRegion(0, 0, width, height);
+    particle.useOffscreen = useOffscreen;
 
     var defaultData = new Float32Array(4 * fboWidth * fboHeight);
     for (var i = 0; i < defaultData.length; i += 4) {
@@ -115,7 +122,7 @@ function initParticle() {
     var statusList = createStatus(particleCount);
     var display = createDisplay(particleCount);
 
-    particle.useHalfFloat = browser.iOS;
+    particle.useHalfFloat = useHalfFloat;
 
     particle.setStatusList(statusList);
     particle.setDisplay(display);
