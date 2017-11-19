@@ -47,8 +47,8 @@ var ImagePool = loadImages(
 
 
 function init() {
-    // var filter = new PIXI.filters.AlphaFilter(1.0);
     // var filter = new PIXI.filters.BlurFilter();
+    // var filter = new PIXI.filters.AlphaFilter(1.0);
     // filter.padding = 0;
     // app.stage.filters = [filter];
 
