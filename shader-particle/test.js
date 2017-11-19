@@ -135,10 +135,9 @@ function update(delta) {
     bunny.rotation += 0.02 * delta;
     bunnyBig.rotation -= 0.02 * delta;
 
-    // particle.position.x = 0 + Math.sin(now / 400) * 30;
+    particle.time = now;
+    particle.position.x = 0 + Math.sin(now / 400) * 30;
     // particle.position.y = 0 + Math.cos(now / 400) * 30;
-    // particle.alpha = 0.5;
-    particle.time = (now % (3142 * 2)) / 6000;
     particle.alpha = 0.6 + Math.sin(now / 500) * 0.4;
     particle.colorMultiplier = 1.1;
 

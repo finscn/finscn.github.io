@@ -1,4 +1,4 @@
-var width = 720;
+var width = 640;
 var height = 480;
 
 var stats, counter;
@@ -9,7 +9,7 @@ var container;
 var bunny;
 var bunnyBig;
 var particleCount = 10 * 10000;
-var zoom = 0.5;
+var zoom = 0.5 * 2;
 
 var bunnies = new Array(particleCount);
 
