@@ -8,9 +8,11 @@ var bunnies = new Array(particleCount);
 
 var stats, counter;
 var bunniesTexture;
-var container;
 var bunny;
 var bunnyBig;
+var containers = [];
+
+var limit = 65536 / 4;
 
 var app = new PIXI.Application(width, height, { backgroundColor: 0x1099bb });
 document.body.appendChild(app.view);
@@ -67,15 +69,23 @@ function init() {
 }
 
 function initParticle() {
-    container = new PIXI.particles.ParticleContainer(particleCount * 1.5, {
-        rotation: true,
-        position: true,
-        uvs: true,
-    });
 
     var texture = new PIXI.Texture(bunniesTexture, new PIXI.Rectangle(0, 46, 30, 38));
 
+    var container;
+    var pCount = 0;
     for (var i = 0; i < particleCount; i++) {
+        if (pCount === 0) {
+            pCount = 0;
+            container = new PIXI.particles.ParticleContainer(particleCount * 1.5, {
+                rotation: true,
+                position: true,
+                uvs: true,
+            });
+            app.stage.addChild(container);
+            containers.push(container);
+        }
+
         var p = new PIXI.Sprite(texture);
         p.anchor.set(0.5, 0.5);
         p.scale.set(zoom);
@@ -85,11 +95,14 @@ function initParticle() {
         p.velX = Math.random() * 10; // initial x speed of bunny
         p.velY = (Math.random() * 5) - 2.5; // initial y speed of bunny
 
-        bunnies[i] = p;
         container.addChild(p);
+        bunnies[i] = p;
+        pCount++;
+        if (pCount >= limit) {
+            pCount = 0;
+        }
     }
 
-    app.stage.addChild(container);
 }
 
 function update(delta) {
@@ -100,10 +113,11 @@ function update(delta) {
     bunny.rotation += 0.02 * delta;
     bunnyBig.rotation -= 0.02 * delta;
 
-    container.alpha = 0.6 + Math.sin(now / 500) * 0.4;
-
-    container.position.x = 0 + Math.sin(now / 400) * 30;
-    // particle.position.y = 0 + Math.cow(now / 400) * 30;
+    containers.forEach(function(container) {
+        container.position.x = 0 + Math.sin(now / 400) * 30;
+        // container.position.y = 0 + Math.cos(now / 400) * 30;
+        container.alpha = 0.6 + Math.sin(now / 500) * 0.4;
+    });
 
     var gravity = 0.75;
     for (var i = 0; i < particleCount; i++) {

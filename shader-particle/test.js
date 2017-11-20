@@ -124,8 +124,8 @@ function initParticle() {
 
     particle.useHalfFloat = useHalfFloat;
 
-    particle.setStatusList(statusList);
     particle.setDisplay(display);
+    particle.setStatusList(statusList);
 
     particle.useStatus = [0, 1];
 
