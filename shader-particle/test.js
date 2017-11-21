@@ -106,16 +106,16 @@ function initParticle() {
 
     particle.setData(defaultData);
 
-    var frameList = [
+    var rectList = [
         [0, 0, 30 / 30, 46 / 203],
         [0, 46 / 203, 30 / 30, 38 / 203],
         [0, (46 + 38) / 203, 30 / 30, 38 / 203],
     ];
-    var idx = 0;
     var frames = [];
+    var frameIdx = 0;
     for (var i = 0; i < particleCount; i++) {
-        frames.push(frameList[idx]);
-        idx = (idx + 1) % frameList.length;
+        frames.push(rectList[frameIdx]);
+        frameIdx = (frameIdx + 1) % rectList.length;
     }
     particle.setFrames(frames);
 
@@ -148,10 +148,10 @@ function update(delta) {
     particle.alpha = 0.6 + Math.sin(now / 500) * 0.4;
     particle.colorMultiplier = 1.1;
 
-    var red = 0.22 + Math.sin(now / 500) * 0.2;
-    var green = 0.22 + Math.sin(now / 700) * 0.2;
-    var blue = 0.22 + Math.sin(now / 900) * 0.2;
-    particle.colorOffset = new Float32Array([red, green, blue]);
+    // var red = 0.22 + Math.sin(now / 500) * 0.2;
+    // var green = 0.22 + Math.sin(now / 700) * 0.2;
+    // var blue = 0.22 + Math.sin(now / 900) * 0.2;
+    // particle.colorOffset = new Float32Array([red, green, blue]);
 
     particle.updateStatus(app.renderer);
 

@@ -70,10 +70,15 @@ function init() {
 
 function initParticle() {
 
-    var texture = new PIXI.Texture(bunniesTexture, new PIXI.Rectangle(0, 46, 30, 38));
-
     var container;
     var pCount = 0;
+
+    var rectList = [
+        new PIXI.Rectangle(0, 0, 30, 46),
+        new PIXI.Rectangle(0, 46, 30, 38),
+        new PIXI.Rectangle(0, (46 + 38), 30, 38),
+    ];
+    var frameIdx = 0;
     for (var i = 0; i < particleCount; i++) {
         if (pCount === 0) {
             pCount = 0;
@@ -84,6 +89,9 @@ function initParticle() {
             app.stage.addChild(container);
             containers.push(container);
         }
+
+        var texture = new PIXI.Texture(bunniesTexture, rectList[frameIdx]);
+        frameIdx = (frameIdx + 1) % rectList.length;
 
         var p = new PIXI.Sprite(texture);
         p.anchor.set(0.5, 0.5);
@@ -113,9 +121,15 @@ function update(delta) {
     bunnyBig.rotation -= 0.02 * delta;
 
     containers.forEach(function(container) {
-        // container.position.x = 0 + Math.sin(now / 400) * 30;
+        container.position.x = 0 + Math.sin(now / 400) * 30;
         // container.position.y = 0 + Math.cos(now / 400) * 30;
-        // container.alpha = 0.6 + Math.sin(now / 500) * 0.4;
+        container.alpha = 0.6 + Math.sin(now / 500) * 0.4;
+        container.colorMultiplier = 1.1;
+
+        // var red = 0.22 + Math.sin(now / 500) * 0.2;
+        // var green = 0.22 + Math.sin(now / 700) * 0.2;
+        // var blue = 0.22 + Math.sin(now / 900) * 0.2;
+        // container.colorOffset = new Float32Array([red, green, blue]);
     });
 
     var gravity = 0.75;
