@@ -80,7 +80,6 @@ function initParticle() {
             container = new PIXI.particles.ParticleContainer(particleCount * 1.5, {
                 rotation: true,
                 position: true,
-                uvs: true,
             });
             app.stage.addChild(container);
             containers.push(container);
@@ -114,9 +113,9 @@ function update(delta) {
     bunnyBig.rotation -= 0.02 * delta;
 
     containers.forEach(function(container) {
-        container.position.x = 0 + Math.sin(now / 400) * 30;
+        // container.position.x = 0 + Math.sin(now / 400) * 30;
         // container.position.y = 0 + Math.cos(now / 400) * 30;
-        container.alpha = 0.6 + Math.sin(now / 500) * 0.4;
+        // container.alpha = 0.6 + Math.sin(now / 500) * 0.4;
     });
 
     var gravity = 0.75;
