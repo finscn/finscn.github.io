@@ -12,14 +12,10 @@ varying vec2 vTextureCoord;
 uniform vec2 uPosition;
 
 uniform sampler2D uStatusOut0;
-uniform sampler2D uStatusOut1;
 attribute vec2 aParticleIndex;
-
-// attribute vec4 aParticleFrame;
 
 attribute vec2 aParticleFrameOffset;
 uniform vec2 uParticleFrameSize;
-
 
 void main(void){
 
@@ -28,23 +24,16 @@ void main(void){
     state = texture2D(uStatusOut0, aParticleIndex);
     vec2 position = state.xy;
 
-    state = texture2D(uStatusOut1, aParticleIndex);
-    // float cosR = state.x;
-    // float sinR = state.y;
+    state = texture2D(uStatusOut0, vec2(aParticleIndex.x, aParticleIndex.y + 0.5));
     float cosR = cos(state.z);
     float sinR = sin(state.z);
-
 
     vec2 v = position + uPosition;
 
     v.x += aVertexPosition.x * cosR - aVertexPosition.y * sinR;
     v.y += aVertexPosition.x * sinR + aVertexPosition.y * cosR;
 
-    gl_Position = vec4((projectionMatrix * vec3(v, 1.0)).xy, -1.0, 1.0);
-
-    // vTextureCoord = aTextureCoord;
-
-    // vTextureCoord = aParticleFrame.xy + aTextureCoord * aParticleFrame.zw;
+    gl_Position = vec4((projectionMatrix * vec3(v, 1.0)).xy, 0.0, 1.0);
 
     vTextureCoord = aParticleFrameOffset.xy + aTextureCoord * uParticleFrameSize.xy;
 }

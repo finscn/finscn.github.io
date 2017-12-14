@@ -12,27 +12,26 @@ varying vec2 vTextureCoord;
 uniform vec2 uPosition;
 
 uniform sampler2D uStatusOut0;
-uniform sampler2D uStatusOut1;
+uniform sampler2D uStatusOut2;
 attribute vec2 aParticleIndex;
-
-// attribute vec4 aParticleFrame;
 
 attribute vec2 aParticleFrameOffset;
 uniform vec2 uParticleFrameSize;
 
+${encodeShader}
 
 void main(void){
 
     vec4 state;
 
-    state = texture2D(uStatusOut0, aParticleIndex);
-    vec2 position = state.xy;
+    vec4 psample = texture2D(uStatusOut0, aParticleIndex);
+    vec2 position = vec2(decode(psample.rg, SCALE.x), decode(psample.ba, SCALE.x));
 
-    state = texture2D(uStatusOut1, aParticleIndex);
-    // float cosR = state.x;
-    // float sinR = state.y;
-    float cosR = cos(state.z);
-    float sinR = sin(state.z);
+    vec4 rsample = texture2D(uStatusOut2, aParticleIndex);
+    float rotation = decode(rsample.rg, 100.0);
+
+    float cosR = cos(rotation);
+    float sinR = sin(rotation);
 
 
     vec2 v = position + uPosition;
@@ -40,7 +39,7 @@ void main(void){
     v.x += aVertexPosition.x * cosR - aVertexPosition.y * sinR;
     v.y += aVertexPosition.x * sinR + aVertexPosition.y * cosR;
 
-    gl_Position = vec4((projectionMatrix * vec3(v, 1.0)).xy, -1.0, 1.0);
+    gl_Position = vec4((projectionMatrix * vec3(v, 1.0)).xy, 0.0, 1.0);
 
     // vTextureCoord = aTextureCoord;
 
@@ -78,6 +77,9 @@ void main(void){
         vertDisplay,
         fragDisplay
     );
+    display.updateShader = function(renderer, particle) {
+        this.shader.uniforms.SCALE = SCALE;
+    };
 
     return display;
 }

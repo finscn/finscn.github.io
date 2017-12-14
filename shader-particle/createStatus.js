@@ -1,4 +1,36 @@
 function createStatus(particleCount) {
+
+    var initialPosVec = new Float32Array(4 * fboWidth * fboHeight);
+    var initialRotation = new Float32Array(4 * fboWidth * fboHeight);
+    for (var i = 0; i < initialPosVec.length; i += 4) {
+        initialPosVec[i] = Math.random() * width; // initial x of bunny
+        initialPosVec[i + 1] = Math.random() * -height * 1.5; // initial y of bunny
+        initialPosVec[i + 2] = Math.random() * 10; // initial x speed of bunny
+        initialPosVec[i + 3] = Math.random() * 5 - 2.5; // initial y speed of bunny
+
+        var r = Math.random() * 3.14 * 2;
+        // initialRotation[i] = Math.cos(r);
+        // initialRotation[i + 1] = Math.sin(r);
+        initialRotation[i + 2] = r;
+        initialRotation[i + 3] = 0;
+    };
+
+    // var initialPosVec = new Uint16Array(4 * fboWidth * fboHeight);
+    // var initialRotation = new Uint16Array(4 * fboWidth * fboHeight);
+    // for (var i = 0; i < initialPosVec.length; i += 4) {
+    //     initialPosVec[i] = ShaderParticle.toHalfFloat(Math.random() * width); // initial x of bunny
+    //     initialPosVec[i + 1] = ShaderParticle.toHalfFloat(Math.random() * -height * 2); // initial y of bunny
+    //     initialPosVec[i + 2] = ShaderParticle.toHalfFloat(Math.random() * 10); // initial x speed of bunny
+    //     initialPosVec[i + 3] = ShaderParticle.toHalfFloat(Math.random() * 5 - 2.5); // initial y speed of bunny
+
+    //    var r = Math.random() * 3.14 * 2;
+    //    initialRotation[i] = ShaderParticle.toHalfFloat(Math.cos(r));
+    //    initialRotation[i + 1] = ShaderParticle.toHalfFloat(Math.sin(r));
+    //    initialRotation[i + 2] = ShaderParticle.toHalfFloat(r);
+    //   initialRotation[i + 3] = ShaderParticle.toHalfFloat(0);
+
+    // };
+
     var statusList = [];
 
     var vertPhysics = null;
@@ -8,50 +40,45 @@ function createStatus(particleCount) {
 precision mediump float;
 
 varying vec2 vTextureCoord;
-uniform sampler2D uTextureIn;
-uniform vec2 viewSize;
-uniform float fboWidth;
-uniform float time;
-uniform float particleCount;
+uniform sampler2D uStatusIn;
+uniform vec2 uViewSize;
+uniform vec2 uFboSize;
+uniform float uParticleCount;
+uniform float random;
 
 const float gravity = 0.75;
 
-float rand(vec2 co)
-{
-    float a = 12.9898;
-    float b = 78.233;
-    float c = 43758.5453;
-    float dt = dot(co.xy ,vec2(a,b));
-    float sn = mod(dt,3.14);
-    return fract(sin(sn) * c);
-}
-
 void main(void)
 {
+    // float fboWidth = uFboSize.x;
+
     // float x = gl_FragCoord.x - 0.5;
     // float y = gl_FragCoord.y - 0.5;
-    // if (y * fboWidth + x >= particleCount){
+    // if (y * fboWidth + x >= uParticleCount){
     //     discard;
     // }
 
-    vec4 position = texture2D(uTextureIn, vTextureCoord);
+    vec4 position = texture2D(uStatusIn, vTextureCoord);
+
+    float x = vTextureCoord.x;
+    float no = vTextureCoord.y + x / 512.0;
+
     position.xy += position.zw;
     position.w += gravity;
 
-    if(position.y > viewSize.y)
+    if(position.y > uViewSize.y)
     {
-        position.y = viewSize.y;
-        position.w *= -0.85;
-
-        if(position.w > -20.0)
+        position.y = uViewSize.y;
+        if(position.w > 25.0)
         {
-            position.w = rand(vTextureCoord) * -32.0;
+            position.w = 25.0 - random * no * 10.0; // * abs(position.x * 0.05 + position.z) * 0.1;
         }
+        position.w *= -1.0;
     }
 
-    if(position.x > viewSize.x)
+    if(position.x > uViewSize.x)
     {
-        position.x = viewSize.x;
+        position.x = uViewSize.x;
         position.z *= -1.0;
     }
     else if(position.x < 0.0)
@@ -67,12 +94,20 @@ void main(void)
 
     var status = new PIXI.ShaderParticleStatus(
         vertPhysics,
-        fragPhysics
+        fragPhysics,
+        initialPosVec
     );
 
     statusList.push(status);
 
+
     /////////////////////////////
+    /////////////////////////////
+    /////////////////////////////
+    /////////////////////////////
+    /////////////////////////////
+    /////////////////////////////
+
 
     var vertPhysics = null;
     var fragPhysics = `
@@ -80,47 +115,39 @@ void main(void)
 precision mediump float;
 
 varying vec2 vTextureCoord;
-uniform sampler2D uTextureIn;
+uniform sampler2D uStatusIn;
 
-uniform float fboWidth;
-uniform float particleCount;
-
-float rand(vec2 co)
-{
-    float a = 12.9898;
-    float b = 78.233;
-    float c = 43758.5453;
-    float dt = dot(co.xy ,vec2(a,b));
-    float sn = mod(dt,3.14);
-    return fract(sin(sn) * c);
-}
+uniform vec2 uFboSize;
+uniform float uParticleCount;
 
 void main(void)
 {
+    // float fboWidth = uFboSize.x;
+
     // float x = gl_FragCoord.x - 0.5;
     // float y = gl_FragCoord.y - 0.5;
-    // if (y * fboWidth + x >= particleCount){
+    // if (y * fboWidth + x >= uParticleCount){
     //     discard;
     // }
 
-    vec4 raotation = texture2D(uTextureIn, vTextureCoord);
-    raotation.z += 0.1 + rand(vTextureCoord) * 0.1;
+    vec4 rotation = texture2D(uStatusIn, vTextureCoord);
+    rotation.z += 0.02;
+    rotation.z = mod(rotation.z, 3.1415926 * 2.0);
 
-    raotation.z = mod(raotation.z, 3.1415926 * 2.0);
+    // rotation.x = cos(rotation.z);
+    // rotation.y = sin(rotation.z);
 
-    raotation.x = cos(raotation.z);
-    raotation.y = sin(raotation.z);
-
-    gl_FragColor = raotation;
+    gl_FragColor = rotation;
 }
 
     `;
 
     var status = new PIXI.ShaderParticleStatus(
         vertPhysics,
-        fragPhysics
+        fragPhysics,
+        initialRotation
     );
-
+    // status.once = true;
     statusList.push(status);
 
     return statusList;
