@@ -2,7 +2,7 @@ var width = 640;
 var height = 480;
 
 var params = getUrlParams();
-var particleCount = params.p || 8 * 10000;
+var particleCount = parseInt(params.p) || 8 * 10000;
 
 var zoom = 0.5 * 2;
 
