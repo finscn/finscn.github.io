@@ -47,7 +47,7 @@ function getUrlParams() {
                 continue;
             }
             var nv = a.split("=");
-            params[nv[0]] = nv.length > 1 ? Utils.decodeURIComponent(nv[1]) : true;
+            params[nv[0]] = nv.length > 1 ? decodeURIComponent(nv[1]) : true;
         }
     }
     return params;
