@@ -1,7 +1,9 @@
 var width = 640;
 var height = 480;
 
-var particleCount = 8 * 10000;
+var params = getUrlParams();
+var particleCount = params.p || 8 * 10000;
+
 var zoom = 0.5 * 2;
 
 var bunnies = new Array(particleCount);

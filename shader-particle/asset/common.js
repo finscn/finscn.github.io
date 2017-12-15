@@ -35,6 +35,24 @@ function randomInt(min, max) {
     return ((max - min + 1) * Math.random() + min) >> 0;
 }
 
+function getUrlParams() {
+    var params = {};
+    var queryStr = window.location.search;
+    if (queryStr) {
+        queryStr = queryStr.substring(1);
+        var args = queryStr.split("&");
+        for (var i = 0, len = args.length; i < len; i++) {
+            var a = args[i];
+            if (a === "") {
+                continue;
+            }
+            var nv = a.split("=");
+            params[nv[0]] = nv.length > 1 ? Utils.decodeURIComponent(nv[1]) : true;
+        }
+    }
+    return params;
+}
+
 function getBrowserInfo() {
     var browser = {};
 
