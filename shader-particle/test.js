@@ -148,6 +148,7 @@ function initParticle() {
 }
 
 function start() {
+    // app.ticker.add(update);
     update();
 }
 
@@ -160,6 +161,7 @@ function update(delta) {
     var now = Date.now();
 
     delta = 1;
+
     bunny.rotation += 0.02 * delta;
     bunnyBig.rotation -= 0.02 * delta;
 

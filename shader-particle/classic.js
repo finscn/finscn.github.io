@@ -17,6 +17,7 @@ var app = new PIXI.Application(width, height, {
     // clearBeforeRender: false,
     // preserveDrawingBuffer: true,
 });
+app.stop();
 document.body.appendChild(app.view);
 
 var ImagePool = loadImages(
@@ -41,7 +42,7 @@ var ImagePool = loadImages(
         }
 
         init();
-        app.ticker.add(update);
+        start();
     }
 );
 
@@ -104,13 +105,22 @@ function initParticle() {
         container.addChild(p);
         bunnies[i] = p;
     }
+}
 
+function start() {
+    // app.ticker.add(update);
+    update();
 }
 
 function update(delta) {
+
     stats && stats.begin();
 
+    requestAnimationFrame(update);
+
     var now = Date.now();
+
+    delta = 1;
 
     bunny.rotation += 0.02 * delta;
     bunnyBig.rotation -= 0.02 * delta;
@@ -161,6 +171,8 @@ function update(delta) {
         }
         p.rotation = r;
     }
+
+    app.renderer.render(app.stage);
 
     stats && stats.end();
 }
