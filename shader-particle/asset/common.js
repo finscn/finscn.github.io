@@ -50,7 +50,6 @@ function getUrlParams() {
             params[nv[0]] = nv.length > 1 ? decodeURIComponent(nv[1]) : true;
         }
     }
-    debugger
     return params;
 }
 
