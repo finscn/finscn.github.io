@@ -21,6 +21,7 @@ setInterval(function() {
         return;
     }
     var gravity = 0.75;
+    var random = Math.random();
     var index = 0;
     for (var i = 0;index+=5, i < particleCount; i++) {
         var posX = workerArray[index + 0];
@@ -36,11 +37,7 @@ setInterval(function() {
 
         if (posY > height) {
             posY = height;
-            velY *= -0.85;
-
-            if (velY > -20.0) {
-                velY = Math.random() * -32.0;
-            }
+            velY = -25.0 + random * ((posX + posY) % 10);
         }
 
         if (posX > width) {
