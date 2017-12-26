@@ -11,9 +11,6 @@ if (format !== 'RGBA' && browser.iOS) {
     format = 'FLOAT HALF_FLOAT';
 }
 
-var useFilter = false;
-var useFramebuffer = null;
-
 var stats, counter;
 var bunniesTexture;
 var html5Texture;
