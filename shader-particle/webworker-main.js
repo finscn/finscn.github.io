@@ -14,6 +14,11 @@ var app = new PIXI.Application(width, height, {
 app.stop();
 document.body.appendChild(app.view);
 
+
+var root = document.location.href.replace(/\/[^/]*$/, "/");
+var workerArray = null;
+var workerArraySize = 0;
+
 var ImagePool = loadImages(
     [
         { id: 'bunnies', src: 'asset/bunnies.png' },
@@ -40,6 +45,12 @@ var ImagePool = loadImages(
     }
 );
 
+
+var worker = new Worker(root + "webworker-worker.js");
+worker.postMessage = worker.webkitPostMessage || worker.postMessage;
+worker.onmessage = function(e) {
+    workerArray = e.data;
+}
 
 function init() {
     // var filter = new PIXI.filters.AlphaFilter(1.0);
@@ -82,6 +93,12 @@ function initParticle() {
         new PIXI.Rectangle(0, (46 + 38), 30, 38),
     ];
     var frameIdx = 0;
+
+
+    workerArraySize = particleCount * 5;
+    workerArray = new Float32Array(workerArraySize);
+    var index = 0;
+
     for (var i = 0; i < particleCount; i++) {
         var texture = new PIXI.Texture(bunniesTexture, rectList[frameIdx]);
         frameIdx = (frameIdx + 1) % rectList.length;
@@ -90,15 +107,38 @@ function initParticle() {
         p.anchor.set(0.5, 0.5);
         p.scale.set(zoom);
 
-        p.position.x = Math.random() * width; // initial x of bunny
-        p.position.y = Math.random() * -height * 2; // initial y of bunny
-        p.velX = Math.random() * 10; // initial x speed of bunny
-        p.velY = (Math.random() * 5) - 2.5; // initial y speed of bunny
-        p.rotation = Math.random() * 3.14 * 2;
+        var x = Math.random() * width; // initial x of bunny
+        var y = Math.random() * -height * 2; // initial y of bunny
+        var velX = Math.random() * 10; // initial x speed of bunny
+        var velY = (Math.random() * 5) - 2.5; // initial y speed of bunny
+        var rotation = Math.random() * 3.14 * 2;
+
+        workerArray[index++] = x;
+        workerArray[index++] = y;
+        workerArray[index++] = velX;
+        workerArray[index++] = velY;
+        workerArray[index++] = rotation;
+
+        p.position.set(x, y);
+        p.velX = velX;
+        p.velY = velY;
+        p.rotation = rotation;
 
         container.addChild(p);
         bunnies[i] = p;
     }
+
+    worker.postMessage({
+        particleCount: particleCount,
+        workerArraySize: workerArraySize,
+        width: width,
+        height: height,
+    });
+}
+
+function sendBuffer() {
+    worker.postMessage(workerArray, [workerArray.buffer]);
+    workerArray = null;
 }
 
 function start() {
@@ -129,44 +169,22 @@ function update(delta) {
     // var blue = 0.22 + Math.sin(now / 900) * 0.2;
     // container.colorOffset = new Float32Array([red, green, blue]);
 
-    var gravity = 0.75;
-    for (var i = 0; i < particleCount; i++) {
-        var p = bunnies[i];
-
-        var posX = p.position.x;
-        var posY = p.position.y;
-        posX += p.velX;
-        posY += p.velY;
-
-        p.velY += gravity;
-
-        if (posY > height) {
-            posY = height;
-            p.velY *= -0.85;
-
-            if (p.velY > -20.0) {
-                p.velY = Math.random() * -32.0;
-            }
+    if (workerArray) {
+        var index = 0;
+        for (var i = 0; i < particleCount; i++) {
+            var p = bunnies[i];
+            var x = workerArray[index++];
+            var y = workerArray[index++];
+            index += 2;
+            var rotation = workerArray[index++];
+            p.position.set(x, y);
+            p.rotation = rotation;
         }
-
-        if (posX > width) {
-            posX = width;
-            p.velX *= -1.0;
-        } else if (posX < 0.0) {
-            posX = 0.0;
-            p.velX *= -1.0;
-        }
-        p.position.set(posX, posY);
-
-        var r = p.rotation;
-        r += 0.02;
-        if (r > 3.1415926 * 2.0) {
-            r = 0.0;
-        }
-        p.rotation = r;
+        sendBuffer();
     }
 
     app.renderer.render(app.stage);
+
 
     stats && stats.end();
 }
