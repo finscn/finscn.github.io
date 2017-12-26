@@ -109,6 +109,7 @@ uniform sampler2D posTex;
 uniform vec2 uViewSize;
 uniform vec2 uFboSize;
 uniform float uParticleCount;
+uniform float random;
 
 const float gravity = 0.75;
 
@@ -125,13 +126,7 @@ void main(void)
     velocity.y += gravity;
     if(position.y > uViewSize.y)
     {
-        position.y = uViewSize.y;
-
-        if(velocity.y > 25.0)
-        {
-            velocity.y = 25.0;
-        }
-        velocity.y *= -1.0;
+        velocity.y = -25.0 + random * mod(position.x + position.y, 10.0);
     }
     if(position.x > uViewSize.x)
     {

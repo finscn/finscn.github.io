@@ -130,23 +130,20 @@ function update(delta) {
     // container.colorOffset = new Float32Array([red, green, blue]);
 
     var gravity = 0.75;
+    var random = Math.random();
     for (var i = 0; i < particleCount; i++) {
+        var no = i;
         var p = bunnies[i];
 
         var posX = p.position.x;
         var posY = p.position.y;
         posX += p.velX;
         posY += p.velY;
-
         p.velY += gravity;
 
         if (posY > height) {
             posY = height;
-            p.velY *= -0.85;
-
-            if (p.velY > -20.0) {
-                p.velY = Math.random() * -32.0;
-            }
+            p.velY = -25.0 + random * ((posX + posY) % 10);
         }
 
         if (posX > width) {
@@ -156,6 +153,7 @@ function update(delta) {
             posX = 0.0;
             p.velX *= -1.0;
         }
+
         p.position.set(posX, posY);
 
         var r = p.rotation;

@@ -31,6 +31,7 @@ uniform sampler2D uStatusIn;
 uniform vec2 uViewSize;
 uniform vec2 uFboSize;
 uniform float uParticleCount;
+uniform float random;
 
 const float gravity = 0.75;
 
@@ -49,12 +50,7 @@ void main(void)
         if(position.y > uViewSize.y)
         {
             position.y = uViewSize.y;
-
-            if(position.w > 25.0)
-            {
-                position.w = 25.0;
-            }
-            position.w *= -1.0;
+            position.w = -25.0 + random * mod(position.x + position.y, 10.0);
         }
         if(position.x > uViewSize.x)
         {

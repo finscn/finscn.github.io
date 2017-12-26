@@ -69,11 +69,7 @@ void main(void)
     if(position.y > uViewSize.y)
     {
         position.y = uViewSize.y;
-        if(position.w > 25.0)
-        {
-            position.w = 25.0 - random * no * 10.0; // * abs(position.x * 0.05 + position.z) * 0.1;
-        }
-        position.w *= -1.0;
+        position.w = -25.0 + random * mod(position.x + position.y, 10.0);
     }
 
     if(position.x > uViewSize.x)

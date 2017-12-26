@@ -165,6 +165,13 @@ function update(delta) {
         random: Math.random()
     };
 
+    if (particle.statusList[1]) {
+        particle.statusList[1].uniforms = {
+            random: Math.random()
+        };
+    }
+
+
     app.renderer.render(app.stage);
 
     // var red = 0.22 + Math.sin(now / 500) * 0.2;
