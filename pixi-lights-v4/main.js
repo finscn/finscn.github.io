@@ -1,21 +1,25 @@
-var LightSpriteRenderer = PIXI.renderers.LightSpriteRenderer;
+var LightSpriteRenderer = PIXI.lights.LightSpriteRenderer;
 var AmbientLight = PIXI.lights.AmbientLight;
 var DirectionalLight = PIXI.lights.DirectionalLight;
 var PointLight = PIXI.lights.PointLight;
 
-
-var canvas = document.getElementById("canvas");
 var viewWidth = 1024;
 var viewHeight = 512;
 
+var useStaticScene = false;
+var scene;
+var staticScene;
+
+
+var stats = new Stats();
+var canvas = document.getElementById("canvas");
 var renderer = new PIXI.WebGLRenderer(viewWidth, viewHeight, {
     view: canvas
 });
-
 var stage = new PIXI.Container();
-var stats = new Stats();
-var lightCount = 1;
 
+
+var lightCount = 1;
 
 var lightHeight = 90;
 var allLights = [];
@@ -89,8 +93,6 @@ PIXI.loader
     .add('panda', 'image/panda.png')
     .load(function(loader, res) {
         var bg = new PIXI.Sprite(res.bg_diffuse.texture);
-        stage.addChild(bg);
-
 
         var block = new PIXI.Sprite(res.block_diffuse.texture);
         var block1 = new PIXI.Sprite(res.block_diffuse.texture);
@@ -131,13 +133,47 @@ PIXI.loader
         // panda.rendererName = "lightsprite";
         // panda.lights = allLights;
 
+        var sprites = [
+            bg,
+            couch,
+            panda,
+            block,
+            block1,
+            block2,
+        ];
 
-        stage.addChild(couch);
-        stage.addChild(panda);
+        if (!useStaticScene) {
+            scene = new PIXI.Container();
 
-        stage.addChild(block);
-        stage.addChild(block1);
-        stage.addChild(block2);
+            sprites.forEach(function(s) {
+                scene.addChild(s);
+            });
+
+            stage.addChild(scene);
+        } else {
+            var diffuseRenderTexture = PIXI.RenderTexture.create(viewWidth, viewHeight);
+            staticScene = PIXI.Sprite.from(diffuseRenderTexture);
+
+            var normalRenderTexture = PIXI.RenderTexture.create(viewWidth, viewHeight);
+            // staticScene.normalTexture = normalRenderTexture;
+            // staticScene.pluginName = "lightSprite";
+
+            renderer.renderingDiffuses = true;
+            sprites.forEach(function(s) {
+                renderer.render(s, diffuseRenderTexture, false);
+            });
+            renderer.renderingDiffuses = false;
+
+            renderer.renderingNormals = true;
+            sprites.forEach(function(s) {
+                renderer.render(s, normalRenderTexture, false);
+            });
+            renderer.renderingNormals = false;
+
+            stage.addChild(staticScene);
+        }
+
+
 
 
         canvas.addEventListener('mousemove', function(e) {
