@@ -1,0 +1,114 @@
+<html>
+
+<head>
+    <title>box2d test</title>
+    <style type="text/css">
+    canvas {
+        background: #000;
+    }
+    </style>
+    <script src="stats.min.js"></script>
+    <script src="common.js"></script>
+    <script src="box2d.min.js"></script>
+</head>
+
+<body>
+    <canvas id="stage"></canvas>
+    <script>
+    var WorldDef = {
+        gravity: new box2d.b2Vec2(0, -10),
+        allowSleep: true,
+        warmStarting: true,
+        continuousPhysics: true,
+        subStepping: false,
+        blockSolve: true,
+        velocityIterations: 8,
+        positionIterations: 3,
+    };
+
+    world = new box2d.b2World(WorldDef.gravity);
+
+    var bd = new box2d.b2BodyDef();
+    var ground = world.CreateBody(bd);
+
+    var bd = new box2d.b2BodyDef();
+    bd.type = box2d.b2BodyType.b2_dynamicBody;
+    bd.allowSleep = true;
+    bd.position.Set(0.0, 10.0);
+    var body = world.CreateBody(bd);
+
+    var shape = new box2d.b2PolygonShape();
+    shape.SetAsBox(0.5, 20.0, new box2d.b2Vec2(20.0, 0.0), 0.0);
+    body.CreateFixture(shape, 5.0);
+    shape.SetAsBox(0.5, 20.0, new box2d.b2Vec2(-20.0, 0.0), 0.0);
+    body.CreateFixture(shape, 5.0);
+    shape.SetAsBox(20.0, 0.5, new box2d.b2Vec2(0.0, 20.0), 0.0);
+    body.CreateFixture(shape, 5.0);
+    shape.SetAsBox(20.0, 0.5, new box2d.b2Vec2(0.0, -20.0), 0.0);
+    body.CreateFixture(shape, 5.0);
+
+    var jd = new box2d.b2RevoluteJointDef();
+    jd.bodyA = ground;
+    jd.bodyB = body;
+    jd.localAnchorA.Set(-0.0, 0.0);
+    jd.localAnchorB.Set(0.0, 0.0);
+    jd.referenceAngle = 0.0;
+    jd.motorSpeed = 0.08 * box2d.b2_pi;
+    jd.maxMotorTorque = 1e8;
+    jd.enableMotor = true;
+    world.CreateJoint(jd);
+
+    var count = 0;
+    while (count < COUNT) {
+        var bd = new box2d.b2BodyDef();
+        bd.type = box2d.b2BodyType.b2_dynamicBody;
+        bd.position.Set(0.0 + randomInt(-120, 120) / 10, 0.0 + randomInt(-120, 120) / 10);
+        var body = world.CreateBody(bd);
+
+        var shape = new box2d.b2PolygonShape();
+        shape.SetAsBox(boxSize, boxSize);
+        body.CreateFixture(shape, 1.0);
+
+        count++;
+    }
+
+
+    function render(ctx) {
+        ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+        ctx.save();
+        ctx.translate(WIDTH / 2, HEIGHT / 2); // Translate to the center
+        ctx.scale(10, -10); // Zoom in and flip y axis
+        ctx.lineWidth = 0.1;
+
+        for (var b = world.m_bodyList; b; b = b.m_next) {
+            var xf = b.m_xf;
+            ctx.save();
+            ctx.translate(xf.p.x, xf.p.y);
+            ctx.rotate(xf.q.GetAngle());
+
+            for (var f = b.m_fixtureList; f; f = f.m_next) {
+                var shape = f.GetShape();
+                drawPoly(context, shape.m_vertices, shape.m_count);
+            }
+
+            ctx.restore();
+        }
+        ctx.restore();
+    }
+
+    function animate(time) {
+        stats.begin();
+
+        requestAnimationFrame(animate);
+
+        world.Step(16 / 1000, WorldDef.velocityIterations, WorldDef.positionIterations);
+
+        render(context);
+
+        stats.end();
+    }
+    </script>
+</body>
+
+</html>
