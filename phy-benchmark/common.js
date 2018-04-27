@@ -44,10 +44,10 @@ var timeStep = 1000 / 60;
 function tick() {
     stats.begin();
 
-    requestAnimationFrame(tick);
-
     update(timeStep);
     render(context, timeStep);
 
     stats.end();
+
+    requestAnimationFrame(tick);
 }
