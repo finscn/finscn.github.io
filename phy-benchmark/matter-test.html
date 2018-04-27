@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>p2.js Canvas Box example</title>
+    <meta charset="utf-8">
+    <style type="text/css">
+    body {}
+
+    canvas {
+        background: #000;
+    }
+    </style>
+    <script src="stats.min.js"></script>
+    <script src="common.js"></script>
+    <script src="matter.min.js"></script>
+</head>
+
+<body>
+    <canvas id="stage"></canvas>
+    <script>
+    var bigBox;
+    var engine;
+
+    function init() {
+        engine = Matter.Engine.create({
+            positionIterations: 6, // 3,
+            velocityIterations: 4, // 8,
+            constraintIterations: 2, // 1,
+        });
+        world = engine.world;
+
+        var bw = 400;
+        bigBox = Matter.Body.create({
+            parts: [
+                Matter.Bodies.rectangle(WIDTH / 2, HEIGHT / 2 - bw / 2, bw, 10),
+                Matter.Bodies.rectangle(WIDTH / 2, HEIGHT / 2 + bw / 2, bw, 10),
+                Matter.Bodies.rectangle(WIDTH / 2 - bw / 2, HEIGHT / 2, 10, bw),
+                Matter.Bodies.rectangle(WIDTH / 2 + bw / 2, HEIGHT / 2, 10, bw)
+            ],
+            isStatic: true
+        });
+
+        Matter.World.add(world, bigBox);
+
+        var count = 0;
+        var i = 0;
+        while (count < COUNT) {
+            var body = Matter.Bodies.rectangle(
+                WIDTH / 2 + randomInt(-120, 120),
+                HEIGHT / 2 + randomInt(-120, 120),
+                boxSize * 20,
+                boxSize * 20);
+
+            Matter.Body.set(body, 'mass', 1);
+            Matter.World.add(world, body);
+
+            count++;
+        }
+
+        tick()
+    }
+
+    function drawBody(ctx, body) {
+        var parts = body.parts;
+        parts.forEach(function(part) {
+            if (!part.render.visible) {
+                return;
+            }
+
+            ctx.beginPath();
+            ctx.moveTo(part.vertices[0].x, part.vertices[0].y);
+
+            for (var j = 1; j < part.vertices.length; j++) {
+                if (!part.vertices[j - 1].isInternal) {
+                    ctx.lineTo(part.vertices[j].x, part.vertices[j].y);
+                } else {
+                    ctx.moveTo(part.vertices[j].x, part.vertices[j].y);
+                }
+
+                if (part.vertices[j].isInternal) {
+                    ctx.moveTo(part.vertices[(j + 1) % part.vertices.length].x, part.vertices[(j + 1) % part.vertices.length].y);
+                }
+            }
+
+            ctx.lineTo(part.vertices[0].x, part.vertices[0].y);
+            ctx.closePath();
+            ctx.stroke();
+        });
+    }
+
+    function render(ctx, timeStep) {
+
+        ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+        ctx.save();
+        // ctx.translate(WIDTH / 2, HEIGHT / 2); // Translate to the center
+        // ctx.scale(20, -20); // Zoom in and flip y axis
+        // ctx.lineWidth = 0.05;
+
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "#fff";
+
+        // Draw all bodies
+        world.bodies.forEach(function(body) {
+            drawBody(ctx, body);
+        })
+
+        // Restore transform
+        ctx.restore();
+    }
+
+    var angle = 0;
+
+    var runner = Matter.Runner.create();
+
+    function update(timeStep) {
+        var maxSubSteps = 5;
+        timeStep /= 1000;
+
+        Matter.Runner.tick(runner, engine);
+        Matter.Body.setAngle(bigBox, angle);
+
+        angle -= 0.1 * timeStep;
+    }
+    </script>
+</body>
+
+</html>

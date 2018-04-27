@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>p2.js Canvas Box example</title>
+    <meta charset="utf-8">
+    <style type="text/css">
+    body {}
+
+    canvas {
+        background: #000;
+    }
+    </style>
+    <script src="stats.min.js"></script>
+    <script src="common.js"></script>
+    <script src="p2.min.js"></script>
+</head>
+
+<body>
+    <canvas id="stage"></canvas>
+    <script>
+    var bigBox;
+
+    function init() {
+
+        // Init p2.js
+        world = new p2.World();
+
+        // Create boxes
+        var body = new p2.Body({
+            position: [-0, 0],
+            mass: 1,
+            // angularVelocity : -0.2,
+            fixedRotation: true,
+            fixedX: true,
+            fixedY: true
+        });
+        var bw = 20;
+        body.addShape(new p2.Box({ width: bw, height: 0.5 }), [0, bw / 2]);
+        body.addShape(new p2.Box({ width: 0.5, height: bw }), [bw / 2, 0]);
+        body.addShape(new p2.Box({ width: bw, height: 0.5 }), [0, -bw / 2]);
+        body.addShape(new p2.Box({ width: 0.5, height: bw }), [-bw / 2, 0]);
+        world.addBody(body);
+        bigBox = body;
+
+        var count = 0;
+        var i = 0;
+        while (count < COUNT) {
+            var body = new p2.Body({
+                position: [0 + randomInt(-120, 120) / 20, 0 + randomInt(-120, 120) / 20],
+                mass: 1,
+            });
+            body.addShape(new p2.Box({ width: boxSize, height: boxSize }));
+            world.addBody(body);
+
+            count++;
+        }
+
+        tick()
+    }
+
+    function drawBody(ctx, body) {
+        ctx.beginPath();
+        var x = body.interpolatedPosition[0],
+            y = body.interpolatedPosition[1];
+        ctx.save();
+        ctx.translate(x, y); // Translate to the center of the box
+        ctx.rotate(body.angle); // Rotate to the box body frame
+        body.shapes.forEach(function(shape) {
+            var x = shape.position[0];
+            var y = shape.position[1];
+            ctx.rect(-shape.width / 2 + x, -shape.height / 2 + y, shape.width, shape.height);
+        })
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    function render(ctx, timeStep) {
+        ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+        ctx.save();
+        ctx.translate(WIDTH / 2, HEIGHT / 2); // Translate to the center
+        ctx.scale(20, -20); // Zoom in and flip y axis
+        ctx.lineWidth = 0.05;
+
+        ctx.strokeStyle = "#fff";
+
+        // Draw all bodies
+        world.bodies.forEach(function(body) {
+            drawBody(ctx, body);
+        })
+
+        // Restore transform
+        ctx.restore();
+    }
+
+    function update(timeStep) {
+        var maxSubSteps = 5;
+        timeStep /= 1000;
+        world.step(timeStep, timeStep, maxSubSteps);
+        bigBox.angle += 0.2 * timeStep;
+    }
+    </script>
+</body>
+
+</html>

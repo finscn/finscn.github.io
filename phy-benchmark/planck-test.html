@@ -1,0 +1,104 @@
+<html>
+
+<head>
+    <title>planck test</title>
+    <style type="text/css">
+    canvas {
+        background: #000;
+    }
+    </style>
+    <script src="stats.min.js"></script>
+    <script src="common.js"></script>
+    <script src="planck.min.js"></script>
+</head>
+
+<body>
+    <canvas id="stage"></canvas>
+    <script>
+    var pl = planck;
+    var WorldDef;
+
+    function init() {
+
+        WorldDef = {
+            gravity: pl.Vec2(0, -10),
+            allowSleep: true,
+            warmStarting: true,
+            continuousPhysics: true,
+            subStepping: false,
+            blockSolve: true,
+            velocityIterations: 8,
+            positionIterations: 3,
+        };
+
+        world = pl.World(WorldDef);
+
+        var bd = {};
+        var ground = world.createBody(bd);
+
+        var bd = {};
+        bd.type = 'dynamic';
+        bd.allowSleep = true;
+        bd.position = pl.Vec2(0, 0);
+        var body = world.createBody(bd);
+
+        body.createFixture(pl.Box(0.5, 20, pl.Vec2(20, 0), 0), 5);
+        body.createFixture(pl.Box(0.5, 20, pl.Vec2(-20, 0), 0), 5);
+        body.createFixture(pl.Box(20, 0.5, pl.Vec2(0, 20), 0), 5);
+        body.createFixture(pl.Box(20, 0.5, pl.Vec2(0, -20), 0), 5);
+
+
+        var jd = {};
+        jd.motorSpeed = 0.08 * Math.PI;
+        jd.maxMotorTorque = 1e8;
+        jd.enableMotor = true;
+        world.createJoint(pl.RevoluteJoint(jd, ground, body, pl.Vec2(0, 0)));
+
+
+        var count = 0;
+        while (count < COUNT) {
+            var bd = {};
+            var body = world.createDynamicBody(bd);
+            body.setPosition(pl.Vec2(0 + randomInt(-120, 120) / 10, 0 + randomInt(-120, 120) / 10));
+
+            var shape = pl.Box(boxSize, boxSize);
+            body.createFixture(shape, 1);
+
+            count++;
+        }
+
+        tick();
+    }
+
+
+    function render(ctx, timeStep) {
+        ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+        ctx.save();
+        ctx.translate(WIDTH / 2, HEIGHT / 2); // Translate to the center
+        ctx.scale(10, -10); // Zoom in and flip y axis
+        ctx.lineWidth = 0.1;
+
+        for (var b = world.m_bodyList; b; b = b.m_next) {
+            var xf = b.m_xf;
+            ctx.save();
+            ctx.translate(xf.p.x, xf.p.y);
+            ctx.rotate(xf.q.getAngle());
+
+            for (var f = b.m_fixtureList; f; f = f.m_next) {
+                var shape = f.getShape();
+                drawPoly(context, shape.m_vertices, shape.m_count);
+            }
+
+            ctx.restore();
+        }
+        ctx.restore();
+    }
+
+    function update(timeStep) {
+        world.step(timeStep / 1000, WorldDef.velocityIterations, WorldDef.positionIterations);
+    }
+    </script>
+</body>
+
+</html>
