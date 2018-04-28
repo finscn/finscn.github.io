@@ -1,0 +1,189 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../base/style.css">
+    <script src="../base/boot.js"></script>
+    <script src="../base/stats.min.js"></script>
+    <title>Oimo.js test</title>
+    <script src="oimo.min.js"></script>
+</head>
+
+<body>
+    <canvas id="stage"></canvas>
+    <script>
+    var bigBox;
+
+    var COUNT = 1;
+
+    function init() {
+
+        // Init p2.js
+
+        world = new OIMO.World({
+            timestep: 1 / 60,
+            iterations: 8 * 10,
+            broadphase: 3, // 1 brute force, 2 sweep and prune, 3 volume tree
+            worldscale: 2, // scale full world
+            // random: true, // randomize sample
+            info: false, // calculate statistic or not
+            gravity: [0, -9.8, 0]
+        });
+
+        var types = ['box', 'box', 'box', 'box'];
+
+        var sizes = [
+            20, 2, 10,
+            2, 20, 10,
+            20, 2, 10,
+            2, 20, 10,
+        ];
+
+        var positions = [
+            0, 10, 0,
+            10, 0, 0,
+            0, -10, 0,
+            -10, 0, 0,
+        ];
+
+        var body = world.add({
+            type: types, // type of shape : sphere, box, cylinder
+            size: sizes,
+            posShape: positions,
+            pos: [0, 0, 0], // start position in degree
+            move: false, // dynamic or statique
+            kinematic: true,
+            density: 0.1*100000000,
+            // restitution: 0.1,
+            restitution: 0,
+        });
+
+        bigBox = body;
+
+
+        var A = world.add({
+            size: [33, 33 ,2],
+            pos: [0, 0, -1], // start position in degree
+            move: true, // dynamic or statique
+            kinematic: true,
+        });
+        var B = world.add({
+            size: [33, 33 ,2],
+            pos: [0, 0, 1], // start position in degree
+            move: true, // dynamic or statique
+            kinematic: true,
+        });
+
+
+        var count = 0;
+        var i = 0;
+        while (count < COUNT) {
+
+            var body = world.add({
+                type: 'box', // type of shape : sphere, box, cylinder
+                size: [boxSize, boxSize, 2],
+                pos: [0 + randomInt(-120, 120) / 20, 0 + randomInt(-120, 120) / 20, 0], // start position in degree
+                move: true, // dynamic or statique
+                // kinematic: true,
+                // restitution: 0.01,
+            density: 0.1*100000000,
+            // restitution: 0.1,
+            restitution: 0,
+            });
+
+            // var body = new p2.Body({
+            //     position: [0 + randomInt(-120, 120) / 20, 0 + randomInt(-120, 120) / 20],
+            //     mass: 1,
+            // });
+            // body.addShape(new p2.Box({ width: boxSize, height: boxSize }));
+            // world.addBody(body);
+
+            count++;
+        }
+
+        tick()
+    }
+
+
+
+    function drawShape(ctx, shape) {
+        var elements = shape.elements;
+        ctx.beginPath();
+
+        var len = elements.length;
+
+        var x = elements[0];
+        var y = elements[1];
+        var z = elements[2];
+
+        ctx.moveTo(x, y);
+
+        var x = elements[6];
+        var y = elements[6 + 1];
+        var z = elements[6 + 2];
+        ctx.lineTo(x, y);
+
+        var x = elements[6 * 3];
+        var y = elements[6 * 3 + 1];
+        var z = elements[6 * 3 + 2];
+        ctx.lineTo(x, y);
+
+        var x = elements[6 * 2];
+        var y = elements[6 * 2 + 1];
+        var z = elements[6 * 2 + 2];
+        ctx.lineTo(x, y);
+
+        ctx.closePath();
+        ctx.stroke();
+        // debugger
+        // ctx.restore();
+    }
+
+
+    function render(ctx, timeStep) {
+        ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+        ctx.save();
+        ctx.translate(WIDTH / 2, HEIGHT / 2); // Translate to the center
+        ctx.scale(20, -20); // Zoom in and flip y axis
+        ctx.lineWidth = 0.05;
+
+        // // Draw all bodies
+        // world.bodies.forEach(function(body) {
+        //     drawBody(ctx, body);
+        // })
+
+        var body = world.rigidBodies;
+
+        while (body !== null) {
+            // var position = body.position;
+            var shape = body.shapes;
+            while (shape !== null) {
+                drawShape(ctx, shape)
+                shape = shape.next;
+            }
+            body = body.next;
+        }
+
+        // Restore transform
+        ctx.restore();
+    }
+
+    var angle = {
+        x: 0,
+        y: 0,
+        z: 0,
+    };
+
+    function update(timeStep) {
+        var maxSubSteps = 5;
+        // timeStep /= 1000;
+        angle.z += 0.02 * timeStep;
+        bigBox.setRotation(angle);
+        world.step();
+        // debugger;
+    }
+    </script>
+</body>
+
+</html>

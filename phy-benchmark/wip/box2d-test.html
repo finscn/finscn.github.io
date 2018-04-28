@@ -1,0 +1,144 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../base/style.css">
+    <script src="../base/boot.js"></script>
+    <script src="../base/stats.min.js"></script>
+    <title>box2d.js test</title>
+    <script src="box2d.min.js"></script>
+</head>
+
+<body>
+    <canvas id="stage"></canvas>
+    <script>
+    var Config = {
+        timeScale: 1.25 / 1000,
+        gravity: -9.8,
+        positionIterations: 3,
+        velocityIterations: 8,
+
+        angularVelocity: 0.2,
+        boardWidth: 40,
+        boardHeight: 1,
+        circleRaius: 3,
+        circleMargin: 12,
+        boxSize: 0.8,
+
+        // allowSleep: true,
+        // warmStarting: true,
+        // continuousPhysics: true,
+        // subStepping: false,
+        // blockSolve: true,
+    };
+
+    var tumblerBox;
+
+    var box2d;
+
+    function init() {
+        console.log(box2d.b2_version);
+
+        world = new box2d.b2World(new box2d.b2Vec2(0, Config.gravity));
+
+        var bd = new box2d.b2BodyDef();
+        // bd.type = box2d.b2BodyType.b2_staticBody;
+        // bd.type = box2d.b2BodyType.b2_kinematicBody;
+        bd.type = box2d.b2BodyType.b2_dynamicBody;
+        bd.position.Set(0.0, 0.0);
+        tumblerBox = world.CreateBody(bd);
+
+        var bwHalf = Config.boardWidth / 2;
+        var bhHalf = Config.boardHeight / 2;
+
+        var shape = new box2d.b2PolygonShape();
+        shape.SetAsBox(bhHalf, bwHalf, new box2d.b2Vec2(bwHalf, 0.0), 0.0);
+        tumblerBox.CreateFixture(shape, 1.0);
+        shape.SetAsBox(bhHalf, bwHalf, new box2d.b2Vec2(-bwHalf, 0.0), 0.0);
+        tumblerBox.CreateFixture(shape, 1.0);
+        shape.SetAsBox(bwHalf, bhHalf, new box2d.b2Vec2(0.0, bwHalf), 0.0);
+        tumblerBox.CreateFixture(shape, 1.0);
+        shape.SetAsBox(bwHalf, bhHalf, new box2d.b2Vec2(0.0, -bwHalf), 0.0);
+        tumblerBox.CreateFixture(shape, 1.0);
+
+        var shape = new box2d.b2CircleShape(Config.circleRaius);
+        shape.m_p.Set(Config.circleMargin, Config.circleMargin)
+        tumblerBox.CreateFixture(shape, 1.0);
+        shape.m_p.Set(-Config.circleMargin, Config.circleMargin)
+        tumblerBox.CreateFixture(shape, 1.0);
+        shape.m_p.Set(-Config.circleMargin, -Config.circleMargin)
+        tumblerBox.CreateFixture(shape, 1.0);
+        shape.m_p.Set(Config.circleMargin, -Config.circleMargin)
+        tumblerBox.CreateFixture(shape, 1.0);
+
+        var bd = new box2d.b2BodyDef();
+        var ground = world.CreateBody(bd);
+        var jd = new box2d.b2RevoluteJointDef();
+        jd.bodyA = ground;
+        jd.bodyB = tumblerBox;
+        jd.localAnchorA.Set(-0.0, 0.0);
+        jd.localAnchorB.Set(0.0, 0.0);
+        jd.referenceAngle = 0.0;
+        jd.motorSpeed = Config.angularVelocity;
+        jd.maxMotorTorque = 1e8;
+        jd.enableMotor = true;
+        world.CreateJoint(jd);
+
+        var count = 0;
+        while (count < COUNT) {
+            var bd = new box2d.b2BodyDef();
+            bd.type = box2d.b2BodyType.b2_dynamicBody;
+            bd.position.Set(0.0 + randomInt(-120, 120) / 10, 0.0 + randomInt(-120, 120) / 10);
+            var body = world.CreateBody(bd);
+
+            var shape = new box2d.b2PolygonShape();
+            shape.SetAsBox(Config.boxSize / 2, Config.boxSize / 2);
+            body.CreateFixture(shape, 1.0);
+
+            count++;
+        }
+
+        tick();
+    }
+
+    function render(ctx, timeStep) {
+        ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+        ctx.save();
+        ctx.translate(WIDTH / 2, HEIGHT / 2); // Translate to the center
+        ctx.scale(10, -10); // Zoom in and flip y axis
+        ctx.lineWidth = 0.1;
+
+        for (var b = world.m_bodyList; b; b = b.m_next) {
+            var xf = b.m_xf;
+            ctx.save();
+            ctx.translate(xf.p.x, xf.p.y);
+            ctx.rotate(xf.q.GetAngle());
+
+            for (var f = b.m_fixtureList; f; f = f.m_next) {
+                var shape = f.GetShape();
+                if (shape.m_vertices) {
+                    drawPoly(context, shape.m_vertices, shape.m_count);
+                } else if (shape.m_p) {
+                    drawCircle(context, shape.m_radius, shape.m_p.x, shape.m_p.y);
+                }
+            }
+            ctx.restore();
+        }
+        ctx.restore();
+    }
+
+    var tumblerAngle = 0;
+
+    function update(timeStep) {
+        timeStep *= Config.timeScale;
+
+        world.Step(timeStep, Config.velocityIterations, Config.positionIterations);
+        tumblerAngle += 0.1 * timeStep;
+
+        // tumblerBox.SetAngle(tumblerAngle);
+    }
+    </script>
+</body>
+
+</html>

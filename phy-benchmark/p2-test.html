@@ -1,56 +1,96 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <title>p2.js test</title>
     <meta charset="utf-8">
-    <style type="text/css">
-    body {}
-
-    canvas {
-        background: #000;
-    }
-    </style>
-    <script src="stats.min.js"></script>
-    <script src="common.js"></script>
+    <link rel="stylesheet" href="./base/style.css">
+    <script src="./base/boot.js"></script>
+    <script src="./base/stats.min.js"></script>
+    <title>p2.js test</title>
     <script src="p2.min.js"></script>
 </head>
 
 <body>
     <canvas id="stage"></canvas>
     <script>
-    var bigBox;
+    var Config = {
+        timeScale: 1.25 / 1000,
+        gravity: -9.8,
+        positionIterations: 3,
+        velocityIterations: 8,
+        iterations: 20,
+
+        angularVelocity: 0.2,
+        boardWidth: 40,
+        boardHeight: 1,
+        circleRaius: 3,
+        circleMargin: 12,
+        boxSize: 0.8,
+
+        // allowSleep: true,
+        // warmStarting: true,
+        // continuousPhysics: true,
+        // subStepping: false,
+        // blockSolve: true,
+    };
+
+    var tumblerBox;
 
     function init() {
 
-        // Init p2.js
-        world = new p2.World();
-
-        // Create boxes
-        var body = new p2.Body({
-            position: [-0, 0],
-            mass: 1,
-            // angularVelocity : -0.2,
-            fixedRotation: true,
-            fixedX: true,
-            fixedY: true
+        world = new p2.World({
+            gravity: p2.vec2.fromValues(0, Config.gravity),
+            solver: new p2.GSSolver({
+                iterations: Config.iterations
+            })
         });
-        var bw = 20;
-        body.addShape(new p2.Box({ width: bw, height: 0.5 }), [0, bw / 2]);
-        body.addShape(new p2.Box({ width: 0.5, height: bw }), [bw / 2, 0]);
-        body.addShape(new p2.Box({ width: bw, height: 0.5 }), [0, -bw / 2]);
-        body.addShape(new p2.Box({ width: 0.5, height: bw }), [-bw / 2, 0]);
-        world.addBody(body);
-        bigBox = body;
+
+        tumblerBox = new p2.Body({
+            position: [-0, 0],
+            mass: 10,
+            angularVelocity: Config.angularVelocity,
+            type: p2.Body.STATIC,
+            // fixedRotation: true,
+            // fixedX: true,
+            // fixedY: true
+        });
+
+        var bw = Config.boardWidth;
+        var bh = Config.boardHeight;
+
+        tumblerBox.addShape(new p2.Box({ width: bw, height: bh }), [0, bw / 2]);
+        tumblerBox.addShape(new p2.Box({ width: bh, height: bw }), [bw / 2, 0]);
+        tumblerBox.addShape(new p2.Box({ width: bw, height: bh }), [0, -bw / 2]);
+        tumblerBox.addShape(new p2.Box({ width: bh, height: bw }), [-bw / 2, 0]);
+
+        tumblerBox.addShape(new p2.Circle({ radius: Config.circleRaius }), [Config.circleMargin, Config.circleMargin]);
+        tumblerBox.addShape(new p2.Circle({ radius: Config.circleRaius }), [-Config.circleMargin, Config.circleMargin]);
+        tumblerBox.addShape(new p2.Circle({ radius: Config.circleRaius }), [-Config.circleMargin, -Config.circleMargin]);
+        tumblerBox.addShape(new p2.Circle({ radius: Config.circleRaius }), [Config.circleMargin, -Config.circleMargin]);
+
+        world.addBody(tumblerBox);
+
+        // var ground = new p2.Body({
+        //     position: [-0, 0],
+        //     // type: p2.Body.STATIC,
+        // });
+        // world.addBody(ground);
+        // var cr = new p2.RevoluteConstraint(ground, tumblerBox, {
+        //     localPivotA: [0,0],
+        //     localPivotB: [0,0],
+        //     motorSpeed: Config.angularVelocity,
+        //     motorEnabled: true,
+        // });
+        // world.addConstraint(cr);
+
 
         var count = 0;
         var i = 0;
         while (count < COUNT) {
             var body = new p2.Body({
-                position: [0 + randomInt(-120, 120) / 20, 0 + randomInt(-120, 120) / 20],
+                position: [0 + randomInt(-120, 120) / 10, 0 + randomInt(-120, 120) / 10],
                 mass: 1,
             });
-            body.addShape(new p2.Box({ width: boxSize, height: boxSize }));
+            body.addShape(new p2.Box({ width: Config.boxSize, height: Config.boxSize }));
             world.addBody(body);
 
             count++;
@@ -60,7 +100,6 @@
     }
 
     function drawBody(ctx, body) {
-        ctx.beginPath();
         var x = body.interpolatedPosition[0],
             y = body.interpolatedPosition[1];
         ctx.save();
@@ -69,9 +108,15 @@
         body.shapes.forEach(function(shape) {
             var x = shape.position[0];
             var y = shape.position[1];
-            ctx.rect(-shape.width / 2 + x, -shape.height / 2 + y, shape.width, shape.height);
+            if (shape.radius) {
+                drawCircle(ctx, shape.radius, x, y);
+            } else {
+                ctx.beginPath();
+                ctx.rect(-shape.width / 2 + x, -shape.height / 2 + y, shape.width, shape.height);
+                ctx.closePath();
+                ctx.stroke();
+            }
         })
-        ctx.stroke();
         ctx.restore();
     }
 
@@ -80,10 +125,8 @@
 
         ctx.save();
         ctx.translate(WIDTH / 2, HEIGHT / 2); // Translate to the center
-        ctx.scale(20, -20); // Zoom in and flip y axis
-        ctx.lineWidth = 0.05;
-
-        ctx.strokeStyle = "#fff";
+        ctx.scale(10, -10); // Zoom in and flip y axis
+        ctx.lineWidth = 0.1;
 
         // Draw all bodies
         world.bodies.forEach(function(body) {
@@ -95,10 +138,10 @@
     }
 
     function update(timeStep) {
+        timeStep *= Config.timeScale;
         var maxSubSteps = 5;
-        timeStep /= 1000;
         world.step(timeStep, timeStep, maxSubSteps);
-        bigBox.angle += 0.2 * timeStep;
+        // tumblerBox.angle += 0.2 * timeStep;
     }
     </script>
 </body>

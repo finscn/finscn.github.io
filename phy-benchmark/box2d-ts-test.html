@@ -1,68 +1,88 @@
 <html>
 
 <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="./base/style.css">
+    <script src="./base/boot.js"></script>
+    <script src="./base/stats.min.js"></script>
+    <script src="./base/system-production.js"></script>
     <title>box2d.ts test</title>
-    <style type="text/css">
-    canvas {
-        background: #000;
-    }
-    </style>
-    <script src="stats.min.js"></script>
-    <script src="common.js"></script>
-    <script src="system-production.js"></script>
     <script src="box2d-ts.min.js"></script>
 </head>
 
 <body>
     <canvas id="stage"></canvas>
     <script>
+    var Config = {
+        timeScale: 1.25 / 1000,
+        gravity: -9.8,
+        positionIterations: 3,
+        velocityIterations: 8,
+
+        angularVelocity: 0.2,
+        boardWidth: 40,
+        boardHeight: 1,
+        circleRaius: 3,
+        circleMargin: 12,
+        boxSize: 0.8,
+
+        // allowSleep: true,
+        // warmStarting: true,
+        // continuousPhysics: true,
+        // subStepping: false,
+        // blockSolve: true,
+    };
+
+    var tumblerBox;
+
     var box2d;
-    var WorldDef;
 
     function init() {
-        System.import("Box2D").then(function(_box2d) {
-            box2d = _box2d;
+        System.import("Box2D").then(function(Box2D) {
+            box2d = Box2D;
             console.log(box2d.b2_version);
 
-            WorldDef = {
-                gravity: new box2d.b2Vec2(0, -10),
-                allowSleep: true,
-                warmStarting: true,
-                continuousPhysics: true,
-                subStepping: false,
-                blockSolve: true,
-                velocityIterations: 8,
-                positionIterations: 3,
-            };
+            world = new box2d.b2World(new box2d.b2Vec2(0, Config.gravity));
 
-            world = new box2d.b2World(WorldDef.gravity);
+            var bd = new box2d.b2BodyDef();
+            // bd.type = box2d.b2BodyType.b2_staticBody;
+            // bd.type = box2d.b2BodyType.b2_kinematicBody;
+            bd.type = box2d.b2BodyType.b2_dynamicBody;
+            bd.position.Set(0.0, 0.0);
+            tumblerBox = world.CreateBody(bd);
+
+            var bwHalf = Config.boardWidth / 2;
+            var bhHalf = Config.boardHeight / 2;
+
+            var shape = new box2d.b2PolygonShape();
+            shape.SetAsBox(bhHalf, bwHalf, new box2d.b2Vec2(bwHalf, 0.0), 0.0);
+            tumblerBox.CreateFixture(shape, 1.0);
+            shape.SetAsBox(bhHalf, bwHalf, new box2d.b2Vec2(-bwHalf, 0.0), 0.0);
+            tumblerBox.CreateFixture(shape, 1.0);
+            shape.SetAsBox(bwHalf, bhHalf, new box2d.b2Vec2(0.0, bwHalf), 0.0);
+            tumblerBox.CreateFixture(shape, 1.0);
+            shape.SetAsBox(bwHalf, bhHalf, new box2d.b2Vec2(0.0, -bwHalf), 0.0);
+            tumblerBox.CreateFixture(shape, 1.0);
+
+            var shape = new box2d.b2CircleShape(Config.circleRaius);
+            shape.m_p.Set(Config.circleMargin, Config.circleMargin)
+            tumblerBox.CreateFixture(shape, 1.0);
+            shape.m_p.Set(-Config.circleMargin, Config.circleMargin)
+            tumblerBox.CreateFixture(shape, 1.0);
+            shape.m_p.Set(-Config.circleMargin, -Config.circleMargin)
+            tumblerBox.CreateFixture(shape, 1.0);
+            shape.m_p.Set(Config.circleMargin, -Config.circleMargin)
+            tumblerBox.CreateFixture(shape, 1.0);
 
             var bd = new box2d.b2BodyDef();
             var ground = world.CreateBody(bd);
-
-            var bd = new box2d.b2BodyDef();
-            bd.type = box2d.b2BodyType.b2_dynamicBody;
-            bd.allowSleep = true;
-            bd.position.Set(0.0, 10.0);
-            var body = world.CreateBody(bd);
-
-            var shape = new box2d.b2PolygonShape();
-            shape.SetAsBox(0.5, 20.0, new box2d.b2Vec2(20.0, 0.0), 0.0);
-            body.CreateFixture(shape, 5.0);
-            shape.SetAsBox(0.5, 20.0, new box2d.b2Vec2(-20.0, 0.0), 0.0);
-            body.CreateFixture(shape, 5.0);
-            shape.SetAsBox(20.0, 0.5, new box2d.b2Vec2(0.0, 20.0), 0.0);
-            body.CreateFixture(shape, 5.0);
-            shape.SetAsBox(20.0, 0.5, new box2d.b2Vec2(0.0, -20.0), 0.0);
-            body.CreateFixture(shape, 5.0);
-
             var jd = new box2d.b2RevoluteJointDef();
             jd.bodyA = ground;
-            jd.bodyB = body;
+            jd.bodyB = tumblerBox;
             jd.localAnchorA.Set(-0.0, 0.0);
             jd.localAnchorB.Set(0.0, 0.0);
             jd.referenceAngle = 0.0;
-            jd.motorSpeed = 0.08 * box2d.b2_pi;
+            jd.motorSpeed = Config.angularVelocity;
             jd.maxMotorTorque = 1e8;
             jd.enableMotor = true;
             world.CreateJoint(jd);
@@ -75,7 +95,7 @@
                 var body = world.CreateBody(bd);
 
                 var shape = new box2d.b2PolygonShape();
-                shape.SetAsBox(boxSize, boxSize);
+                shape.SetAsBox(Config.boxSize / 2, Config.boxSize / 2);
                 body.CreateFixture(shape, 1.0);
 
                 count++;
@@ -104,16 +124,26 @@
 
             for (var f = b.m_fixtureList; f; f = f.m_next) {
                 var shape = f.GetShape();
-                drawPoly(context, shape.m_vertices, shape.m_count);
+                if (shape.m_vertices) {
+                    drawPoly(context, shape.m_vertices, shape.m_count);
+                } else if (shape.m_p) {
+                    drawCircle(context, shape.m_radius, shape.m_p.x, shape.m_p.y);
+                }
             }
-
             ctx.restore();
         }
         ctx.restore();
     }
 
+    var tumblerAngle = 0;
+
     function update(timeStep) {
-        world.Step(timeStep / 1000, WorldDef.velocityIterations, WorldDef.positionIterations);
+        timeStep *= Config.timeScale;
+
+        world.Step(timeStep, Config.velocityIterations, Config.positionIterations);
+        tumblerAngle += 0.1 * timeStep;
+
+        // tumblerBox.SetAngle(tumblerAngle);
     }
     </script>
 </body>

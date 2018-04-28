@@ -1,12 +1,11 @@
 var canvas, context;
 var world;
 
-var WIDTH = 800;
-var HEIGHT = 500;
+var WIDTH = 700;
+var HEIGHT = 600;
 var COUNT = 500;
-var boxSize = 0.4;
 
-var stats = new Stats();
+var stats;
 
 function randomInt(min, max) {
     return ((max - min + 1) * Math.random() + min) >> 0;
@@ -19,25 +18,33 @@ function drawPoly(ctx, vertices, vertexCount) {
         ctx.lineTo(vertices[i].x, vertices[i].y);
     }
     ctx.closePath();
-    ctx.strokeStyle = '#ffffff';
     ctx.stroke();
 }
 
+function drawCircle(ctx, raidus, x, y) {
+    ctx.beginPath();
+    ctx.arc(x, y, raidus, 0, 2 * Math.PI);
+    ctx.stroke();
+}
 
-window.onload = function() {
+window.addEventListener('load', function() {
     canvas = document.getElementById('stage');
     canvas.width = WIDTH;
     canvas.height = HEIGHT;
 
+    stats = new Stats();
     if (stats.domElement) {
         stats.domElement.style.cssText = 'opacity:0.75; position:absolute; right:0px; top:0px; z-index:9999;';
         document.body.appendChild(stats.domElement);
     }
 
+    canvas.style.backgroundColor = "#ffffff";
     context = canvas.getContext('2d');
+    context.fillStyle = '#ffffff';
+    context.strokeStyle = '#000000';
 
     init()
-}
+});
 
 var timeStep = 1000 / 60;
 

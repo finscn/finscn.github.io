@@ -1,59 +1,84 @@
 <html>
 
 <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="./base/style.css">
+    <script src="./base/boot.js"></script>
+    <script src="./base/stats.min.js"></script>
     <title>planck.js test</title>
-    <style type="text/css">
-    canvas {
-        background: #000;
-    }
-    </style>
-    <script src="stats.min.js"></script>
-    <script src="common.js"></script>
     <script src="planck.min.js"></script>
 </head>
 
 <body>
     <canvas id="stage"></canvas>
     <script>
+    var Config = {
+        timeScale: 1.25 / 1000,
+        gravity: -9.8,
+        positionIterations: 3,
+        velocityIterations: 8,
+
+        angularVelocity: 0.2,
+        boardWidth: 40,
+        boardHeight: 1,
+        circleRaius: 3,
+        circleMargin: 12,
+        boxSize: 0.8,
+
+        // allowSleep: true,
+        // warmStarting: true,
+        // continuousPhysics: true,
+        // subStepping: false,
+        // blockSolve: true,
+    };
+
     var pl = planck;
-    var WorldDef;
 
     function init() {
 
-        WorldDef = {
-            gravity: pl.Vec2(0, -10),
-            allowSleep: true,
-            warmStarting: true,
-            continuousPhysics: true,
-            subStepping: false,
-            blockSolve: true,
-            velocityIterations: 8,
-            positionIterations: 3,
+        var options = {
+            gravity: pl.Vec2(0, Config.gravity),
+            positionIterations: Config.positionIterations,
+            velocityIterations: Config.velocityIterations,
         };
 
-        world = pl.World(WorldDef);
+        world = pl.World(options);
 
-        var bd = {};
-        var ground = world.createBody(bd);
 
         var bd = {};
         bd.type = 'dynamic';
         bd.allowSleep = true;
         bd.position = pl.Vec2(0, 0);
-        var body = world.createBody(bd);
+        tumblerBox = world.createBody(bd);
 
-        body.createFixture(pl.Box(0.5, 20, pl.Vec2(20, 0), 0), 5);
-        body.createFixture(pl.Box(0.5, 20, pl.Vec2(-20, 0), 0), 5);
-        body.createFixture(pl.Box(20, 0.5, pl.Vec2(0, 20), 0), 5);
-        body.createFixture(pl.Box(20, 0.5, pl.Vec2(0, -20), 0), 5);
+        var bwHalf = Config.boardWidth / 2;
+        var bhHalf = Config.boardHeight / 2;
 
+        tumblerBox.createFixture(pl.Box(bhHalf, bwHalf, pl.Vec2(bwHalf, 0), 0), 1);
+        tumblerBox.createFixture(pl.Box(bhHalf, bwHalf, pl.Vec2(-bwHalf, 0), 0), 1);
+        tumblerBox.createFixture(pl.Box(bwHalf, bhHalf, pl.Vec2(0, bwHalf), 0), 1);
+        tumblerBox.createFixture(pl.Box(bwHalf, bhHalf, pl.Vec2(0, -bwHalf), 0), 1);
 
+        var shape = pl.Circle(Config.circleRaius);
+        shape.m_p.set(pl.Vec2(Config.circleMargin, Config.circleMargin));
+        tumblerBox.createFixture(shape, 1);
+        var shape = pl.Circle(Config.circleRaius);
+        shape.m_p.set(pl.Vec2(-Config.circleMargin, Config.circleMargin));
+        tumblerBox.createFixture(shape, 1);
+        var shape = pl.Circle(Config.circleRaius);
+        shape.m_p.set(pl.Vec2(-Config.circleMargin, -Config.circleMargin));
+        tumblerBox.createFixture(shape, 1);
+        var shape = pl.Circle(Config.circleRaius);
+        shape.m_p.set(pl.Vec2(Config.circleMargin, -Config.circleMargin));
+        tumblerBox.createFixture(shape, 1);
+
+        var bd = {};
+        var ground = world.createBody(bd);
         var jd = {};
-        jd.motorSpeed = 0.08 * Math.PI;
+        jd.motorSpeed = Config.angularVelocity;
         jd.maxMotorTorque = 1e8;
         jd.enableMotor = true;
-        world.createJoint(pl.RevoluteJoint(jd, ground, body, pl.Vec2(0, 0)));
-
+        world.createJoint(pl.RevoluteJoint(jd, ground, tumblerBox, pl.Vec2(0, 0)));
 
         var count = 0;
         while (count < COUNT) {
@@ -61,7 +86,7 @@
             var body = world.createDynamicBody(bd);
             body.setPosition(pl.Vec2(0 + randomInt(-120, 120) / 10, 0 + randomInt(-120, 120) / 10));
 
-            var shape = pl.Box(boxSize, boxSize);
+            var shape = pl.Box(Config.boxSize / 2, Config.boxSize / 2);
             body.createFixture(shape, 1);
 
             count++;
@@ -87,16 +112,20 @@
 
             for (var f = b.m_fixtureList; f; f = f.m_next) {
                 var shape = f.getShape();
-                drawPoly(context, shape.m_vertices, shape.m_count);
+                if (shape.m_vertices) {
+                    drawPoly(context, shape.m_vertices, shape.m_count);
+                } else if (shape.m_p) {
+                    drawCircle(context, shape.m_radius, shape.m_p.x, shape.m_p.y);
+                }
             }
-
             ctx.restore();
         }
         ctx.restore();
     }
 
     function update(timeStep) {
-        world.step(timeStep / 1000, WorldDef.velocityIterations, WorldDef.positionIterations);
+        timeStep *= Config.timeScale;
+        world.step(timeStep, Config.velocityIterations, Config.positionIterations);
     }
     </script>
 </body>
