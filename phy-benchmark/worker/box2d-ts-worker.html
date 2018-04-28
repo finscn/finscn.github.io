@@ -1,0 +1,122 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../base/style.css">
+    <script src="../base/boot.js"></script>
+    <script src="../base/stats.min.js"></script>
+    <title>box2d.ts worker example</title>
+</head>
+
+<body>
+    <canvas id="stage"></canvas>
+    <script>
+    var worker;
+    var bodiesData;
+    var mainData;
+
+    // poly:       id | xf.p.x | xf.p.y | angle | vCount | x | y | ... | x | y
+    // rect(13):   id | xf.p.x | xf.p.y | angle | 4 | x | y | x | y |x | y |x | y
+    // circle(8):  id | xf.p.x | xf.p.y | angle | 0 | radius | x | y
+
+    function init() {
+        initWorker();
+        tick();
+    }
+
+    function initWorker() {
+
+        worker = new Worker('box2d-ts-worker.js');
+
+        worker.onmessage = function(e) {
+            // When we get a message from the worker, store it
+            var array = e.data;
+            if (array[0] === 1) {
+                bodiesData = array;
+            }
+        }
+
+        // Start the worker by sending an initial message
+        worker.postMessage({
+            rootUrl: document.location.href.replace(/\/[^/]*$/, "/"),
+            COUNT: COUNT,
+        });
+    }
+
+    function sendMainData() {
+        if (mainData) {
+            worker.postMessage(mainData, [mainData.buffer]);
+            mainData = null;
+        }
+    }
+
+    function sendBodiesData() {
+        if (bodiesData) {
+            worker.postMessage(bodiesData, [bodiesData.buffer]);
+            bodiesData = null;
+        }
+    }
+
+    function render(ctx, timeStep) {
+
+        if (!bodiesData) {
+            return;
+        }
+
+        ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+        ctx.save();
+        ctx.translate(WIDTH / 2, HEIGHT / 2); // Translate to the center
+        ctx.scale(10, -10); // Zoom in and flip y axis
+        ctx.lineWidth = 0.1;
+
+        var len = bodiesData.length;
+        for (var i = 1; i < len;) {
+            var id = bodiesData[i++];
+            var tx = bodiesData[i++];
+            var ty = bodiesData[i++];
+            var angle = bodiesData[i++];
+            var shapeCount = bodiesData[i++];
+
+            ctx.save();
+            ctx.translate(tx, ty);
+            ctx.rotate(angle);
+
+            for (var j = 0; j < shapeCount; j++) {
+                var vCount = bodiesData[i++];
+                if (vCount === 0) {
+                    var radius = bodiesData[i++];
+                    var cx = bodiesData[i++];
+                    var cy = bodiesData[i++];
+                    // console.log(tx,ty,angle,radius+1, cx, cy)
+                    drawCircle(ctx, radius, cx, cy);
+                } else {
+                    ctx.beginPath();
+                    var x = bodiesData[i++];
+                    var y = bodiesData[i++];
+                    ctx.moveTo(x, y);
+                    for (var k = 1; k < vCount; k++) {
+                        var x = bodiesData[i++];
+                        var y = bodiesData[i++];
+                        ctx.lineTo(x, y);
+                    }
+                    ctx.closePath();
+                    ctx.stroke();
+                }
+            }
+
+            ctx.restore();
+        }
+
+        ctx.restore();
+
+        sendBodiesData();
+    }
+
+    function update(timeStep) {
+
+    }
+    </script>
+</body>
+
+</html>

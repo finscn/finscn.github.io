@@ -51,28 +51,31 @@
             bd.position.Set(0.0, 0.0);
             tumblerBox = world.CreateBody(bd);
 
+            var shape;
+
             var bwHalf = Config.boardWidth / 2;
             var bhHalf = Config.boardHeight / 2;
-
-            var shape = new box2d.b2PolygonShape();
-            shape.SetAsBox(bhHalf, bwHalf, new box2d.b2Vec2(bwHalf, 0.0), 0.0);
+            shape = createRectShape(bhHalf, bwHalf, new box2d.b2Vec2(bwHalf, 0.0), 0.0);
             tumblerBox.CreateFixture(shape, 1.0);
-            shape.SetAsBox(bhHalf, bwHalf, new box2d.b2Vec2(-bwHalf, 0.0), 0.0);
+            shape = createRectShape(bhHalf, bwHalf, new box2d.b2Vec2(-bwHalf, 0.0), 0.0);
             tumblerBox.CreateFixture(shape, 1.0);
-            shape.SetAsBox(bwHalf, bhHalf, new box2d.b2Vec2(0.0, bwHalf), 0.0);
+            shape = createRectShape(bwHalf, bhHalf, new box2d.b2Vec2(0.0, bwHalf), 0.0);
             tumblerBox.CreateFixture(shape, 1.0);
-            shape.SetAsBox(bwHalf, bhHalf, new box2d.b2Vec2(0.0, -bwHalf), 0.0);
+            shape = createRectShape(bwHalf, bhHalf, new box2d.b2Vec2(0.0, -bwHalf), 0.0);
             tumblerBox.CreateFixture(shape, 1.0);
 
-            var shape = new box2d.b2CircleShape(Config.circleRaius);
-            shape.m_p.Set(Config.circleMargin, Config.circleMargin)
+            var radius = Config.circleRaius;
+            var cx = Config.circleMargin;
+            var cy = Config.circleMargin;
+            shape = createCircleShape(radius, cx, cy)
             tumblerBox.CreateFixture(shape, 1.0);
-            shape.m_p.Set(-Config.circleMargin, Config.circleMargin)
+            shape = createCircleShape(radius, -cx, cy)
             tumblerBox.CreateFixture(shape, 1.0);
-            shape.m_p.Set(-Config.circleMargin, -Config.circleMargin)
+            shape = createCircleShape(radius, -cx, -cy)
             tumblerBox.CreateFixture(shape, 1.0);
-            shape.m_p.Set(Config.circleMargin, -Config.circleMargin)
+            shape = createCircleShape(radius, cx, -cy)
             tumblerBox.CreateFixture(shape, 1.0);
+
 
             var bd = new box2d.b2BodyDef();
             var ground = world.CreateBody(bd);
@@ -94,8 +97,7 @@
                 bd.position.Set(0.0 + randomInt(-120, 120) / 10, 0.0 + randomInt(-120, 120) / 10);
                 var body = world.CreateBody(bd);
 
-                var shape = new box2d.b2PolygonShape();
-                shape.SetAsBox(Config.boxSize / 2, Config.boxSize / 2);
+                var shape = createRectShape(Config.boxSize / 2, Config.boxSize / 2);
                 body.CreateFixture(shape, 1.0);
 
                 count++;
@@ -106,6 +108,18 @@
         }).catch(function(error) {
             console.error(error);
         });
+    }
+
+    function createRectShape(w, h, center, angle) {
+        var shape = new box2d.b2PolygonShape();
+        shape.SetAsBox(w, h, center || box2d.ZERO, angle || 0.0);
+        return shape;
+    }
+
+    function createCircleShape(radius, x, y) {
+        var shape = new box2d.b2CircleShape(radius);
+        shape.m_p.Set(x, y);
+        return shape;
     }
 
     function render(ctx, timeStep) {
@@ -141,8 +155,8 @@
         timeStep *= Config.timeScale;
 
         world.Step(timeStep, Config.velocityIterations, Config.positionIterations);
-        tumblerAngle += 0.1 * timeStep;
 
+        // tumblerAngle += 0.1 * timeStep;
         // tumblerBox.SetAngle(tumblerAngle);
     }
     </script>
