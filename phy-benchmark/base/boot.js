@@ -3,6 +3,7 @@ var world;
 
 var WIDTH = 700;
 var HEIGHT = 600;
+
 var COUNT = 500;
 
 var stats;
