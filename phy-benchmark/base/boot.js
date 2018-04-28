@@ -1,11 +1,10 @@
-var canvas, context;
-var world;
+var COUNT = 500;
 
 var WIDTH = 700;
 var HEIGHT = 600;
 
-var COUNT = 500;
-
+var canvas, context;
+var world;
 var stats;
 
 function randomInt(min, max) {
