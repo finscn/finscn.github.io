@@ -64,7 +64,8 @@
                 Matter.Bodies.circle(WIDTH / 2 + Config.circleMargin, HEIGHT / 2 + Config.circleMargin, Config.circleRaius),
                 Matter.Bodies.circle(WIDTH / 2 - Config.circleMargin, HEIGHT / 2 + Config.circleMargin, Config.circleRaius),
             ],
-            isStatic: true
+            isStatic: true,
+            angularVelocity: Config.angularVelocity,
         });
         Matter.World.add(world, tumblerBox);
 
@@ -118,6 +119,7 @@
         timeStep *= Config.timeScale;
 
         Matter.Runner.tick(runner, engine);
+        // Matter.Engine.update(engine, delta, 1);
 
         angle -= Config.angularVelocity * timeStep;
         Matter.Body.setAngle(tumblerBox, angle);
