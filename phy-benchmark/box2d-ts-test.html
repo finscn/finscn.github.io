@@ -48,6 +48,7 @@
             world = new box2d.b2World(new box2d.b2Vec2(0, Config.gravity));
 
             var bd = new box2d.b2BodyDef();
+            bd.position.Set(0.0, 0.0);
 
             // bd.type = box2d.b2BodyType.b2_staticBody;
 
@@ -57,11 +58,12 @@
                 bd.type = box2d.b2BodyType.b2_dynamicBody;
             }
 
-            if (bd.type == box2d.b2BodyType.b2_kinematicBody) {
+            if (bd.type === box2d.b2BodyType.b2_kinematicBody) {
                 bd.angularVelocity = Config.angularVelocity;
-            } else if (bd.type == box2d.b2BodyType.b2_dynamicBody) {
-                var bd = new box2d.b2BodyDef();
-                var ground = world.CreateBody(bd);
+            } else if (bd.type === box2d.b2BodyType.b2_dynamicBody) {
+                bd.angularVelocity = Config.angularVelocity;
+                var jbd = new box2d.b2BodyDef();
+                var ground = world.CreateBody(jbd);
                 var jd = new box2d.b2RevoluteJointDef();
                 jd.bodyA = ground;
                 jd.bodyB = tumblerBox;
@@ -74,7 +76,6 @@
                 world.CreateJoint(jd);
             }
 
-            bd.position.Set(0.0, 0.0);
             tumblerBox = world.CreateBody(bd);
 
             var shape;
