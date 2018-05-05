@@ -39,9 +39,9 @@ function drawPoly(ctx, vertices, vertexCount) {
     ctx.stroke();
 }
 
-function drawCircle(ctx, raidus, x, y) {
+function drawCircle(ctx, radius, x, y) {
     ctx.beginPath();
-    ctx.arc(x, y, raidus, 0, 2 * Math.PI);
+    ctx.arc(x, y, radius, 0, 2 * Math.PI);
     ctx.stroke();
 }
 

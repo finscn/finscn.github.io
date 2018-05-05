@@ -52,10 +52,10 @@
 
             // bd.type = box2d.b2BodyType.b2_staticBody;
 
-            if (params.type==='kinematic'){
+            if (params.type === 'kinematic') {
                 bd.type = box2d.b2BodyType.b2_kinematicBody;
                 bd.angularVelocity = Config.angularVelocity;
-            }else{
+            } else {
                 bd.type = box2d.b2BodyType.b2_dynamicBody;
             }
             tumblerBox = world.CreateBody(bd);
@@ -110,6 +110,7 @@
                 var body = world.CreateBody(bd);
 
                 var shape = createRectShape(Config.boxSize / 2, Config.boxSize / 2);
+                // var shape = createCircleShape(Config.boxSize / 2);
                 body.CreateFixture(shape, 1.0);
 
                 count++;
@@ -130,7 +131,7 @@
 
     function createCircleShape(radius, x, y) {
         var shape = new box2d.b2CircleShape(radius);
-        shape.m_p.Set(x, y);
+        shape.m_p.Set(x || 0, y || 0);
         return shape;
     }
 
