@@ -34,6 +34,8 @@
         // blockSolve: true,
     };
 
+    var params = getUrlParams();
+
     var tumblerBox;
 
     var box2d;
@@ -46,9 +48,32 @@
             world = new box2d.b2World(new box2d.b2Vec2(0, Config.gravity));
 
             var bd = new box2d.b2BodyDef();
+
             // bd.type = box2d.b2BodyType.b2_staticBody;
-            // bd.type = box2d.b2BodyType.b2_kinematicBody;
-            bd.type = box2d.b2BodyType.b2_dynamicBody;
+
+            if (params.type==='kinematic'){
+                bd.type = box2d.b2BodyType.b2_kinematicBody;
+            }else{
+                bd.type = box2d.b2BodyType.b2_dynamicBody;
+            }
+
+            if (bd.type == box2d.b2BodyType.b2_kinematicBody) {
+                bd.angularVelocity = Config.angularVelocity;
+            } else if (bd.type == box2d.b2BodyType.b2_dynamicBody) {
+                var bd = new box2d.b2BodyDef();
+                var ground = world.CreateBody(bd);
+                var jd = new box2d.b2RevoluteJointDef();
+                jd.bodyA = ground;
+                jd.bodyB = tumblerBox;
+                jd.localAnchorA.Set(-0.0, 0.0);
+                jd.localAnchorB.Set(0.0, 0.0);
+                jd.referenceAngle = 0.0;
+                jd.motorSpeed = Config.angularVelocity;
+                jd.maxMotorTorque = 1e8;
+                jd.enableMotor = true;
+                world.CreateJoint(jd);
+            }
+
             bd.position.Set(0.0, 0.0);
             tumblerBox = world.CreateBody(bd);
 
@@ -76,20 +101,6 @@
             tumblerBox.CreateFixture(shape, 1.0);
             shape = createCircleShape(radius, cx, -cy)
             tumblerBox.CreateFixture(shape, 1.0);
-
-
-            var bd = new box2d.b2BodyDef();
-            var ground = world.CreateBody(bd);
-            var jd = new box2d.b2RevoluteJointDef();
-            jd.bodyA = ground;
-            jd.bodyB = tumblerBox;
-            jd.localAnchorA.Set(-0.0, 0.0);
-            jd.localAnchorB.Set(0.0, 0.0);
-            jd.referenceAngle = 0.0;
-            jd.motorSpeed = Config.angularVelocity;
-            jd.maxMotorTorque = 1e8;
-            jd.enableMotor = true;
-            world.CreateJoint(jd);
 
             var count = 0;
             while (count < COUNT) {
