@@ -6,16 +6,21 @@
     <link rel="stylesheet" href="./base/style.css">
     <script src="./base/boot.js"></script>
     <script src="./base/stats.min.js"></script>
-    <script src="./base/system-production.js"></script>
+    <!-- <script src="./base/system-production.js"></script> -->
+    <script src="./base/require.js"></script>
     <title>box2d.ts test</title>
-    <script src="box2d-ts.min.js"></script>
+    <script src="box2d-ts.js"></script>
+    <!-- <script src="box2d-ts.min.js"></script> -->
 </head>
 
 <body>
     <canvas id="stage"></canvas>
     <script>
+    //COUNT += 100;
+    COUNT = 700;
+
     var Config = {
-        timeScale: 1.25 / 1000,
+        timeScale: 1.3 / 1000,
         gravity: -9.8,
         positionIterations: 3,
         velocityIterations: 8,
@@ -41,7 +46,10 @@
     var box2d;
 
     function init() {
-        System.import("Box2D").then(function(Box2D) {
+        // return;
+        require(['Box2D'], function(Box2D) {
+            console.log(Box2D)
+            // requirejs(["Box2D"], function(Box2D) {
             box2d = Box2D;
             console.log(box2d.b2_version);
 
@@ -104,9 +112,12 @@
 
             var count = 0;
             while (count < COUNT) {
+                var x = 0.0 + randomInt(-120, 120) / 10;
+                var y = 0.0 + randomInt(-120, 120) / 10;
+
                 var bd = new box2d.b2BodyDef();
                 bd.type = box2d.b2BodyType.b2_dynamicBody;
-                bd.position.Set(0.0 + randomInt(-120, 120) / 10, 0.0 + randomInt(-120, 120) / 10);
+                bd.position.Set(x, y);
                 var body = world.CreateBody(bd);
 
                 var shape = createRectShape(Config.boxSize / 2, Config.boxSize / 2);
@@ -118,8 +129,6 @@
 
             tick();
 
-        }).catch(function(error) {
-            console.error(error);
         });
     }
 
@@ -167,7 +176,9 @@
     function update(timeStep) {
         timeStep *= Config.timeScale;
 
+        // window.iii=0;
         world.Step(timeStep, Config.velocityIterations, Config.positionIterations);
+        // console.log(window.iii)
 
         // tumblerAngle += 0.1 * timeStep;
         // tumblerBox.SetAngle(tumblerAngle);

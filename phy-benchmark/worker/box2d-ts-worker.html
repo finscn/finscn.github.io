@@ -12,6 +12,11 @@
 <body>
     <canvas id="stage"></canvas>
     <script>
+    //COUNT += 100;
+    COUNT = 700;
+
+    var userZeroCopy = true;
+
     var worker;
     var bodiesData;
     var mainData;
@@ -41,19 +46,28 @@
         worker.postMessage({
             rootUrl: document.location.href.replace(/\/[^/]*$/, "/"),
             COUNT: COUNT,
+            userZeroCopy: userZeroCopy,
         });
     }
 
     function sendMainData() {
         if (mainData) {
-            worker.postMessage(mainData, [mainData.buffer]);
+            if (userZeroCopy) {
+                worker.postMessage(mainData, [mainData.buffer]);
+            } else {
+                worker.postMessage(mainData);
+            }
             mainData = null;
         }
     }
 
     function sendBodiesData() {
         if (bodiesData) {
-            worker.postMessage(bodiesData, [bodiesData.buffer]);
+            if (userZeroCopy) {
+                worker.postMessage(bodiesData, [bodiesData.buffer]);
+            } else {
+                worker.postMessage(bodiesData);
+            }
             bodiesData = null;
         }
     }

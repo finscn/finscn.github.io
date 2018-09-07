@@ -2,6 +2,7 @@ var rootUrl;
 var bodiesData;
 var mainData;
 var COUNT;
+var userZeroCopy;
 
 // Body:       id | xf.p.x | xf.p.y | angle | shapeCount
 // poly:       vCount | x | y | ... | x | y
@@ -14,8 +15,9 @@ self.onmessage = function(e) {
     if (!box2d) {
         rootUrl = e.data.rootUrl;
         COUNT = e.data.COUNT;
-        importScripts(rootUrl + '../base/system-production.js');
-        importScripts(rootUrl + '../box2d-ts.min.js');
+        userZeroCopy = e.data.userZeroCopy;
+        importScripts(rootUrl + '../base/require.js');
+        importScripts(rootUrl + '../box2d-ts.js');
         init();
     } else {
         // We got a new buffer
@@ -50,7 +52,8 @@ var tumblerBox;
 var box2d;
 
 function init() {
-    System.import("Box2D").then(function(Box2D) {
+    // System.import("Box2D").then(function(Box2D) {
+    require(['Box2D'], function(Box2D) {
         box2d = Box2D;
         console.log(box2d.b2_version);
 
@@ -118,9 +121,6 @@ function init() {
         }
 
         start();
-
-    }).catch(function(error) {
-        console.error(error);
     });
 }
 
@@ -150,14 +150,22 @@ function randomInt(min, max) {
 
 function sendMainData() {
     if (mainData) {
-        self.postMessage(mainData, [mainData.buffer]);
+        if (userZeroCopy) {
+            self.postMessage(mainData, [mainData.buffer]);
+        } else {
+            self.postMessage(mainData);
+        }
         mainData = null;
     }
 }
 
 function sendBodiesData() {
     if (bodiesData) {
-        self.postMessage(bodiesData, [bodiesData.buffer]);
+        if (userZeroCopy) {
+            self.postMessage(bodiesData, [bodiesData.buffer]);
+        } else {
+            self.postMessage(bodiesData);
+        }
         bodiesData = null;
     }
 }
