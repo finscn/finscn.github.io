@@ -14,11 +14,13 @@
     <script>
     //COUNT += 100;
     COUNT = 700;
+    COUNT = 1500;
 
     var userZeroCopy = true;
 
     var worker;
     var bodiesData;
+    var bodiesDataBackup;
     var mainData;
 
     // poly:       id | xf.p.x | xf.p.y | angle | vCount | x | y | ... | x | y
@@ -39,6 +41,7 @@
             var array = e.data;
             if (array[0] === 1) {
                 bodiesData = array;
+                bodiesDataBackup = new Float32Array(bodiesData);
             }
         }
 
@@ -74,7 +77,7 @@
 
     function render(ctx, timeStep) {
 
-        if (!bodiesData) {
+        if (!bodiesDataBackup) {
             return;
         }
 
@@ -85,34 +88,35 @@
         ctx.scale(10, -10); // Zoom in and flip y axis
         ctx.lineWidth = 0.1;
 
-        var len = bodiesData.length;
+        var len = bodiesDataBackup.length;
+
         for (var i = 1; i < len;) {
-            var id = bodiesData[i++];
-            var tx = bodiesData[i++];
-            var ty = bodiesData[i++];
-            var angle = bodiesData[i++];
-            var shapeCount = bodiesData[i++];
+            var id = bodiesDataBackup[i++];
+            var tx = bodiesDataBackup[i++];
+            var ty = bodiesDataBackup[i++];
+            var angle = bodiesDataBackup[i++];
+            var shapeCount = bodiesDataBackup[i++];
 
             ctx.save();
             ctx.translate(tx, ty);
             ctx.rotate(angle);
 
             for (var j = 0; j < shapeCount; j++) {
-                var vCount = bodiesData[i++];
+                var vCount = bodiesDataBackup[i++];
                 if (vCount === 0) {
-                    var radius = bodiesData[i++];
-                    var cx = bodiesData[i++];
-                    var cy = bodiesData[i++];
+                    var radius = bodiesDataBackup[i++];
+                    var cx = bodiesDataBackup[i++];
+                    var cy = bodiesDataBackup[i++];
                     // console.log(tx,ty,angle,radius+1, cx, cy)
                     drawCircle(ctx, radius, cx, cy);
                 } else {
                     ctx.beginPath();
-                    var x = bodiesData[i++];
-                    var y = bodiesData[i++];
+                    var x = bodiesDataBackup[i++];
+                    var y = bodiesDataBackup[i++];
                     ctx.moveTo(x, y);
                     for (var k = 1; k < vCount; k++) {
-                        var x = bodiesData[i++];
-                        var y = bodiesData[i++];
+                        var x = bodiesDataBackup[i++];
+                        var y = bodiesDataBackup[i++];
                         ctx.lineTo(x, y);
                     }
                     ctx.closePath();
@@ -126,6 +130,13 @@
         ctx.restore();
 
         sendBodiesData();
+
+        var now = Date.now();
+        var size = 50;
+        var x = WIDTH / 2 - size / 2 + Math.sin(now / 500) * (WIDTH / 2 * 0.8);
+        var y = HEIGHT / 2 - size / 2;
+        ctx.fillStyle = "red";
+        ctx.fillRect(x, y, size, size);
     }
 
     function update(timeStep) {

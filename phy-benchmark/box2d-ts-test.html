@@ -18,6 +18,7 @@
     <script>
     //COUNT += 100;
     COUNT = 700;
+    COUNT = 1500;
 
     var Config = {
         timeScale: 1.3 / 1000,
@@ -169,6 +170,13 @@
             ctx.restore();
         }
         ctx.restore();
+
+        var now = Date.now();
+        var size = 50;
+        var x = WIDTH / 2 - size / 2 + Math.sin(now / 500) * (WIDTH / 2 * 0.8);
+        var y = HEIGHT / 2 - size / 2;
+        ctx.fillStyle = "red";
+        ctx.fillRect(x, y, size, size);
     }
 
     var tumblerAngle = 0;
