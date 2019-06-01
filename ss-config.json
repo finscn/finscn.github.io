@@ -7,7 +7,7 @@
 "port_password":{
     "10080":"Xiaopang-01"
 },
-"timeout":800,
+"timeout":500,
 "method":"aes-256-cfb",
 "protocol": "origin",
 "protocol_param": "",
