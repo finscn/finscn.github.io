@@ -1,6 +1,5 @@
 {
-"server":"0.0.0.0",
-"server_ipv6": "[::]",
+"server":"149.28.179.106",
 "server_port":10080,
 "password":"Xiaopang-01",
 "port_password":{
