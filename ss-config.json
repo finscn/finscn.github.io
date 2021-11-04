@@ -1,10 +1,10 @@
 {
     "server": "0.0.0.0",
-    "server_port": 8091,
+    "server_port": 8092,
     "password": "Xiaopang-01",
     "port_password":
     {
-        "8091": "Xiaopang-01"
+        "8092": "Xiaopang-01"
     },
     "local_address": "127.0.0.1",
     "local_port": 8098,

@@ -1,7 +1,7 @@
-var LightTarget = PIXI.lights.LightTarget;
-var AmbientLight = PIXI.lights.AmbientLight;
-var DirectionalLight = PIXI.lights.DirectionalLight;
-var PointLight = PIXI.lights.PointLight;
+var LightTarget = PIXI.lighting.LightTarget;
+var AmbientLight = PIXI.lighting.AmbientLight;
+var DirectionalLight = PIXI.lighting.DirectionalLight;
+var PointLight = PIXI.lighting.PointLight;
 
 
 var canvas = document.getElementById("canvas");
