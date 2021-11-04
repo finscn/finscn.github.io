@@ -14,7 +14,7 @@
     <canvas id="stage"></canvas>
     <script>
     var Config = {
-        timeScale: 1 / 1000,
+        timeScale: 1.25 / 1000,
         gravity: 9.8 * 0.1,
         positionIterations: 8, // 3,
         velocityIterations: 8, // 8,
@@ -110,9 +110,22 @@
 
         ctx.lineWidth = 1;
 
-        world.bodies.forEach(function(body) {
-            drawBody(ctx, body);
-        })
+        const count = world.bodies.length;
+        for (var i = 0; i < count; i++) {
+            ctx.save();
+
+            var body = world.bodies[i]
+            var parts = body.parts;
+            parts.forEach(function(part) {
+                if (part.circleRadius) {
+                    drawCircle(ctx, part.circleRadius, part.position.x, part.position.y);
+                } else {
+                    drawPoly(ctx, part.vertices, part.vertices.length);
+                }
+            });
+
+            ctx.restore();
+        }
     }
 
     var angle = 0;
