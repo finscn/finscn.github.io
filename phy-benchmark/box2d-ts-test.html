@@ -7,9 +7,12 @@
     <script src="./base/boot.js"></script>
     <script src="./base/stats.min.js"></script>
     <!-- <script src="./base/system-production.js"></script> -->
-    <script src="./base/require.js"></script>
+    <!-- <script src="./base/require.js"></script> -->
+
+    <!-- <script src="https://unpkg.com/systemjs@6.7.0/dist/system.js"></script> -->
+
     <title>box2d.ts test</title>
-    <script src="box2d-ts.js"></script>
+    <script src="box2d.umd.js"></script>
     <!-- <script src="box2d-ts.min.js"></script> -->
 </head>
 
@@ -48,33 +51,36 @@
 
     function init() {
         // return;
-        require(['Box2D'], function(Box2D) {
+        // System.import("box2d.umd.js").then(function(Box2D) {
+        // require(['Box2D'], function(Box2D) {
+        Box2D = b2
+        setTimeout(function(){
             console.log(Box2D)
             // requirejs(["Box2D"], function(Box2D) {
             box2d = Box2D;
-            console.log(box2d.b2_version);
+            console.log(box2d.version);
 
-            world = new box2d.b2World(new box2d.b2Vec2(0, Config.gravity));
+            world = new box2d.World(new box2d.Vec2(0, Config.gravity));
 
-            var bd = new box2d.b2BodyDef();
+            var bd = new box2d.BodyDef();
             bd.position.Set(0.0, 0.0);
 
-            // bd.type = box2d.b2BodyType.b2_staticBody;
+            // bd.type = box2d.BodyType.b2_staticBody;
 
             if (params.type === 'kinematic') {
-                bd.type = box2d.b2BodyType.b2_kinematicBody;
+                bd.type = box2d.BodyType.b2_kinematicBody;
                 bd.angularVelocity = Config.angularVelocity;
             } else {
-                bd.type = box2d.b2BodyType.b2_dynamicBody;
+                bd.type = box2d.BodyType.b2_dynamicBody;
             }
             tumblerBox = world.CreateBody(bd);
 
-            if (bd.type === box2d.b2BodyType.b2_kinematicBody) {
+            if (bd.type === box2d.BodyType.b2_kinematicBody) {
                 // do nothing
-            } else if (bd.type === box2d.b2BodyType.b2_dynamicBody) {
-                var jbd = new box2d.b2BodyDef();
+            } else if (bd.type === box2d.BodyType.b2_dynamicBody) {
+                var jbd = new box2d.BodyDef();
                 var ground = world.CreateBody(jbd);
-                var jd = new box2d.b2RevoluteJointDef();
+                var jd = new box2d.RevoluteJointDef();
                 jd.bodyA = ground;
                 jd.bodyB = tumblerBox;
                 jd.localAnchorA.Set(-0.0, 0.0);
@@ -90,13 +96,13 @@
 
             var bwHalf = Config.boardWidth / 2;
             var bhHalf = Config.boardHeight / 2;
-            shape = createRectShape(bhHalf, bwHalf, new box2d.b2Vec2(bwHalf, 0.0), 0.0);
+            shape = createRectShape(bhHalf, bwHalf, new box2d.Vec2(bwHalf, 0.0), 0.0);
             tumblerBox.CreateFixture(shape, 1.0);
-            shape = createRectShape(bhHalf, bwHalf, new box2d.b2Vec2(-bwHalf, 0.0), 0.0);
+            shape = createRectShape(bhHalf, bwHalf, new box2d.Vec2(-bwHalf, 0.0), 0.0);
             tumblerBox.CreateFixture(shape, 1.0);
-            shape = createRectShape(bwHalf, bhHalf, new box2d.b2Vec2(0.0, bwHalf), 0.0);
+            shape = createRectShape(bwHalf, bhHalf, new box2d.Vec2(0.0, bwHalf), 0.0);
             tumblerBox.CreateFixture(shape, 1.0);
-            shape = createRectShape(bwHalf, bhHalf, new box2d.b2Vec2(0.0, -bwHalf), 0.0);
+            shape = createRectShape(bwHalf, bhHalf, new box2d.Vec2(0.0, -bwHalf), 0.0);
             tumblerBox.CreateFixture(shape, 1.0);
 
             var radius = Config.circleRaius;
@@ -116,8 +122,8 @@
                 var x = 0.0 + randomInt(-120, 120) / 10;
                 var y = 0.0 + randomInt(-120, 120) / 10;
 
-                var bd = new box2d.b2BodyDef();
-                bd.type = box2d.b2BodyType.b2_dynamicBody;
+                var bd = new box2d.BodyDef();
+                bd.type = box2d.BodyType.b2_dynamicBody;
                 bd.position.Set(x, y);
                 var body = world.CreateBody(bd);
 
@@ -134,13 +140,13 @@
     }
 
     function createRectShape(w, h, center, angle) {
-        var shape = new box2d.b2PolygonShape();
+        var shape = new box2d.PolygonShape();
         shape.SetAsBox(w, h, center || box2d.ZERO, angle || 0.0);
         return shape;
     }
 
     function createCircleShape(radius, x, y) {
-        var shape = new box2d.b2CircleShape(radius);
+        var shape = new box2d.CircleShape(radius);
         shape.m_p.Set(x || 0, y || 0);
         return shape;
     }
