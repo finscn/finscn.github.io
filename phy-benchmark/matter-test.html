@@ -2,7 +2,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no" />
+    <meta name="viewport"
+        content="width=device-width, height=device-height, initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no" />
     <link rel="stylesheet" href="./base/style.css">
     <script src="./base/boot.js"></script>
     <script src="./base/stats.min.js"></script>
@@ -13,136 +14,139 @@
 <body>
     <canvas id="stage"></canvas>
     <script>
-    var Config = {
-        timeScale: 1.25 / 1000,
-        gravity: 9.8 * 0.1,
-        positionIterations: 8, // 3,
-        velocityIterations: 8, // 8,
+        var Config = {
+            timeScale: 1.25 / 1000,
+            gravity: 9.8 * 0.1,
+            positionIterations: 8, // 3,
+            velocityIterations: 8, // 8,
 
-        angularVelocity: 0.2,
-        boardWidth: 400,
-        boardHeight: 10,
-        circleRaius: 30,
-        circleMargin: 120,
-        boxSize: 8,
+            angularVelocity: 0.2,
+            boardWidth: 400,
+            boardHeight: 10,
+            circleRaius: 30,
+            circleMargin: 120,
+            boxSize: 8,
 
-        // allowSleep: true,
-        // warmStarting: true,
-        // continuousPhysics: true,
-        // subStepping: false,
-        // blockSolve: true,
-    };
+            // allowSleep: true,
+            // warmStarting: true,
+            // continuousPhysics: true,
+            // subStepping: false,
+            // blockSolve: true,
+        };
 
-    var tumblerBox;
+        var tumblerBox;
 
-    var engine;
+        var engine;
 
-    function init() {
-        engine = Matter.Engine.create({
-            positionIterations: Config.positionIterations,
-            velocityIterations: Config.velocityIterations,
-            world: Matter.World.create({
-                gravity: {
-                    y: Config.gravity,
-                },
-            })
-        });
-        world = engine.world;
+        function init() {
+            engine = Matter.Engine.create({
+                positionIterations: Config.positionIterations,
+                velocityIterations: Config.velocityIterations,
+                world: Matter.World.create({
+                    gravity: {
+                        y: Config.gravity,
+                    },
+                })
+            });
+            world = engine.world;
 
-        var bw = Config.boardWidth;
-        var bh = Config.boardHeight;
+            var bw = Config.boardWidth;
+            var bh = Config.boardHeight;
 
-        tumblerBox = Matter.Body.create({
-            parts: [
-                Matter.Bodies.rectangle(WIDTH / 2, HEIGHT / 2 - bw / 2, bw, bh),
-                Matter.Bodies.rectangle(WIDTH / 2, HEIGHT / 2 + bw / 2, bw, bh),
-                Matter.Bodies.rectangle(WIDTH / 2 - bw / 2, HEIGHT / 2, bh, bw),
-                Matter.Bodies.rectangle(WIDTH / 2 + bw / 2, HEIGHT / 2, bh, bw),
+            tumblerBox = Matter.Body.create({
+                parts: [
+                    Matter.Bodies.rectangle(WIDTH / 2, HEIGHT / 2 - bw / 2, bw, bh),
+                    Matter.Bodies.rectangle(WIDTH / 2, HEIGHT / 2 + bw / 2, bw, bh),
+                    Matter.Bodies.rectangle(WIDTH / 2 - bw / 2, HEIGHT / 2, bh, bw),
+                    Matter.Bodies.rectangle(WIDTH / 2 + bw / 2, HEIGHT / 2, bh, bw),
 
-                Matter.Bodies.circle(WIDTH / 2 - Config.circleMargin, HEIGHT / 2 - Config.circleMargin, Config.circleRaius),
-                Matter.Bodies.circle(WIDTH / 2 + Config.circleMargin, HEIGHT / 2 - Config.circleMargin, Config.circleRaius),
-                Matter.Bodies.circle(WIDTH / 2 + Config.circleMargin, HEIGHT / 2 + Config.circleMargin, Config.circleRaius),
-                Matter.Bodies.circle(WIDTH / 2 - Config.circleMargin, HEIGHT / 2 + Config.circleMargin, Config.circleRaius),
-            ],
-            isStatic: true,
-            angularVelocity: Config.angularVelocity,
-        });
-        Matter.World.add(world, tumblerBox);
+                    Matter.Bodies.circle(WIDTH / 2 - Config.circleMargin, HEIGHT / 2 - Config.circleMargin, Config.circleRaius),
+                    Matter.Bodies.circle(WIDTH / 2 + Config.circleMargin, HEIGHT / 2 - Config.circleMargin, Config.circleRaius),
+                    Matter.Bodies.circle(WIDTH / 2 + Config.circleMargin, HEIGHT / 2 + Config.circleMargin, Config.circleRaius),
+                    Matter.Bodies.circle(WIDTH / 2 - Config.circleMargin, HEIGHT / 2 + Config.circleMargin, Config.circleRaius),
+                ],
+                isStatic: true,
+                angularVelocity: Config.angularVelocity,
+            });
+            Matter.World.add(world, tumblerBox);
 
 
-        var count = 0;
-        var i = 0;
-        while (count < COUNT) {
-            var body = Matter.Bodies.rectangle(
-                WIDTH / 2 + randomInt(-120, 120),
-                HEIGHT / 2 + randomInt(-120, 120),
-                Config.boxSize,
-                Config.boxSize);
+            var count = 0;
+            var i = 0;
+            while (count < COUNT) {
+                var body
+                if (count % 5 === 1) {
+                    body = Matter.Bodies.circle(
+                        WIDTH / 2 + randomInt(-120, 120),
+                        HEIGHT / 2 + randomInt(-120, 120),
+                        Config.boxSize / 2 * 1.5);
+                } else {
+                    body = Matter.Bodies.rectangle(
+                        WIDTH / 2 + randomInt(-120, 120),
+                        HEIGHT / 2 + randomInt(-120, 120),
+                        Config.boxSize,
+                        Config.boxSize);
+                }
 
-            // var body = Matter.Bodies.circle(
-            //     WIDTH / 2 + randomInt(-120, 120),
-            //     HEIGHT / 2 + randomInt(-120, 120),
-            //     Config.boxSize/2);
+                Matter.Body.set(body, 'frictionAir', 0.01 + 0.05 * (count % 2));
+                Matter.Body.set(body, 'mass', 1);
+                Matter.World.add(world, body);
 
-            Matter.Body.set(body, 'frictionAir', 0.01 + 0.05*(count%2));
-            Matter.Body.set(body, 'mass', 1);
-            Matter.World.add(world, body);
+                count++;
+            }
 
-            count++;
+            tick()
         }
 
-        tick()
-    }
-
-    function drawBody(ctx, body) {
-        var parts = body.parts;
-        parts.forEach(function(part) {
-            if (part.circleRadius) {
-                drawCircle(ctx, part.circleRadius, part.position.x, part.position.y);
-            } else {
-                drawPoly(ctx, part.vertices, part.vertices.length);
-            }
-        });
-    }
-
-    function render(ctx, timeStep) {
-        ctx.clearRect(0, 0, WIDTH, HEIGHT);
-
-        ctx.lineWidth = 1;
-
-        const count = world.bodies.length;
-        for (var i = 0; i < count; i++) {
-            ctx.save();
-
-            var body = world.bodies[i]
+        function drawBody(ctx, body) {
             var parts = body.parts;
-            parts.forEach(function(part) {
+            parts.forEach(function (part) {
                 if (part.circleRadius) {
                     drawCircle(ctx, part.circleRadius, part.position.x, part.position.y);
                 } else {
                     drawPoly(ctx, part.vertices, part.vertices.length);
                 }
             });
-
-            ctx.restore();
         }
-    }
 
-    var angle = 0;
+        function render(ctx, timeStep) {
+            ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-    var runner = Matter.Runner.create();
-    runner.isFixed = true;
-    runner.delta = 5;
+            ctx.lineWidth = 1;
 
-    function update(timeStep) {
-        timeStep *= Config.timeScale;
+            const count = world.bodies.length;
+            for (var i = 0; i < count; i++) {
+                ctx.save();
 
-        Matter.Runner.tick(runner, engine);
-        // Matter.Engine.update(engine, delta, 1);
+                var body = world.bodies[i]
+                var parts = body.parts;
+                parts.forEach(function (part) {
+                    if (part.circleRadius) {
+                        drawCircle(ctx, part.circleRadius, part.position.x, part.position.y);
+                    } else {
+                        drawPoly(ctx, part.vertices, part.vertices.length);
+                    }
+                });
 
-        angle -= Config.angularVelocity * timeStep;
-        Matter.Body.setAngle(tumblerBox, angle);
-    }
+                ctx.restore();
+            }
+        }
+
+        var angle = 0;
+
+        var runner = Matter.Runner.create();
+        runner.isFixed = true;
+        runner.delta = 5;
+
+        function update(timeStep) {
+            timeStep *= Config.timeScale;
+
+            Matter.Runner.tick(runner, engine);
+            // Matter.Engine.update(engine, delta, 1);
+
+            angle -= Config.angularVelocity * timeStep;
+            Matter.Body.setAngle(tumblerBox, angle);
+        }
     </script>
 </body>
 

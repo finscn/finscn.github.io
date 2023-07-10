@@ -2,7 +2,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no" />
+    <meta name="viewport"
+        content="width=device-width, height=device-height, initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no" />
     <link rel="stylesheet" href="./base/style.css">
     <script src="./base/boot.js"></script>
     <script src="./base/stats.min.js"></script>
@@ -13,122 +14,129 @@
 <body>
     <canvas id="stage"></canvas>
     <script>
-    var Config = {
-        timeScale: 1.25 / 1000,
-        gravity: -9.8,
-        positionIterations: 3,
-        velocityIterations: 8,
+        var Config = {
+            timeScale: 1.25 / 1000,
+            gravity: -9.8,
+            positionIterations: 3,
+            velocityIterations: 8,
 
-        angularVelocity: 0.2,
-        boardWidth: 40,
-        boardHeight: 1,
-        circleRaius: 3,
-        circleMargin: 12,
-        boxSize: 0.8,
+            angularVelocity: 0.2,
+            boardWidth: 40,
+            boardHeight: 1,
+            circleRaius: 3,
+            circleMargin: 12,
+            boxSize: 0.8,
 
-        // allowSleep: true,
-        // warmStarting: true,
-        // continuousPhysics: true,
-        // subStepping: false,
-        // blockSolve: true,
-    };
-
-    var pl = planck;
-
-    function init() {
-
-        var options = {
-            gravity: pl.Vec2(0, Config.gravity),
-            positionIterations: Config.positionIterations,
-            velocityIterations: Config.velocityIterations,
+            // allowSleep: true,
+            // warmStarting: true,
+            // continuousPhysics: true,
+            // subStepping: false,
+            // blockSolve: true,
         };
 
-        world = pl.World(options);
+        var pl = planck;
+
+        function init() {
+
+            var options = {
+                gravity: pl.Vec2(0, Config.gravity),
+                positionIterations: Config.positionIterations,
+                velocityIterations: Config.velocityIterations,
+            };
+
+            world = pl.World(options);
 
 
-        var bd = {};
-        bd.type = 'dynamic';
-        bd.allowSleep = true;
-        bd.position = pl.Vec2(0, 0);
-        tumblerBox = world.createBody(bd);
-
-        var bwHalf = Config.boardWidth / 2;
-        var bhHalf = Config.boardHeight / 2;
-
-        tumblerBox.createFixture(pl.Box(bhHalf, bwHalf, pl.Vec2(bwHalf, 0), 0), 1);
-        tumblerBox.createFixture(pl.Box(bhHalf, bwHalf, pl.Vec2(-bwHalf, 0), 0), 1);
-        tumblerBox.createFixture(pl.Box(bwHalf, bhHalf, pl.Vec2(0, bwHalf), 0), 1);
-        tumblerBox.createFixture(pl.Box(bwHalf, bhHalf, pl.Vec2(0, -bwHalf), 0), 1);
-
-        var shape = pl.Circle(Config.circleRaius);
-        shape.m_p.set(pl.Vec2(Config.circleMargin, Config.circleMargin));
-        tumblerBox.createFixture(shape, 1);
-        var shape = pl.Circle(Config.circleRaius);
-        shape.m_p.set(pl.Vec2(-Config.circleMargin, Config.circleMargin));
-        tumblerBox.createFixture(shape, 1);
-        var shape = pl.Circle(Config.circleRaius);
-        shape.m_p.set(pl.Vec2(-Config.circleMargin, -Config.circleMargin));
-        tumblerBox.createFixture(shape, 1);
-        var shape = pl.Circle(Config.circleRaius);
-        shape.m_p.set(pl.Vec2(Config.circleMargin, -Config.circleMargin));
-        tumblerBox.createFixture(shape, 1);
-
-        var bd = {};
-        var ground = world.createBody(bd);
-        var jd = {};
-        jd.motorSpeed = Config.angularVelocity;
-        jd.maxMotorTorque = 1e8;
-        jd.enableMotor = true;
-        world.createJoint(pl.RevoluteJoint(jd, ground, tumblerBox, pl.Vec2(0, 0)));
-
-        var count = 0;
-        while (count < COUNT) {
             var bd = {};
-            var body = world.createDynamicBody(bd);
-            body.setPosition(pl.Vec2(0 + randomInt(-120, 120) / 10, 0 + randomInt(-120, 120) / 10));
+            bd.type = 'dynamic';
+            bd.allowSleep = true;
+            bd.position = pl.Vec2(0, 0);
+            tumblerBox = world.createBody(bd);
 
-            var shape = pl.Box(Config.boxSize / 2, Config.boxSize / 2);
-            // var shape = pl.Circle(Config.boxSize / 2);
-            body.createFixture(shape, 1);
+            var bwHalf = Config.boardWidth / 2;
+            var bhHalf = Config.boardHeight / 2;
 
-            count++;
+            tumblerBox.createFixture(pl.Box(bhHalf, bwHalf, pl.Vec2(bwHalf, 0), 0), 1);
+            tumblerBox.createFixture(pl.Box(bhHalf, bwHalf, pl.Vec2(-bwHalf, 0), 0), 1);
+            tumblerBox.createFixture(pl.Box(bwHalf, bhHalf, pl.Vec2(0, bwHalf), 0), 1);
+            tumblerBox.createFixture(pl.Box(bwHalf, bhHalf, pl.Vec2(0, -bwHalf), 0), 1);
+
+            var shape = pl.Circle(Config.circleRaius);
+            shape.m_p.set(pl.Vec2(Config.circleMargin, Config.circleMargin));
+            tumblerBox.createFixture(shape, 1);
+            var shape = pl.Circle(Config.circleRaius);
+            shape.m_p.set(pl.Vec2(-Config.circleMargin, Config.circleMargin));
+            tumblerBox.createFixture(shape, 1);
+            var shape = pl.Circle(Config.circleRaius);
+            shape.m_p.set(pl.Vec2(-Config.circleMargin, -Config.circleMargin));
+            tumblerBox.createFixture(shape, 1);
+            var shape = pl.Circle(Config.circleRaius);
+            shape.m_p.set(pl.Vec2(Config.circleMargin, -Config.circleMargin));
+            tumblerBox.createFixture(shape, 1);
+
+            var bd = {};
+            var ground = world.createBody(bd);
+            var jd = {};
+            jd.motorSpeed = Config.angularVelocity;
+            jd.maxMotorTorque = 1e8;
+            jd.enableMotor = true;
+            world.createJoint(pl.RevoluteJoint(jd, ground, tumblerBox, pl.Vec2(0, 0)));
+
+            var count = 0;
+            while (count < COUNT) {
+                var bd = {};
+                var body = world.createDynamicBody(bd);
+                body.setPosition(pl.Vec2(0 + randomInt(-120, 120) / 10, 0 + randomInt(-120, 120) / 10));
+
+                var shape = pl.Box(Config.boxSize / 2, Config.boxSize / 2);
+
+                var shape
+                if (count % 5 === 1) {
+                    shape = pl.Circle(Config.boxSize / 2 * 1.5);
+                } else {
+                    shape = pl.Box(Config.boxSize / 2, Config.boxSize / 2);
+                }
+
+                body.createFixture(shape, 1);
+
+                count++;
+            }
+
+            tick();
         }
 
-        tick();
-    }
 
+        function render(ctx, timeStep) {
+            ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-    function render(ctx, timeStep) {
-        ctx.clearRect(0, 0, WIDTH, HEIGHT);
-
-        ctx.save();
-        ctx.translate(WIDTH / 2, HEIGHT / 2); // Translate to the center
-        ctx.scale(10, -10); // Zoom in and flip y axis
-        ctx.lineWidth = 0.1;
-
-        for (var b = world.m_bodyList; b; b = b.m_next) {
-            var xf = b.m_xf;
             ctx.save();
-            ctx.translate(xf.p.x, xf.p.y);
-            ctx.rotate(xf.q.getAngle());
+            ctx.translate(WIDTH / 2, HEIGHT / 2); // Translate to the center
+            ctx.scale(10, -10); // Zoom in and flip y axis
+            ctx.lineWidth = 0.1;
 
-            for (var f = b.m_fixtureList; f; f = f.m_next) {
-                var shape = f.getShape();
-                if (shape.m_vertices) {
-                    drawPoly(context, shape.m_vertices, shape.m_count);
-                } else if (shape.m_p) {
-                    drawCircle(context, shape.m_radius, shape.m_p.x, shape.m_p.y);
+            for (var b = world.m_bodyList; b; b = b.m_next) {
+                var xf = b.m_xf;
+                ctx.save();
+                ctx.translate(xf.p.x, xf.p.y);
+                ctx.rotate(xf.q.getAngle());
+
+                for (var f = b.m_fixtureList; f; f = f.m_next) {
+                    var shape = f.getShape();
+                    if (shape.m_vertices) {
+                        drawPoly(context, shape.m_vertices, shape.m_count);
+                    } else if (shape.m_p) {
+                        drawCircle(context, shape.m_radius, shape.m_p.x, shape.m_p.y);
+                    }
                 }
+                ctx.restore();
             }
             ctx.restore();
         }
-        ctx.restore();
-    }
 
-    function update(timeStep) {
-        timeStep *= Config.timeScale;
-        world.step(timeStep, Config.velocityIterations, Config.positionIterations);
-    }
+        function update(timeStep) {
+            timeStep *= Config.timeScale;
+            world.step(timeStep, Config.velocityIterations, Config.positionIterations);
+        }
     </script>
 </body>
 
