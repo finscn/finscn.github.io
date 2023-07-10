@@ -2,6 +2,9 @@
 
 <head>
     <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <meta name="viewport"
         content="width=device-width, height=device-height, initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no" />
     <link rel="stylesheet" href="./base/style.css">
@@ -14,6 +17,10 @@
 <body>
     <canvas id="stage"></canvas>
     <script>
+        // COUNT += 100;
+        // COUNT = 700;
+        // COUNT = 1500;
+
         var Config = {
             timeScale: 1.25 / 1000,
             gravity: -9.8,
@@ -37,6 +44,7 @@
         var pl = planck;
 
         function init() {
+            console.log('COUNT:', COUNT);
 
             var options = {
                 gravity: pl.Vec2(0, Config.gravity),

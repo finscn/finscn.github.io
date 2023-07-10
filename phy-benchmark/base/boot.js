@@ -1,4 +1,4 @@
-var COUNT = 500;
+var COUNT = 700;
 
 var WIDTH = 700;
 var HEIGHT = 600;
@@ -45,7 +45,7 @@ function drawCircle(ctx, radius, x, y) {
     ctx.stroke();
 }
 
-window.addEventListener('load', function() {
+window.addEventListener('load', function () {
     canvas = document.getElementById('stage');
     canvas.width = WIDTH;
     canvas.height = HEIGHT;
