@@ -35,6 +35,7 @@ function generateBlockPhysicsBody(threeObject, data) {
 
     creationSettings.mMassPropertiesOverride.mMass = 0;
     creationSettings.mRestitution = restitution;
+    creationSettings.mFriction = friction;
 
     let body = bodyInterface.CreateBody(creationSettings);
 
@@ -77,6 +78,7 @@ function generatePhysicsBody(threeObject, objectType, data) {
         new Jolt.Quat(rot.x, rot.y, rot.z, rot.w), Jolt.Dynamic, Jolt.MOVING);
     creationSettings.mMassPropertiesOverride.mMass = mass;
     creationSettings.mRestitution = restitution;
+    creationSettings.mFriction = friction;
 
     let body = bodyInterface.CreateBody(creationSettings);
 

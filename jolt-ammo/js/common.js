@@ -29,7 +29,8 @@ const floorHeight = 64
 const floorThickness = 10
 
 
-const restitution = 0.5
+const restitution = 0.4
+const friction = 0.5
 const mass = 5
 
 var canvasWidth = 1024

@@ -47,6 +47,7 @@ function generateBlockPhysicsBody(threeObject, data) {
     var body = new Ammo.btRigidBody(rbInfo);
 
     body.setRestitution(restitution)
+    body.setFriction(friction)
 
     physicsWorld.addRigidBody(body);
 
@@ -98,6 +99,7 @@ function generatePhysicsBody(threeObject, objectType, data) {
     var body = new Ammo.btRigidBody(rbInfo);
 
     body.setRestitution(restitution)
+    body.setFriction(friction)
 
     physicsWorld.addRigidBody(body);
 
