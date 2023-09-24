@@ -112,7 +112,7 @@ function updateFloor(deltaTime, dy) {
 function updatePhysics(deltaTime) {
     deltaTime = Math.min(deltaTime, 1.0 / 30.0);
     var numSteps = deltaTime > 1.0 / 55.0 ? 2 : 1;
-    jolt.Step(deltaTime, numSteps);
-    // jolt.Step(1 / 60, 1);
+    // jolt.Step(deltaTime, numSteps);
+    jolt.Step(1 / 60, 1);
 }
 

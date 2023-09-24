@@ -145,6 +145,6 @@ function updateFloor(deltaTime, dy) {
 function updatePhysics(deltaTime) {
     deltaTime = Math.min(deltaTime, 1.0 / 30.0);
     var numSteps = deltaTime > 1.0 / 55.0 ? 2 : 1;
-    physicsWorld.stepSimulation(deltaTime, numSteps);
-    // physicsWorld.stepSimulation(1 / 60, 1);
+    // physicsWorld.stepSimulation(deltaTime, numSteps);
+    physicsWorld.stepSimulation(1 / 60, 1);
 }
