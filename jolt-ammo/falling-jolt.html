@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>JoltPhysics.js demo</title>
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+	<div id="container">Loading...</div>
+	<div id="info">JoltPhysics.js demo ( <span id="obj-count">0</span> )</div>
+
+	<script src="three/three.min.js"></script>
+	<script src="three/OrbitControls.js"></script>
+	<script src="three/WebGL.js"></script>
+	<script src="three/stats.min.js"></script>
+	<script src="js/common.js"></script>
+	<script src="js/phy-jolt.js"></script>
+
+	<script type="module">
+		import initJolt from './JoltPhysics.js/jolt-physics.wasm.js';
+
+		initJolt().then(function (_Jolt) {
+			Jolt = _Jolt;
+
+			start()
+		});
+
+
+	</script>
+</body>
+
+</html>
