@@ -34,9 +34,8 @@ function generateBlockPhysicsBody(threeObject, data) {
     var shape = new Ammo.btBoxShape(new Ammo.btVector3(sx, sy, sz));
     shape.setMargin(convexRadius);
 
-
     var localInertia = new Ammo.btVector3(0, 0, 0);
-    shape.calculateLocalInertia(mass, localInertia);
+    shape.calculateLocalInertia(0, localInertia);
     var transform = new Ammo.btTransform();
     transform.setIdentity();
     var pos = threeObject.position;
@@ -44,14 +43,12 @@ function generateBlockPhysicsBody(threeObject, data) {
     transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
     transform.setRotation(new Ammo.btQuaternion(rot.x, rot.y, rot.z, rot.w));
     var motionState = new Ammo.btDefaultMotionState(transform);
-    var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass * 0, motionState, shape, localInertia);
+    var rbInfo = new Ammo.btRigidBodyConstructionInfo(0, motionState, shape, localInertia);
     var body = new Ammo.btRigidBody(rbInfo);
 
     body.setRestitution(restitution)
 
-
     physicsWorld.addRigidBody(body);
-
 
     return body
 }
@@ -99,6 +96,7 @@ function generatePhysicsBody(threeObject, objectType, data) {
     var motionState = new Ammo.btDefaultMotionState(transform);
     var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
     var body = new Ammo.btRigidBody(rbInfo);
+
     body.setRestitution(restitution)
 
     physicsWorld.addRigidBody(body);
@@ -122,13 +120,17 @@ function updateDynamicObjects() {
     }
 }
 
-function updateFloor(dy) {
+function updateFloor(deltaTime, dy) {
     if (floor && floor.position) {
         const body = floor.userData.body
 
         let ms = body.getMotionState();
         if (ms) {
             floorPos.setY(floorY + dy)
+
+            // ms.getWorldTransform(tmpTrans);
+            // tmpTrans.setOrigin(floorPos);
+            // ms.setWorldTransform(tmpTrans);
 
             const worldTrans = body.getWorldTransform();
             worldTrans.setOrigin(floorPos);
@@ -143,6 +145,6 @@ function updateFloor(dy) {
 function updatePhysics(deltaTime) {
     deltaTime = Math.min(deltaTime, 1.0 / 30.0);
     var numSteps = deltaTime > 1.0 / 55.0 ? 2 : 1;
-    // physicsWorld.stepSimulation(deltaTime, numSteps);
-    physicsWorld.stepSimulation(1 / 60, 1);
+    physicsWorld.stepSimulation(deltaTime, numSteps);
+    // physicsWorld.stepSimulation(1 / 60, 1);
 }

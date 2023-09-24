@@ -17,6 +17,8 @@ function initPhysics() {
     physicsSystem.SetGravity(new Jolt.Vec3(0, -6, 0))
 
     floorPos = new Jolt.Vec3(0, 0, 0)
+    floorQuat = new Jolt.Quat(0, 0, 0, 1)
+
 }
 
 function generateBlockPhysicsBody(threeObject, data) {
@@ -29,9 +31,9 @@ function generateBlockPhysicsBody(threeObject, data) {
     var creationSettings = new Jolt.BodyCreationSettings(shape,
         new Jolt.Vec3(x, y, z),
         new Jolt.Quat(qx, qy, qz, qw),
-        Jolt.Static, Jolt.NON_MOVING);
+        Jolt.Kinematic, Jolt.MOVING);
 
-    creationSettings.mMassPropertiesOverride.mMass = mass;
+    creationSettings.mMassPropertiesOverride.mMass = 0;
     creationSettings.mRestitution = restitution;
 
     let body = bodyInterface.CreateBody(creationSettings);
@@ -96,21 +98,21 @@ function updateDynamicObjects() {
     }
 }
 
-function updateFloor(dy) {
+function updateFloor(deltaTime, dy) {
     if (floor && floor.position) {
         const body = floor.userData.body
         floorPos.SetY(floorY + dy)
-        bodyInterface.SetPosition(body.GetID(), floorPos)
+        // bodyInterface.SetPosition(body.GetID(), floorPos)
+        bodyInterface.MoveKinematic(body.GetID(), floorPos, floorQuat, deltaTime)
 
         floor.position.set(0, floorY + dy, 0)
     }
 }
 
-
 function updatePhysics(deltaTime) {
     deltaTime = Math.min(deltaTime, 1.0 / 30.0);
     var numSteps = deltaTime > 1.0 / 55.0 ? 2 : 1;
-    // jolt.Step(deltaTime, numSteps);
-    jolt.Step(1 / 60, 1);
+    jolt.Step(deltaTime, numSteps);
+    // jolt.Step(1 / 60, 1);
 }
 

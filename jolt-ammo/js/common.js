@@ -21,14 +21,15 @@ var timeNextSpawn = time + objectTimePeriod;
 
 
 let floor;
-let floorPos;
 let floorY = 0
+let floorPos;
+let floorQuat;
 const floorWidth = 64
 const floorHeight = 64
 const floorThickness = 10
 
 
-const restitution = 0.7
+const restitution = 0.5
 const mass = 5
 
 var canvasWidth = 1024
@@ -208,10 +209,10 @@ function createFloor() {
 
 function createWalls() {
     let cfg = [
-        [floorWidth + 4, 28, 4, 0, 5, -floorHeight / 2],
-        [floorWidth + 4, 28, 4, 0, 5, floorHeight / 2],
-        [4, 28, floorHeight + 4, -floorWidth / 2, 5, 0],
-        [4, 28, floorHeight + 4, floorWidth / 2, 5, 0]
+        [floorWidth + 4, 34, 4, 0, 8, -floorHeight / 2],
+        [floorWidth + 4, 34, 4, 0, 8, floorHeight / 2],
+        [4, 34, floorHeight + 4, -floorWidth / 2, 8, 0],
+        [4, 34, floorHeight + 4, floorWidth / 2, 8, 0]
     ]
 
     cfg.forEach(d => {
@@ -284,11 +285,11 @@ function renderExample() {
 
     if (dynamicObjects.length >= maxNumObjects) {
         shakeTime += deltaTime
-        let dy = -Math.sin(shakeTime * 2) * 3
+        let dy = -Math.sin(shakeTime * 1.5) * 2
         if (dy < 0) {
             dy *= 1.5
         }
-        updateFloor(dy)
+        updateFloor(deltaTime, dy)
     }
 
     updatePhysics(deltaTime);
