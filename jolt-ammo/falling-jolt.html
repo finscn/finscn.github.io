@@ -20,6 +20,18 @@
 	<script src="js/phy-jolt.js"></script>
 
 	<script type="module">
+		// import JoltLib from 'jolt-physics/wasm';
+		// import JoltLib from './JoltPhysics.js/jolt-physics.wasm.js';
+
+		// Jolt = (await JoltLib({
+		// 	locateFile: function(path) {
+		// 		return `JoltPhysics.js/${path}`;
+		// 	}
+		// }));
+
+		// console.log(Jolt)
+		// start()
+
 		import initJolt from './JoltPhysics.js/jolt-physics.wasm.js';
 
 		initJolt().then(function (_Jolt) {

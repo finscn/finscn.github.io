@@ -5,11 +5,32 @@ var settings;
 var physicsSystem;
 var bodyInterface;
 
+// Object layers
+const LAYER_NON_MOVING = 0;
+const LAYER_MOVING = 1;
 
 function initPhysics() {
 
+    // We use only 2 layers: one for non-moving objects and one for moving objects
+	let object_filter = new Jolt.ObjectLayerPairFilterTable(2);
+	object_filter.EnableCollision(LAYER_NON_MOVING, LAYER_MOVING);
+	object_filter.EnableCollision(LAYER_MOVING, LAYER_MOVING);
+
+	// We use a 1-to-1 mapping between object layers and broadphase layers
+	const BP_LAYER_NON_MOVING = new Jolt.BroadPhaseLayer(0);
+	const BP_LAYER_MOVING = new Jolt.BroadPhaseLayer(1);
+	let bp_interface = new Jolt.BroadPhaseLayerInterfaceTable(2, 2);
+	bp_interface.MapObjectToBroadPhaseLayer(LAYER_NON_MOVING, BP_LAYER_NON_MOVING);
+	bp_interface.MapObjectToBroadPhaseLayer(LAYER_MOVING, BP_LAYER_MOVING);
+
     // Initialize Jolt
     settings = new Jolt.JoltSettings();
+    settings.mObjectLayerPairFilter = object_filter;
+    settings.mBroadPhaseLayerInterface = bp_interface;
+    settings.mObjectVsBroadPhaseLayerFilter = new Jolt.ObjectVsBroadPhaseLayerFilterTable(
+        settings.mBroadPhaseLayerInterface, 2,
+        settings.mObjectLayerPairFilter, 2);
+
     jolt = new Jolt.JoltInterface(settings);
     physicsSystem = jolt.GetPhysicsSystem();
     bodyInterface = physicsSystem.GetBodyInterface();
@@ -31,7 +52,7 @@ function generateBlockPhysicsBody(threeObject, data) {
     var creationSettings = new Jolt.BodyCreationSettings(shape,
         new Jolt.Vec3(x, y, z),
         new Jolt.Quat(qx, qy, qz, qw),
-        Jolt.Kinematic, Jolt.MOVING);
+        Jolt.EMotionType_Kinematic, LAYER_MOVING);
 
     creationSettings.mMassPropertiesOverride.mMass = 0;
     creationSettings.mRestitution = restitution;
@@ -75,7 +96,7 @@ function generatePhysicsBody(threeObject, objectType, data) {
     let rot = threeObject.quaternion;
     let creationSettings = new Jolt.BodyCreationSettings(shape,
         new Jolt.Vec3(pos.x, pos.y, pos.z),
-        new Jolt.Quat(rot.x, rot.y, rot.z, rot.w), Jolt.Dynamic, Jolt.MOVING);
+        new Jolt.Quat(rot.x, rot.y, rot.z, rot.w), Jolt.EMotionType_Dynamic, LAYER_MOVING);
     creationSettings.mMassPropertiesOverride.mMass = mass;
     creationSettings.mRestitution = restitution;
     creationSettings.mFriction = friction;
